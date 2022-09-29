@@ -86,7 +86,7 @@ def run(args):
     print(f"Test dataset has {test_ds.get_cat_length()} classes")
     
     # Initialize cosine similarity computation function
-    cos = CosineSimilarity(dim=1, eps=1e-6)
+    cos = CosineSimilarity(dim = 1, eps = 1e-6)
     
     # Initialize train, validation, and test dataloaders
     train_loader = DataLoader(tr_ds, batch_size = bs, shuffle = True, drop_last = True, num_workers = 8)
@@ -107,7 +107,7 @@ def run(args):
         This function gets feature map with size (bs, fm_shape, 7, 7)
         applies average pooling and returns feature map with shape (bs, fm_shape).
         
-        Argument:
+        Parameter:
         
             fm - feature map, tensor.
         
@@ -135,7 +135,7 @@ def run(args):
             
             This class gets model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
             
-            Arguments:
+            Parameters:
             
                 model_name          - model name in the timm library, str;
                 optimizer_name      - optimizer name in the torch library, str;
@@ -193,7 +193,7 @@ def run(args):
             
             This function gets batch and batch index and does one train step and returns train loss.
             
-            Arguments:
+            Parameters:
             
                 batch     - one batch with images, tensor;
                 batch_idx - index of the batch, int.
@@ -295,7 +295,7 @@ def run(args):
             
             This function gets batch and batch index and does one validation step and returns validation loss.
             
-            Arguments:
+            Parameters:
             
                 batch           - one batch with images, tensor;
                 batch_idx       - index of the batch, int.
@@ -412,7 +412,7 @@ def run(args):
         
         This function gets model name and creates a timm model.
         
-        Arguments:
+        Parameters:
         
             model_name  - name of the model in timm library, str;
             conv_input  - option for the the input to pass convolution layer first, bool;
@@ -443,7 +443,7 @@ def run(args):
         
         This function trains the model and returns trained model with its results.
         
-        Arguments:
+        Parameters:
         
             model_name - name of the model in timm library, str;
             save_name  - name for the saved model, str.

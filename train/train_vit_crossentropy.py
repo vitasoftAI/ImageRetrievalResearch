@@ -70,7 +70,7 @@ def run(args):
         This function gets feature map with size (bs, fm_shape, 7, 7)
         applies average pooling and returns feature map with shape (bs, fm_shape).
         
-        Argument:
+        Parameter:
         
             fm - feature map, tensor.
         
@@ -118,7 +118,7 @@ def run(args):
             
             This class gets model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
             
-            Arguments:
+            Parameters:
             
                 model_name          - model name in the timm library, str;
                 optimizer_name      - optimizer name in the torch library, str;
@@ -137,14 +137,12 @@ def run(args):
             # Create a model
             self.model = create_model(model_name)
             # Create loss modules
-            self.cos_loss = CosineEmbeddingLoss(margin=0.2)
-            self.ce_loss = CrossEntropyLoss()
+            self.cos_loss, self.ce_loss = CosineEmbeddingLoss(margin = 0.2), CrossEntropyLoss()
             
             # Example input
-            self.example_input_array = torch.zeros((1, 3, 224, 224), dtype=torch.float32)
+            self.example_input_array = torch.zeros((1, 3, 224, 224), dtype = torch.float32)
 
-        def forward(self, inp):
-            return self.model(inp)
+        def forward(self, inp): return self.model(inp)
         
         # Optimizer configurations
         def configure_optimizers(self):
@@ -175,18 +173,21 @@ def run(args):
                 assert False, f'Unknown optimizer: "{self.hparams.optimizer_name}"'
             
             # Initialize scheduler
-            scheduler = MultiStepLR(optimizer=optimizer, milestones=[10,20,30,40, 50], gamma = 0.1, verbose=True)
+            scheduler = MultiStepLR(optimizer = optimizer, milestones = [10, 20, 30, 40, 50], gamma = 0.1, verbose = True)
         
             return [optimizer], [scheduler]
         
         def training_step(self, batch, batch_idx): 
             
             """
-            Gets batch and batch index and does one train step and returns train loss.
             
-            Arguments:
+            This function gets batch and batch index and does one train step and returns train loss.
+            
+            Parameters:
+            
                 batch - one batch with images;
                 batch_idx - index of the batch.
+                
             """
             
             # Initialize list to track cosine similarities 
@@ -226,11 +227,14 @@ def run(args):
         def validation_step(self, batch, batch_idx):
             
             """
-            Gets batch and batch index and does one validation step and returns validation loss.
             
-            Arguments:
-                batch - one batch with images;
-                batch_idx - index of the batch.
+            This function gets batch and batch index and does one validation step and returns validation loss.
+            
+            Parameters:
+            
+                batch     - one batch with images, torch dataloader object;
+                batch_idx - index of the batch, int.
+                
             """
 
             # Initialize lists to track the metrics 
@@ -270,7 +274,12 @@ def run(args):
         
         """ 
         
-        Gets model name and creates a timm model.
+        This function gets a model name and creates a timm model.
+        
+        Parameters:
+        
+            model_name    - a name of a model from timm library, str;
+            num_classes   - number of classes in the dataset, int.      
         
         """
 
@@ -286,16 +295,18 @@ def run(args):
     def train_model(model_name, save_name = None, **kwargs):
         
         """
-        Trains the model and returns trained model with its results.
         
-        Arguments:
-            model_name - Name of the model you want to run. Is used to look up the class in "model_dict"
-            save_name (optional) - If specified, this name will be used for creating the checkpoint and logging directory.
+        This function trains the model and returns trained model with its results.
+        
+        Parameters:
+        
+            model_name           - a name of the model you want to run, str;
+            save_name            - the name that is used for creating the checkpoint and logging directory, str.
+        
         """
         
         # Set save name
-        if save_name is None:
-            save_name = model_name
+        if save_name is None: save_name = model_name
 
         # Initialize trainer
         trainer = pl.Trainer(
@@ -347,20 +358,21 @@ def run(args):
         else:
             pl.seed_everything(42) 
             # Initialize model
-            model = Model(model_name=model_name, **kwargs)
+            model = Model(model_name = model_name, **kwargs)
             # Fit the model with train and validation dataloaders
             trainer.fit(model, train_loader, val_loader)
 
         return model
 
     # Train model
-    trained_model = train_model(
-    model_name = model_name, optimizer_name = optimizer_name, save_name = f"{model_name}_{optimizer_name}_{lr}",
-    optimizer_hparams = optimizer_hparams)
+    trained_model = train_model(model_name = model_name, optimizer_name = optimizer_name, save_name = f"{model_name}_{optimizer_name}_{lr}", optimizer_hparams = optimizer_hparams)
 
 if __name__ == "__main__":
     
-    parser = argparse.ArgumentParser(description='Triplet Loss PyTorch Lightning Arguments')
+    # Initialize Argument Parser
+    parser = argparse.ArgumentParser(description = 'Triplet Loss PyTorch Lightning Arguments')
+    
+    # Add arguments to the parser
     parser.add_argument('-ed', '--expdir', default=None, help='Experiment directory')
     parser.add_argument("-sp", "--save_path", type=str, default='saved_models', help="Path to save trained models")
     parser.add_argument("-bs", "--batch_size", type=int, default=32, help="Batch size")
@@ -374,6 +386,8 @@ if __name__ == "__main__":
     parser.add_argument("-otl", "--only_target_labels", type=bool, default=True,
                         help="If True trains the model using only cross entropy and and return predicted labels (if both otl and ofm are True uses two loss functions simultaneously)")
     
+    # Parse the arguments from the parser
     args = parser.parse_args() 
     
+    # Run the script
     run(args) 
