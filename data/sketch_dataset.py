@@ -7,17 +7,21 @@ def data_split(data_dir, out_path, policy: str = 'cat', hard_split: bool = True,
     
     """
     
-    Gets data directory, output path, policy for data split, hard_split note, essential classes for train, and split ratio
-    and returns output path with the data split.
+    This function gets data directory, output path, policy for data split, hard_split note, essential classes for train, and split ratio and returns output path with the data split.
     
     Arguments:
-    data_dir - directory with the data;
-    out_path - path to output the json file with data split;
-    policy - policy to split data;
-    hard_split - if True, not all classes in the validation and test sets, else train, val, test sets have samples for all classes;
-    train_essentials - csv file with class names for train;
-    split - data split ratio;
-    sketch_qr - whether sketch images can be query image or not.
+    
+        data_dir            - directory with the data, str;
+        out_path            - path to output the json file with data split, str;
+        policy              - policy to split data, str;
+        hard_split          - if True, not all classes in the validation and test sets, else train, val, test sets have samples for all classes, bool;
+        train_essentials    - csv file with class names for train, str;
+        split               - data split ratio, list;
+        sketch_qry          - whether a sketch image can be used as a query image or not, bool.
+        
+    Output:
+    
+        out_path            - path to output with the json file that has data split, str.
     
     """    
     
