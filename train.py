@@ -2,15 +2,10 @@ import os, argparse, yaml
 import urllib.request
 from types import SimpleNamespace
 from urllib.error import HTTPError
-import matplotlib
-import matplotlib.pyplot as plt
+from datetime import datetime
 import numpy as np
 import pytorch_lightning as pl
-import seaborn as sns
-import tabulate
 import torch
-import torch.nn as nn
-import torch.optim as optim
 from torch.nn import *
 import torch.utils.data as data
 import torchvision
@@ -56,38 +51,22 @@ def run(args):
     optimizer_hparams={"lr": lr, "weight_decay": wd}
     model_dict[model_name] = 0       
       
-    class SquarePad:
-        def __call__(self, image):
-            w, h = image.size
-            max_wh = np.max([w, h])
-            hp = int((max_wh - w)/2)
-            hp_rem = (max_wh - w)%2
-            vp = int((max_wh - h)/2)
-            vp_rem = (max_wh - h)%2
-            padding = (hp, vp, hp+hp_rem, vp+vp_rem)
-            return FF.pad(image, padding, 255, 'constant')
     
     transformations = {}  
     # qry, pos, neg 서로 다른 transform을 적용 하기 위함  
         
     transformations['qry'] = transforms.Compose([
-        SquarePad(),
-        transforms.RandomResizedCrop(224),
         transforms.RandomHorizontalFlip(),
         AutoAugment.ImageNetPolicy(),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])  
     transformations['pos'] = transforms.Compose([
-        SquarePad(),
-        transforms.RandomResizedCrop(224),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])  
     transformations['neg'] = transforms.Compose([
-        SquarePad(),
-        transforms.RandomResizedCrop(224),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
@@ -104,7 +83,10 @@ def run(args):
     print(f"Number of validation set images: {len(val_ds)}")
     print(f"Number of test set images: {len(test_ds)}")
     
-    cos = torch.nn.CosineSimilarity(dim=1, eps=1e-6)
+    with open(f'data/{datetime.now().strftime("%Y%m%d-%H%M%S")}-test_ds.pickle', 'wb') as handle:
+        pickle.dump(test_ds, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    
+    cos = CosineSimilarity(dim=1, eps=1e-6)
     train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
     val_loader = DataLoader(val_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
     test_loader = DataLoader(test_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)  
@@ -114,12 +96,12 @@ def run(args):
     assert only_features or only_labels, "Please choose at least one loss function to train the model (triplet loss or crossentropy loss)"
     if only_features and only_labels:
         print("\nTrain using triplet loss and crossentropy loss\n")
-    elif only_features == True and only_labels == False:
+    elif only_features == True and only_labels == None:
         print("\nTrain using only triplet loss\n")                
-    elif only_features == False and only_labels == True:
+    elif only_features == None and only_labels == True:
         print("\nTrain using only crossentropy loss\n")  
     
-    class ContrastiveLoss(nn.Module):
+    class ContrastiveLoss(Module):
 
         """
 
@@ -158,11 +140,11 @@ def run(args):
             # Create model
             self.model = create_model(model_name)
             # Create loss module
-            # self.loss_module = torch.nn.TripletMarginLoss(margin=1.0, p=2).to('cuda')
-            # self.loss_module = nn.TripletMarginWithDistanceLoss(distance_function=lambda x, y: 1.0 - F.cosine_similarity(x, y)).to('cuda')
+            # self.loss_module = ripletMarginLoss(margin=1.0, p=2).to('cuda')
+            # self.loss_module = TripletMarginWithDistanceLoss(distance_function=lambda x, y: 1.0 - F.cosine_similarity(x, y)).to('cuda')
             # self.loss_module = ContrastiveLoss(margin=0.2).to('cuda')
-            self.cos_loss = torch.nn.CosineEmbeddingLoss(margin=0.5).to('cuda')
-            self.ce_loss = torch.nn.CrossEntropyLoss()
+            self.cos_loss = CosineEmbeddingLoss(margin=0.5).to('cuda')
+            self.ce_loss = CrossEntropyLoss()
             # Example input for visualizing the graph in Tensorboard
             self.example_input_array = torch.zeros((1, 3, 224, 224), dtype=torch.float32)
 
@@ -174,7 +156,7 @@ def run(args):
             
             dic = {}                        
             fm = self.model.forward_features(inp)
-            pool = nn.AvgPool2d((7,7))
+            pool = AvgPool2d((7,7))
             lbl = self.model.forward_head(fm)
             dic["feature_map"] = torch.reshape(pool(fm), (-1, fm.shape[1]))
             dic["class_pred"] = lbl
@@ -187,21 +169,17 @@ def run(args):
             if self.hparams.optimizer_name == "Adam":
                 # AdamW is Adam with a correct implementation of weight decay (see here
                 # for details: https://arxiv.org/pdf/1711.05101.pdf)
-                optimizer = optim.AdamW(self.parameters(), **self.hparams.optimizer_hparams)
+                optimizer = torch.optim.AdamW(self.parameters(), **self.hparams.optimizer_hparams)
                 # scheduler = {"scheduler": ReduceLROnPlateau(optimizer, verbose=True),
                 # "monitor": "val_loss"}
             elif self.hparams.optimizer_name == "SGD":
-                optimizer = optim.SGD(self.parameters(), **self.hparams.optimizer_hparams)
+                optimizer = torch.optim.SGD(self.parameters(), **self.hparams.optimizer_hparams)
             else:
                 assert False, f'Unknown optimizer: "{self.hparams.optimizer_name}"'
-                
-            # scheduler = LambdaLR(optimizer=optimizer,
-            #                             lr_lambda=lambda epoch: 0.95 ** epoch,
-            #                             last_epoch=-1,
-            #                             verbose=True)
-
-            # return [optimizer], [scheduler]
-            return [optimizer]
+            
+            scheduler = MultiStepLR(optimizer=optimizer, milestones=[10,20,30,40, 50], gamma=0.1, verbose=True)
+        
+            return [optimizer], [scheduler]
         
         def training_step(self, batch, batch_idx): # triplet loss 
             # "batch" is the output of the training data loader.
@@ -222,10 +200,10 @@ def run(args):
                 loss_cos = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) + self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss_ce = self.ce_loss(lbl_ims, regs) + self.ce_loss(lbl_poss, regs)
                 loss = loss_cos + loss_ce 
-            elif only_features == True and only_labels == False:
+            elif only_features == True and only_labels == None:
                 loss_cos = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) + self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss = loss_cos                 
-            elif only_features == False and only_labels == True:
+            elif only_features == None and only_labels == True:
                 loss_ce = self.ce_loss(lbl_ims, regs) + self.ce_loss(lbl_poss, regs)
                 loss = loss_ce 
                 
@@ -266,10 +244,10 @@ def run(args):
                 loss_cos = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) + self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss_ce = self.ce_loss(lbl_ims, regs) + self.ce_loss(lbl_poss, regs)
                 loss = loss_cos + loss_ce 
-            elif only_features == True and only_labels == False:
+            elif only_features == True and only_labels == None:
                 loss_cos = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) + self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss = loss_cos                 
-            elif only_features == False and only_labels == True:
+            elif only_features == None and only_labels == True:
                 loss_ce = self.ce_loss(lbl_ims, regs) + self.ce_loss(lbl_poss, regs)
                 loss = loss_ce 
             
@@ -344,10 +322,10 @@ def run(args):
                 loss_cos = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) + self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss_ce = self.ce_loss(lbl_ims, regs) + self.ce_loss(lbl_poss, regs)
                 loss = loss_cos + loss_ce 
-            elif only_features == True and only_labels == False:
+            elif only_features == True and only_labels == None:
                 loss_cos = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) + self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss = loss_cos                 
-            elif only_features == False and only_labels == True:
+            elif only_features == None and only_labels == True:
                 loss_ce = self.ce_loss(lbl_ims, regs) + self.ce_loss(lbl_poss, regs)
                 loss = loss_ce 
         
@@ -381,11 +359,11 @@ def run(args):
             base_model = timm.create_model(model_name, pretrained=True, num_classes=num_classes)
             print(f"Model {model_name} with the best weights is successfully loaded!")        
             if conv_input:                
-                conv_layer = nn.Sequential(nn.Conv2d(3, 3, kernel_size=(3, 3), stride=(1, 1),padding=(1,1), bias=False), 
-                 # nn.Conv2d(3, 3, kernel_size=(3, 3), stride=(2, 2),padding=(1,1), bias=False), 
-                 # nn.MaxPool2d(kernel_size=(3,3), stride=(2,2), padding=(1,1)),
-                 nn.SiLU(inplace=True))
-                model = nn.Sequential(conv_layer, base_model)  
+                conv_layer = Sequential(Conv2d(3, 3, kernel_size=(3, 3), stride=(1, 1),padding=(1,1), bias=False), 
+                 # Conv2d(3, 3, kernel_size=(3, 3), stride=(2, 2),padding=(1,1), bias=False), 
+                 # MaxPool2d(kernel_size=(3,3), stride=(2,2), padding=(1,1)),
+                 SiLU(inplace=True))
+                model = Sequential(conv_layer, base_model)  
             else:
                 model = base_model
         else:
@@ -422,9 +400,9 @@ def run(args):
                 ModelCheckpoint(
                     filename='{epoch}-{val_loss:.2f}-{cos_sims:.2f}-{val_top3:.2f}', 
                     every_n_train_steps = None, save_top_k=1,
-                    save_weights_only=True, mode="max", monitor="val_top3" 
+                    save_weights_only=True, mode="max", monitor="val_top1" 
                 ),  # Save the best checkpoint based on the min val_loss recorded. Saves only weights and not optimizer
-                EarlyStopping(monitor="val_top3", mode="max", patience=3, verbose=True), # set the metric (and change the mode!) to track for early stopping
+                EarlyStopping(monitor="val_top1", mode="max", patience=10, verbose=True), # set the metric (and change the mode!) to track for early stopping
                 LearningRateMonitor("epoch"), # Log learning rate every epoch
             ]
         )
@@ -471,19 +449,20 @@ if __name__ == "__main__":
     parser.add_argument('-ed', '--expdir', default=None, help='Experiment directory')
     parser.add_argument("-sp", "--save_path", type=str, default='saved_models', help="Path to save trained models")
     parser.add_argument('-cp', '--checkpoint_path', type=str, default="/home/ubuntu/workspace/bekhzod/triplet-loss-pytorch/pytorch_lightning/saved_models/model_best.pth.tar", help='Path to the trained model')
-    parser.add_argument("-bs", "--batch_size", type=int, default=16, help="Batch size")
+    parser.add_argument("-bs", "--batch_size", type=int, default=32, help="Batch size")
     parser.add_argument("-d", "--device", type=str, default='cuda:1', help="GPU device number")
-    parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/test_dataset_svg', help="Path to the images")
+#     parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/test_dataset_svg', help="Path to the images")
+    parser.add_argument("-ip", "--ims_path", type=str, default='/mnt/test_dataset_svg/test_dataset_svg_1121', help="Path to the images")
     parser.add_argument("-is", "--input_size", type=int, default=(224, 224), help="Size of the images")
     parser.add_argument("-mn", "--model_name", type=str, default='rexnet_150', help="Model name (from timm library (ex. darknet53, ig_resnext101_32x32d))")
     parser.add_argument("-on", "--optimizer_name", type=str, default='Adam', help="Optimizer name (Adam or SGD)")
     parser.add_argument("-lr", "--learning_rate", type=float, default=3e-4, help="Learning rate value")
     parser.add_argument("-wd", "--weight_decay", type=float, default=1e-5, help="Weight decay value")
-    parser.add_argument("-ofm", "--only_feature_embeddings", type=bool, default=True, 
+    parser.add_argument("-ofm", "--only_feature_embeddings", type=bool,  
                         help="If True trains the model using only triplet loss and and return feature embeddings (if both otl and ofm are True uses two loss functions simultaneously)")
-    parser.add_argument("-otl", "--only_target_labels", type=bool, default=True, 
+    parser.add_argument("-otl", "--only_target_labels", type=bool, 
                         help="If True trains the model using only cross entropy and and return predicted labels (if both otl and ofm are True uses two loss functions simultaneously)")
     
     args = parser.parse_args() 
     
-    run(args)  
+    run(args) 
