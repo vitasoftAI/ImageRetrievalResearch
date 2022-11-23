@@ -1,30 +1,17 @@
-import os, argparse, yaml
-import urllib.request
-from types import SimpleNamespace
-from urllib.error import HTTPError
+import os, argparse, yaml, torch, torchvision, timm, pickle
 from datetime import datetime
-import numpy as np
 import pytorch_lightning as pl
-import torch
 from torch.nn import *
 import torch.utils.data as data
-import torchvision
-from IPython.display import HTML, display, set_matplotlib_formats
-from PIL import Image
 from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
 from torchvision import transforms
 from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import *
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
-import timm
 from collections import OrderedDict as OD
 from collections import namedtuple as NT
 from softdataset import TripletImageDataset
-import pickle
 from tqdm import tqdm
-from torchvision.transforms import ToTensor, Resize
-import torch.nn.functional as F
-import torchvision.transforms.functional as FF
 import AutoAugment
 
 def run(args):
@@ -40,7 +27,7 @@ def run(args):
     optimizer_name=args.optimizer_name
     lr = args.learning_rate
     wd = args.weight_decay
-    checkpoint_path = args.checkpoint_path
+#     checkpoint_path = args.checkpoint_path
     only_features = args.only_feature_embeddings
     only_labels = args.only_target_labels
     
@@ -72,7 +59,7 @@ def run(args):
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ]) 
     
-    dataset = TripletImageDataset(data_dir=path, transform_dic=transformations)
+    dataset = TripletImageDataset(data_dir=path, transform_dic=transformations, load_images=True)
     num_classes = dataset.get_prod_length()
     print(f"The dataset has {num_classes} classes")
     
@@ -87,11 +74,19 @@ def run(args):
         pickle.dump(test_ds, handle, protocol=pickle.HIGHEST_PROTOCOL)
     
     cos = CosineSimilarity(dim=1, eps=1e-6)
-    train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
-    val_loader = DataLoader(val_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
-    test_loader = DataLoader(test_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)  
+    train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=False, num_workers=8)
+    val_loader = DataLoader(val_ds, batch_size=bs, shuffle=True, drop_last=False, num_workers=8)
+    test_loader = DataLoader(test_ds, batch_size=bs, shuffle=True, drop_last=False, num_workers=8)  
     labels = {"pos": torch.tensor(1.).unsqueeze(0),
               "neg": torch.tensor(-1.).unsqueeze(0)}
+    
+    alpha = 1
+    eps = 5
+    def cos_sim_score(score, eps, alpha, mode):
+        if mode == "for_pos":
+            return (score + eps) / (eps + alpha)
+        elif mode == "for_neg":
+            return (score + (alpha / eps)) / (2*eps)
     
     assert only_features or only_labels, "Please choose at least one loss function to train the model (triplet loss or crossentropy loss)"
     if only_features and only_labels:
@@ -144,7 +139,7 @@ def run(args):
             # self.loss_module = TripletMarginWithDistanceLoss(distance_function=lambda x, y: 1.0 - F.cosine_similarity(x, y)).to('cuda')
             # self.loss_module = ContrastiveLoss(margin=0.2).to('cuda')
             self.cos_loss = CosineEmbeddingLoss(margin=0.5).to('cuda')
-            self.ce_loss = CrossEntropyLoss()
+            self.ce_loss = CrossEntropyLoss().to('cuda')
             # Example input for visualizing the graph in Tensorboard
             self.example_input_array = torch.zeros((1, 3, 224, 224), dtype=torch.float32)
 
@@ -156,7 +151,7 @@ def run(args):
             
             dic = {}                        
             fm = self.model.forward_features(inp)
-            pool = AvgPool2d((7,7))
+            pool = AvgPool2d((fm.shape[2],fm.shape[3]))
             lbl = self.model.forward_head(fm)
             dic["feature_map"] = torch.reshape(pool(fm), (-1, fm.shape[1]))
             dic["class_pred"] = lbl
@@ -188,7 +183,7 @@ def run(args):
             ims, poss, negs, clss, regs = batch['qry'], batch['pos'][0], batch['neg'][0], batch['cat_idx'], batch['prod_idx']
 
             # Get feature maps and pred labels
-            out_ims = self(ims)
+            out_ims = self(ims) 
             fm_ims, lbl_ims = out_ims[0], out_ims[1] # get feature maps [0] and predicted labels [1]
             out_poss = self(poss)
             fm_poss, lbl_poss = out_poss[0], out_poss[1] # get feature maps [0] and predicted labels [1]
@@ -199,7 +194,7 @@ def run(args):
             if only_features and only_labels:
                 loss_cos = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) + self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss_ce = self.ce_loss(lbl_ims, regs) + self.ce_loss(lbl_poss, regs)
-                loss = loss_cos + loss_ce 
+                loss = loss_cos * 1.2 + loss_ce * 0.8
             elif only_features == True and only_labels == None:
                 loss_cos = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) + self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss = loss_cos                 
@@ -210,19 +205,22 @@ def run(args):
             # Compute top3 and top1
             top3, top1 = 0, 0            
             for idx, fm in (enumerate(fm_ims)):
-                sim = cos(fm.unsqueeze(0), fm_poss) 
-                cos_sims.append(torch.mean(sim))
-                vals, inds = torch.topk(cos(fm.unsqueeze(0), fm_poss), k=3)
-                top3 += len(inds[idx == inds])
-                top1 += len(inds[idx == inds[0]])
-
+                sim = cos(fm_ims[idx].unsqueeze(0), fm_poss[idx]) 
+#                 print(fm_poss[idx].shape)
+#                 print(fm_ims[idx].shape)
+                cos_sims.append(sim)
+                vals, inds = torch.topk(lbl_ims[idx], k=3)
+                if regs[idx] in inds:
+                    top3 += 1
+                if regs[idx] in inds[0]:
+                    top1 += 1
 
             # Logs the loss per epoch to tensorboard (weighted average over batches)
 #             self.log("train_cos_loss", loss_cos)
 #             self.log("train_ce_loss", loss_ce)
             self.log("train_loss", loss)
-            self.log("train_top3", top3)
-            self.log("train_top1", top1)
+            self.log("train_top3", top3 / len(fm_ims))
+            self.log("train_top1", top1 / len(fm_ims))
 
             return OD([('loss', loss)]) #, ('train_top3', top3 / len(ims)), ('train_top1', top1 / len(ims))])  # Return tensor to call ".backward" on
 
@@ -243,25 +241,33 @@ def run(args):
             if only_features and only_labels:                
                 loss_cos = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) + self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss_ce = self.ce_loss(lbl_ims, regs) + self.ce_loss(lbl_poss, regs)
+                print(f"Triplet loss: {loss_cos:.3f}")
+                print(f"Crossentropy loss: {loss_ce:.3f}")
                 loss = loss_cos + loss_ce 
             elif only_features == True and only_labels == None:
                 loss_cos = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) + self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
-                loss = loss_cos                 
+                loss = loss_cos
+                print(f"Loss: {loss_cos:.3f}")
             elif only_features == None and only_labels == True:
                 loss_ce = self.ce_loss(lbl_ims, regs) + self.ce_loss(lbl_poss, regs)
-                loss = loss_ce 
+                print(f"Loss: {loss_ce:.3f}")
+                loss = loss_ce                
             
             # Compute top3 and top1            
             top3, top1 = 0, 0
             
             for idx, fm in (enumerate(fm_ims)):
-                sim = cos(fm.unsqueeze(0), fm_poss) 
-                cos_sims.append(torch.mean(sim))
-                vals, inds = torch.topk(cos(fm.unsqueeze(0), fm_poss), k=3)
-                top3 += len(inds[idx == inds])
-                top1 += len(inds[idx == inds[0]])
+#                 print(f"fm_shape val{fm.shape}")
+                sim = cos(fm_ims[idx].unsqueeze(0), fm_poss[idx]) 
+#                 sim = cos(fm.unsqueeze(0), fm_poss[idx].unsqueeze(0)) 
+                cos_sims.append(sim)
+                vals, inds = torch.topk(lbl_ims[idx], k=3)
+                if regs[idx] in inds:
+                    top3 += 1
+                if regs[idx] in inds[0]:
+                    top1 += 1
 
-            print(f"Total loss: {loss:.3f}")
+#             print(f"Total loss: {loss:.3f}")
 #             print(f"Crossentropy loss: {loss_ce:.3f}")
             # print(f"Val loss: {loss:.3f}")
             # print(f"Val top3: {top3}")
@@ -273,9 +279,9 @@ def run(args):
             self.log("val_loss", loss)
 #             self.log("val_loss_cos", loss_cos)
 #             self.log("val_loss_ce", loss_ce)
-            self.log("cos_sims", torch.mean(torch.FloatTensor(cos_sims)))
-            self.log("val_top3", top3)
-            self.log("val_top1", top1)
+            self.log("cos_sims", cos_sim_score(torch.mean(torch.FloatTensor(cos_sims)).item(), eps, alpha, mode='for_pos'))
+            self.log("val_top3", top3 / len(fm_ims))
+            self.log("val_top1", top1 / len(fm_ims))
 
             # return OD([('loss', loss), ('val_top3', top3), ('val_top1', top1)]) 
             return OD([('loss', loss), ('val_top3', top3),
@@ -287,65 +293,72 @@ def run(args):
             Compares test images in the batch with the all images in the dataloader.
             
             """
-            fms_ims, fms_poss, fms_negs, scores = [], [], [], []
+            fms_ims, fms_poss, fms_negs, scores, gts_all, im_pred_lbls_all, pos_pred_lbls_all = [], [], [], [], [], [], []
             top1, top3, = 0, 0
             
-            print("Obtaining embeddings...")
+            print("\nObtaining embeddings and predicting labels...\n")
             # Get feature maps and pred labels of the whole test data
             for i, batch_all in enumerate(test_loader):
-                ims_all, poss_all, negs_all, clss_all, regs_all = batch_all['qry'], batch_all['pos'][0], batch_all['neg'][0], batch_all['cat_idx'], batch_all['prod_idx']
-                out_ims_all = self(ims_all.cuda())
-                fm_ims_all, lbl_ims_all = out_ims_all[0], out_ims_all[1] # get feature maps [0] and predicted labels [1]
-                out_poss_all = self(poss_all.cuda())
-                fm_poss_all, lbl_poss_all = out_poss_all[0], out_poss_all[1] # get feature maps [0] and predicted labels [1]
-                out_negs_all = self(negs_all.cuda())
-                fm_negs_all, lbl_negs_all = out_negs_all[0], out_negs_all[1] # get feature maps [0] and predicted labels [1]
-                fms_ims.extend(fm_ims_all)
-                fms_poss.extend(fm_poss_all)
-                fms_negs.extend(fm_negs_all)
-            print("Embeddings are obtained!")               
+                with torch.no_grad():
+                    
+                    ims_all, poss_all, negs_all, clss_all, regs_all = batch_all['qry'], batch_all['pos'][0], batch_all['neg'][0], batch_all['cat_idx'], batch_all['prod_idx']
+                    out_ims_all = self(ims_all.cuda())
+                    fm_ims_all, lbl_ims_all = out_ims_all[0], out_ims_all[1] # get feature maps [0] and predicted labels [1]
+                    out_poss_all = self(poss_all.cuda())
+                    fm_poss_all, lbl_poss_all = out_poss_all[0], out_poss_all[1] # get feature maps [0] and predicted labels [1]
+                    out_negs_all = self(negs_all.cuda())
+                    fm_negs_all, lbl_negs_all = out_negs_all[0], out_negs_all[1] # get feature maps [0] and predicted labels [1]
+                    fms_ims.extend(fm_ims_all)
+                    fms_poss.extend(fm_poss_all)
+                    fms_negs.extend(fm_negs_all)
+                    gts_all.extend(regs_all.cuda())
+                    im_pred_lbls_all.extend(lbl_ims_all)
+                    pos_pred_lbls_all.extend(lbl_poss_all)
+                
             fms_ims = torch.stack(fms_ims)
             fms_poss = torch.stack(fms_poss)
             fms_negs = torch.stack(fms_negs)
+            gts_all = torch.stack(gts_all)
+            im_pred_lbls_all = torch.stack(im_pred_lbls_all)
+            pos_pred_lbls_all = torch.stack(pos_pred_lbls_all)
             
-            ims, poss, negs, clss, regs = batch['qry'], batch['pos'][0], batch['neg'][0], batch['cat_idx'], batch['prod_idx']
-            # Get feature maps and pred labels
-            out_ims = self(ims)
-            fm_ims, lbl_ims = out_ims[0], out_ims[1] # get feature maps [0] and predicted labels [1]
-            out_poss = self(poss)
-            fm_poss, lbl_poss = out_poss[0], out_poss[1] # get feature maps [0] and predicted labels [1]
-            out_negs = self(negs)
-            fm_negs, lbl_negs = out_negs[0], out_negs[1] # get feature maps [0] and predicted labels [1]
-            
-             # Compute loss
-            if only_features and only_labels:
-                loss_cos = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) + self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
-                loss_ce = self.ce_loss(lbl_ims, regs) + self.ce_loss(lbl_poss, regs)
-                loss = loss_cos + loss_ce 
-            elif only_features == True and only_labels == None:
-                loss_cos = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) + self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
-                loss = loss_cos                 
-            elif only_features == None and only_labels == True:
-                loss_ce = self.ce_loss(lbl_ims, regs) + self.ce_loss(lbl_poss, regs)
-                loss = loss_ce 
+            print("Done!\n")               
+            print("\nCalculating metrics...")
         
-            # Compute top3 and top1   
-            for index, fm in enumerate(fm_ims):
-                score = cos(fm.unsqueeze(0), fms_ims) # (1, fm), (len(dl), fm) = (len(dl), fm)
-                scores.append(torch.mean(score))
-                vals, inds = torch.topk(cos(fm.unsqueeze(0), fms_ims), k=3)
-                top3 += len(inds[index == inds])
-                top1 += len(inds[index == inds[0]])     
+            # Compute loss, top3, and top1   
+            for index, fm in enumerate(fms_ims):
+                
+                # Compute loss
+                if only_features and only_labels:
+                    loss_cos = self.cos_loss(fm.unsqueeze(0), fms_poss[index].unsqueeze(0), labels["pos"].to("cuda")) + self.cos_loss(fm.unsqueeze(0), fms_negs[index].unsqueeze(0), labels["neg"].to("cuda"))
+                    loss_ce = self.ce_loss(im_pred_lbls_all[index], gts_all[index]) + self.ce_loss(pos_pred_lbls_all[index], gts_all[index])
+                    loss = loss_cos + loss_ce 
+                elif only_features == True and only_labels == None:
+                    loss_cos = self.cos_loss(fm.unsqueeze(0), fms_poss[index].unsqueeze(0), labels["pos"].to("cuda")) + self.cos_loss(fm.unsqueeze(0), fms_negs[index].unsqueeze(0), labels["neg"].to("cuda"))
+                    loss = loss_cos                 
+                elif only_features == None and only_labels == True:
+                    loss_ce = self.ce_loss(im_pred_lbls_all[index], gts_all[index]) + self.ce_loss(pos_pred_lbls_all[index], gts_all[index])
+                    loss = loss_ce 
+                
+                score = cos(fm.unsqueeze(0), fms_poss[index].unsqueeze(0)) # (1, fm), (len(dl), fm) = (len(dl), fm)
+                scores.append(score)
+                vals, inds = torch.topk(im_pred_lbls_all[index], k=3)
+                if gts_all[index] in inds:
+                    top3 += 1
+                if gts_all[index] in inds[0]:
+                    top1 += 1                    
 
-            print(f'scores: {torch.mean(torch.FloatTensor(scores)).item():.3f}')
-            print('top1', top1/len(fm_ims))
-            print('top3', top3/len(fm_ims))
-            print('test_loss', loss / len(fm_ims))
+            print("Calculating metrics is done!\n")
+            
+#             print(f'scores: {torch.mean(torch.FloatTensor(scores)).item():.3f}')
+            print('top1', top1/len(fms_ims))
+            print('top3', top3/len(fms_ims))
+            print('test_loss', loss / len(fms_ims))
 
-            self.log("scores", torch.mean(torch.FloatTensor(scores)).item())
-            self.log("test_loss", loss / len(fm_ims))
-            self.log("test_top3", top3 / len(fm_ims))
-            self.log("test_top1", top1 / len(fm_ims))
+            self.log("test_sim_scores", cos_sim_score(torch.mean(torch.FloatTensor(scores)).item(), eps, alpha, mode='for_pos'))
+            self.log("test_loss", loss / len(fms_ims))
+            self.log("test_top3", top3 / len(fms_ims))
+            self.log("test_top1", top1 / len(fms_ims))
 
     def create_model(model_name, conv_input=False, num_classes=num_classes):
         
@@ -398,7 +411,7 @@ def run(args):
             callbacks=[
                 
                 ModelCheckpoint(
-                    filename='{epoch}-{val_loss:.2f}-{cos_sims:.2f}-{val_top3:.2f}', 
+                    filename='{epoch}-{val_loss:.2f}-{cos_sims:.2f}-{val_top1:.2f}', 
                     every_n_train_steps = None, save_top_k=1,
                     save_weights_only=True, mode="max", monitor="val_top1" 
                 ),  # Save the best checkpoint based on the min val_loss recorded. Saves only weights and not optimizer
@@ -427,7 +440,7 @@ def run(args):
         test_result = trainer.test(model, dataloaders=test_loader, verbose=True)
 
         result = {"test_loss": test_result[0]["test_loss"], 
-                  "test_scores": test_result[0]["scores"],
+                  "test_scores": test_result[0]["test_sim_scores"],
                   "test_top3": test_result[0]["test_top3"],
                   "test_top1": test_result[0]["test_top1"]}
 
@@ -448,7 +461,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Triplet Loss PyTorch Lightning Arguments')
     parser.add_argument('-ed', '--expdir', default=None, help='Experiment directory')
     parser.add_argument("-sp", "--save_path", type=str, default='saved_models', help="Path to save trained models")
-    parser.add_argument('-cp', '--checkpoint_path', type=str, default="/home/ubuntu/workspace/bekhzod/triplet-loss-pytorch/pytorch_lightning/saved_models/model_best.pth.tar", help='Path to the trained model')
+#     parser.add_argument('-cp', '--checkpoint_path', type=str, default="/home/ubuntu/workspace/bekhzod/triplet-loss-pytorch/pytorch_lightning/saved_models/model_best.pth.tar", help='Path to the trained model')
     parser.add_argument("-bs", "--batch_size", type=int, default=32, help="Batch size")
     parser.add_argument("-d", "--device", type=str, default='cuda:1', help="GPU device number")
 #     parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/test_dataset_svg', help="Path to the images")
