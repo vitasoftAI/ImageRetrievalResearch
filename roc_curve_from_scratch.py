@@ -53,3 +53,5 @@ def roc_curve(path):
     plt.xlabel('FAR (FPR)')
     plt.ylabel('FRR (TPR)')
     plt.legend()
+
+roc_curve('test-old.csv')
