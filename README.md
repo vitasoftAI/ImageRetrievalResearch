@@ -14,7 +14,7 @@ Computes area under curve (AUC) score of receiver operating characteristics (ROC
 
 ![Image](https://user-images.githubusercontent.com/50166164/203878341-69123d1a-5c66-41ed-9870-1dc0dedc900e.PNG)
 
-Run the code 
+Run using terminal
 ```python
-python train.py 
+python roc_curve_from_scratch.py
 ```
