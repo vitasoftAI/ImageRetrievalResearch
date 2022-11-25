@@ -44,11 +44,11 @@ def roc_curve(path):
         tpr = tp / (tp + fn)
         fpr = fp / (tn + fp)
         roc_point.append([tpr, fpr])
-    pivot = pd.DataFrame(roc_point, columns = ["x", "y"])
+    pivot = pd.DataFrame(roc_point, columns = ["tpr", "fpr"])
     pivot["threshold"] = thresholds
     
-    auc = round(abs(np.trapz(pivot.x, pivot.y)), 4)
-    plt.scatter(pivot.y, pivot.x, label=f'AUC Score: {auc:.3f}', c='red', alpha=0.7)
+    auc = round(abs(np.trapz(pivot.tpr, pivot.fpr)), 4)
+    plt.scatter(pivot.fpr, pivot.tpr, label=f'AUC Score: {auc:.3f}', c='red', alpha=0.7)
     plt.plot([0, 1], c='blue', alpha=0.7)
     plt.xlabel('FAR (FPR)')
     plt.ylabel('FRR (TPR)')
