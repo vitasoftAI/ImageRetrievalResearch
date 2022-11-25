@@ -54,4 +54,4 @@ def roc_curve(path):
     plt.ylabel('FRR (TPR)')
     plt.legend()
 
-roc_curve('test-old.csv')
+roc_curve('binary-preds.csv')
