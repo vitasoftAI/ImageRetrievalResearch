@@ -1,4 +1,4 @@
-import os, argparse, yaml, torch, torchvision, timm, pickle
+import os, argparse, yaml, torch, torchvision, timm, pickle, wandb
 from datetime import datetime
 import pytorch_lightning as pl
 from torch.nn import *
@@ -8,11 +8,14 @@ from torchvision import transforms
 from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import *
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+from pytorch_lightning.loggers import WandbLogger
 from collections import OrderedDict as OD
 from collections import namedtuple as NT
 from softdataset import TripletImageDataset
+from original_dataset import OriginalImageDataset, data_split
 from tqdm import tqdm
 import AutoAugment
+
 
 def run(args):
     
@@ -30,61 +33,142 @@ def run(args):
 #     checkpoint_path = args.checkpoint_path
     only_features = args.only_feature_embeddings
     only_labels = args.only_target_labels
-    
+        
     
     argstr = yaml.dump(args.__dict__, default_flow_style=False)
     print(f"\nTraining Arguments:\n{argstr}\n")
     
     optimizer_hparams={"lr": lr, "weight_decay": wd}
-    model_dict[model_name] = 0       
-      
+    model_dict[model_name] = 0 
+    os.system('wandb login 3204eaa1400fed115e40f43c7c6a5d62a0867ed1')     
     
-    transformations = {}  
-    # qry, pos, neg 서로 다른 transform을 적용 하기 위함  
-        
+    angles=[-30, -15, 0, 15, 30] # rotation 각도, 이중 하나의 각도로 돌아감 [-30, -15, 0, 15, 30]
+    distortion_scale = 0.5 # distortion 각도 (0.5)
+    p = 0.5 # distortion이 적용될 확률 (0.5)
+    fill = [0,0,0] # distortion 후 채워지는 배경색
+    fill_sketch = [255,255,255] # distortion 후 채워지는 배경색
+
+    class MyRotationTransform:
+        """Rotate by one of the given angles."""
+
+        def __init__(self, angles):
+            self.angles = angles
+
+        def __call__(self, x):
+            angle = random.choice(self.angles)
+            return TF.rotate(x, angle, fill = fill)
+
+    transformations = {}   
+
     transformations['qry'] = transforms.Compose([
-        transforms.RandomHorizontalFlip(),
-        AutoAugment.ImageNetPolicy(),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ])  
+                            transforms.RandomHorizontalFlip(),
+                            transforms.RandomAffine(0, (0.5, 0), fill = fill),
+                            transforms.RandomRotation(90, fill = fill),
+                            transforms.ColorJitter([0.3, 1]),
+                            transforms.GaussianBlur(9, (0.5, 3.0)),
+                            transforms.ToTensor(),
+                                                  ])
+
     transformations['pos'] = transforms.Compose([
-        transforms.RandomHorizontalFlip(),
+        # MyRotationTransform(angles=angles),
+        transforms.RandomRotation(90, fill = fill_sketch),
+        transforms.RandomPerspective(distortion_scale = distortion_scale, p = p, fill = fill_sketch),
         transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])  
     transformations['neg'] = transforms.Compose([
-        transforms.RandomHorizontalFlip(),
+        # MyRotationTransform(angles=angles),
+        transforms.RandomRotation(90, fill = fill_sketch),
+        transforms.RandomPerspective(distortion_scale = distortion_scale, p = p, fill = fill_sketch),
         transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ]) 
+    ])
     
-    dataset = TripletImageDataset(data_dir=path, transform_dic=transformations, load_images=True)
-    num_classes = dataset.get_prod_length()
+#     transformations = {}  
+#     # qry, pos, neg 서로 다른 transform을 적용 하기 위함  
+        
+#     transformations['qry'] = transforms.Compose([
+#                                 transforms.RandomHorizontalFlip(),
+#                                 transforms.RandomAffine(0, (0.5, 0)),
+#                                 transforms.RandomRotation(90),
+#                                 transforms.ColorJitter([0.3, 1]),
+#                                 transforms.GaussianBlur(9, (0.5, 3.0)),
+#                                 transforms.ToTensor(),
+#                                 # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+#                                ])  
+    
+#     # transformations['qry'] = transforms.Compose([
+#     #     transforms.RandomHorizontalFlip(),
+#     #     AutoAugment.ImageNetPolicy(),
+#     #     transforms.ToTensor(),
+#     #     # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+#     # ])  
+#     transformations['pos'] = transforms.Compose([
+#         transforms.RandomHorizontalFlip(),
+#         transforms.RandomRotation(90),
+
+        
+#         transforms.ToTensor(),
+#         # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+#     ])  
+#     transformations['neg'] = transforms.Compose([
+#         transforms.RandomHorizontalFlip(),
+#         transforms.RandomRotation(90),
+
+#         transforms.ToTensor(),
+#         # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+#     ]) 
+    
+#     dataset = TripletImageDataset(data_dir=path, transform_dic=transformations, load_images=True)
+#     num_classes = dataset.get_prod_length()
+#     print(f"The dataset has {num_classes} classes")
+    
+#     tr_ds, dataset_eval_copy = torch.utils.data.random_split(dataset, [int(len(dataset)*.8), len(dataset)-int(len(dataset)*.8)])
+#     val_ds, test_ds = torch.utils.data.random_split(dataset_eval_copy, [int(len(dataset_eval_copy)*.5), len(dataset_eval_copy)-int(len(dataset_eval_copy)*.5)])
+    
+#     print(f"Number of train set images: {len(tr_ds)}")
+#     print(f"Number of validation set images: {len(val_ds)}")
+#     print(f"Number of test set images: {len(test_ds)}")
+    
+#     with open(f'data/{datetime.now().strftime("%Y%m%d-%H%M%S")}-test_ds.pickle', 'wb') as handle:
+#         pickle.dump(test_ds, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    # out_path = f'/home/ubuntu/workspace/bekhzod/triplet-loss-pytorch/pytorch_lightning/data/{datetime.now().strftime("%Y%m%d-%H%M%S")}-dataset.json'
+    # workspace/bekhzod/triplet-loss-pytorch/pytorch_lightning/
+    out_path = "/home/ubuntu/workspace/bekhzod/triplet-loss-pytorch/pytorch_lightning/data/tr_val_test.json"
+    # out_json_path = data_split(path, out_path)    
+    
+    tr_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='train', load_images=False)
+    val_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='val', load_images=False)
+    test_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='test', load_images=False)
+    
+#     tr_ds = TripletImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='train', load_images=True)
+#     val_ds = TripletImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='val', load_images=True)
+#     test_ds = TripletImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='test', load_images=True)
+    
+    wandb_logger = WandbLogger(name=f'{os.path.basename(tr_ds.data_dir)}-{tr_ds.get_prod_length()}clss-{tr_ds.neg_policy}-{model_name}',project='Image Retrieval')
+    num_classes = tr_ds.get_prod_length()
     print(f"The dataset has {num_classes} classes")
-    
-    tr_ds, dataset_eval_copy = torch.utils.data.random_split(dataset, [int(len(dataset)*.8), len(dataset)-int(len(dataset)*.8)])
-    val_ds, test_ds = torch.utils.data.random_split(dataset_eval_copy, [int(len(dataset_eval_copy)*.5), len(dataset_eval_copy)-int(len(dataset_eval_copy)*.5)])
     
     print(f"Number of train set images: {len(tr_ds)}")
     print(f"Number of validation set images: {len(val_ds)}")
     print(f"Number of test set images: {len(test_ds)}")
     
-    with open(f'data/{datetime.now().strftime("%Y%m%d-%H%M%S")}-test_ds.pickle', 'wb') as handle:
-        pickle.dump(test_ds, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    
     cos = CosineSimilarity(dim=1, eps=1e-6)
-    train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=False, num_workers=8)
-    val_loader = DataLoader(val_ds, batch_size=bs, shuffle=True, drop_last=False, num_workers=8)
-    test_loader = DataLoader(test_ds, batch_size=bs, shuffle=True, drop_last=False, num_workers=8)  
+    train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
+    val_loader = DataLoader(val_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
+    test_loader = DataLoader(test_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)  
     labels = {"pos": torch.tensor(1.).unsqueeze(0),
               "neg": torch.tensor(-1.).unsqueeze(0)}
     
     alpha = 1
     eps = 5
     def cos_sim_score(score, eps, alpha, mode):
+        # if score > 0.5:
         if mode == "for_pos":
-            return (score + eps) / (eps + alpha)
+            if score < 0.3:
+                return (score + eps) / (eps + eps*alpha)
+            else:
+                return (score + eps) / (eps + alpha)
+        # elif score > 0.5:
         elif mode == "for_neg":
             return (score + (alpha / eps)) / (2*eps)
     
@@ -138,8 +222,10 @@ def run(args):
             # self.loss_module = ripletMarginLoss(margin=1.0, p=2).to('cuda')
             # self.loss_module = TripletMarginWithDistanceLoss(distance_function=lambda x, y: 1.0 - F.cosine_similarity(x, y)).to('cuda')
             # self.loss_module = ContrastiveLoss(margin=0.2).to('cuda')
-            self.cos_loss = CosineEmbeddingLoss(margin=0.5).to('cuda')
-            self.ce_loss = CrossEntropyLoss().to('cuda')
+            # self.cos_loss = CosineEmbeddingLoss(margin=0.5).to('cuda')
+            # self.ce_loss = CrossEntropyLoss().to('cuda')
+            self.cos_loss = CosineEmbeddingLoss(margin=0.5)
+            self.ce_loss = CrossEntropyLoss()
             # Example input for visualizing the graph in Tensorboard
             self.example_input_array = torch.zeros((1, 3, 224, 224), dtype=torch.float32)
 
@@ -181,7 +267,8 @@ def run(args):
             
             cos_sims = []
             ims, poss, negs, clss, regs = batch['qry'], batch['pos'][0], batch['neg'][0], batch['cat_idx'], batch['prod_idx']
-
+            # ims, poss, negs, clss, regs = ims.to('cuda'), poss.to('cuda'), negs.to('cuda'), clss.to('cuda'), regs.to('cuda')
+            
             # Get feature maps and pred labels
             out_ims = self(ims) 
             fm_ims, lbl_ims = out_ims[0], out_ims[1] # get feature maps [0] and predicted labels [1]
@@ -194,7 +281,7 @@ def run(args):
             if only_features and only_labels:
                 loss_cos = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) + self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss_ce = self.ce_loss(lbl_ims, regs) + self.ce_loss(lbl_poss, regs)
-                loss = loss_cos * 1.2 + loss_ce * 0.8
+                loss = loss_cos + loss_ce 
             elif only_features == True and only_labels == None:
                 loss_cos = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) + self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss = loss_cos                 
@@ -205,14 +292,15 @@ def run(args):
             # Compute top3 and top1
             top3, top1 = 0, 0            
             for idx, fm in (enumerate(fm_ims)):
-                sim = cos(fm_ims[idx].unsqueeze(0), fm_poss[idx]) 
+                sim_pair = cos(fm_ims[idx].unsqueeze(0), fm_poss[idx]) 
+                sim = cos(fm_ims[idx].unsqueeze(0), fm_poss) 
 #                 print(fm_poss[idx].shape)
 #                 print(fm_ims[idx].shape)
                 cos_sims.append(sim)
-                vals, inds = torch.topk(lbl_ims[idx], k=3)
-                if regs[idx] in inds:
+                vals, inds = torch.topk(sim, k=3)
+                if regs[idx] in regs[inds]:
                     top3 += 1
-                if regs[idx] in inds[0]:
+                if regs[idx] in regs[inds[0]]:
                     top1 += 1
 
             # Logs the loss per epoch to tensorboard (weighted average over batches)
@@ -226,8 +314,9 @@ def run(args):
 
         def validation_step(self, batch, batch_idx): # triplet loss 
 
-            cos_sims = []
+            cos_sims, cos_unsims, cos_sims_pair, cos_unsims_pair = [], [], [], []
             ims, poss, negs, clss, regs = batch['qry'], batch['pos'][0], batch['neg'][0], batch['cat_idx'], batch['prod_idx']
+            # ims, poss, negs, clss, regs = ims.to('cuda'), poss.to('cuda'), negs.to('cuda'), clss.to('cuda'), regs.to('cuda')
 
             # Get feature maps and pred labels
             out_ims = self(ims)
@@ -257,15 +346,18 @@ def run(args):
             top3, top1 = 0, 0
             
             for idx, fm in (enumerate(fm_ims)):
-#                 print(f"fm_shape val{fm.shape}")
-                sim = cos(fm_ims[idx].unsqueeze(0), fm_poss[idx]) 
-#                 sim = cos(fm.unsqueeze(0), fm_poss[idx].unsqueeze(0)) 
-                cos_sims.append(sim)
-                vals, inds = torch.topk(lbl_ims[idx], k=3)
-                if regs[idx] in inds:
+                sim_pair = cos(fm_ims[idx].unsqueeze(0), fm_poss[idx]) 
+                unsim_pair = cos(fm_ims[idx].unsqueeze(0), fm_negs[idx]) 
+                sim = cos(fm_ims[idx].unsqueeze(0), fm_poss) 
+                cos_sims_pair.append(sim_pair)
+                cos_unsims_pair.append(unsim_pair)
+                
+                vals, inds = torch.topk(sim, k=3)
+                if regs[idx] in regs[inds]:
                     top3 += 1
-                if regs[idx] in inds[0]:
+                if regs[idx] in regs[inds[0]]:
                     top1 += 1
+                
 
 #             print(f"Total loss: {loss:.3f}")
 #             print(f"Crossentropy loss: {loss_ce:.3f}")
@@ -279,7 +371,9 @@ def run(args):
             self.log("val_loss", loss)
 #             self.log("val_loss_cos", loss_cos)
 #             self.log("val_loss_ce", loss_ce)
-            self.log("cos_sims", cos_sim_score(torch.mean(torch.FloatTensor(cos_sims)).item(), eps, alpha, mode='for_pos'))
+            self.log("cos_sims_pair", torch.mean(torch.FloatTensor(cos_sims_pair)).item())
+            self.log("cos_unsims_pair", torch.mean(torch.FloatTensor(cos_unsims_pair)).item())
+            # self.log("cos_sims", torch.mean(torch.FloatTensor(cos_sims)).item())
             self.log("val_top3", top3 / len(fm_ims))
             self.log("val_top1", top1 / len(fm_ims))
 
@@ -293,7 +387,7 @@ def run(args):
             Compares test images in the batch with the all images in the dataloader.
             
             """
-            fms_ims, fms_poss, fms_negs, scores, gts_all, im_pred_lbls_all, pos_pred_lbls_all = [], [], [], [], [], [], []
+            fms_ims, fms_poss, fms_negs, scores, cos_sims, gts_all, im_pred_lbls_all, pos_pred_lbls_all = [], [], [], [], [], [], [], []
             top1, top3, = 0, 0
             
             print("\nObtaining embeddings and predicting labels...\n")
@@ -340,12 +434,13 @@ def run(args):
                     loss_ce = self.ce_loss(im_pred_lbls_all[index], gts_all[index]) + self.ce_loss(pos_pred_lbls_all[index], gts_all[index])
                     loss = loss_ce 
                 
-                score = cos(fm.unsqueeze(0), fms_poss[index].unsqueeze(0)) # (1, fm), (len(dl), fm) = (len(dl), fm)
-                scores.append(score)
-                vals, inds = torch.topk(im_pred_lbls_all[index], k=3)
-                if gts_all[index] in inds:
+                score_pair = cos(fm.unsqueeze(0), fms_poss[index].unsqueeze(0)) # (1, fm), (len(dl), fm) = (len(dl), fm)
+                scores.append(score_pair)
+                cos_sim = cos(fm.unsqueeze(0), fms_poss)
+                vals, inds = torch.topk(cos_sim, k=3)
+                if gts_all[index] in gts_all[inds]:
                     top3 += 1
-                if gts_all[index] in inds[0]:
+                if gts_all[index] in gts_all[inds[0]]:
                     top1 += 1                    
 
             print("Calculating metrics is done!\n")
@@ -355,7 +450,7 @@ def run(args):
             print('top3', top3/len(fms_ims))
             print('test_loss', loss / len(fms_ims))
 
-            self.log("test_sim_scores", cos_sim_score(torch.mean(torch.FloatTensor(scores)).item(), eps, alpha, mode='for_pos'))
+            self.log("test_sim_scores_pair", torch.mean(torch.FloatTensor(scores)).item())
             self.log("test_loss", loss / len(fms_ims))
             self.log("test_top3", top3 / len(fms_ims))
             self.log("test_top1", top1 / len(fms_ims))
@@ -382,7 +477,7 @@ def run(args):
         else:
             assert False, f'Unknown model name "{model_name}". Available models are: {str(model_dict.keys())}'
             
-        return model
+        return model#.to('cuda')
 
     def train_model(model_name, save_name=None, **kwargs):
         
@@ -400,14 +495,15 @@ def run(args):
         trainer = pl.Trainer(
             default_root_dir=os.path.join(sp, save_name),  # dir name to save models
             # Run on a single GPU (if possible)
-            gpus=1 if str(device) == "cuda:0" else 0,
+            # gpus=1 if str(device) == "cuda:1" else 0,
             precision=16, amp_backend='native',
             # total num of epochs
             max_epochs=300,
             log_every_n_steps=15,
+            logger=wandb_logger,
             # auto_lr_find=True,
-#             fast_dev_run=True,
-            strategy="ddp", accelerator="gpu", devices=3,
+            # fast_dev_run=True,
+            strategy="ddp", accelerator="gpu", devices=3, 
             callbacks=[
                 
                 ModelCheckpoint(
@@ -423,7 +519,8 @@ def run(args):
         trainer.logger._default_hp_metric = None  # Optional logging argument that we don't need
 
         # Check whether pretrained model exists. If yes, load it and skip training
-        pretrained_filename = os.path.join(sp, 'models', '.ckpt')
+        pretrained_filename = os.path.join(sp, 'rexnet_150_Adam_0.0003', 'Image Retrieval', "1tgu7vtc", "checkpoints")
+        # pretrained_filename = pretrained_filename + '/epoch=3-val_loss=4.73-cos_sims=0.91-val_top1=0.48.ckpt'
         if os.path.isfile(pretrained_filename):
             print(f"Found pretrained model at {pretrained_filename}, loading...")
             # Automatically loads the model with the saved hyperparameters
@@ -454,7 +551,7 @@ def run(args):
     test_top3 = results['test_top3']
     with open(f"results/{model_name}_{optimizer_name}_{lr}_{test_loss}_{test_top1}_{test_top3}_results.pickle", 'wb') as handle:
                     pickle.dump(results, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    print(f"Results of the training are saved in results/{model_name}_{optimizer_name}_{lr}_{test_loss}_{test_top1}_{test_top3}_results.pickle")   
+    print(f"Results of the training are saved in results/{model_name}_{optimizer_name}_{lr}_{test_loss}_{test_top1}_{test_top3}_results.pickle") 
 
 if __name__ == "__main__":
     
@@ -462,18 +559,19 @@ if __name__ == "__main__":
     parser.add_argument('-ed', '--expdir', default=None, help='Experiment directory')
     parser.add_argument("-sp", "--save_path", type=str, default='saved_models', help="Path to save trained models")
 #     parser.add_argument('-cp', '--checkpoint_path', type=str, default="/home/ubuntu/workspace/bekhzod/triplet-loss-pytorch/pytorch_lightning/saved_models/model_best.pth.tar", help='Path to the trained model')
-    parser.add_argument("-bs", "--batch_size", type=int, default=32, help="Batch size")
+    parser.add_argument("-bs", "--batch_size", type=int, default=128, help="Batch size")
     parser.add_argument("-d", "--device", type=str, default='cuda:1', help="GPU device number")
-#     parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/test_dataset_svg', help="Path to the images")
-    parser.add_argument("-ip", "--ims_path", type=str, default='/mnt/test_dataset_svg/test_dataset_svg_1121', help="Path to the images")
+    # parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/test_dataset_svg/test_dataset_svg_1122_3_org', help="Path to the images")
+    parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/test_dataset_svg/test_dataset_svg_1124_images_worker', help="Path to the images")
+    # parser.add_argument("-ip", "--ims_path", type=str, default='/mnt/test_dataset_svg/test_dataset_svg_1124_images_worker', help="Path to the images")
     parser.add_argument("-is", "--input_size", type=int, default=(224, 224), help="Size of the images")
     parser.add_argument("-mn", "--model_name", type=str, default='rexnet_150', help="Model name (from timm library (ex. darknet53, ig_resnext101_32x32d))")
     parser.add_argument("-on", "--optimizer_name", type=str, default='Adam', help="Optimizer name (Adam or SGD)")
-    parser.add_argument("-lr", "--learning_rate", type=float, default=3e-4, help="Learning rate value")
+    parser.add_argument("-lr", "--learning_rate", type=float, default=1e-4, help="Learning rate value")
     parser.add_argument("-wd", "--weight_decay", type=float, default=1e-5, help="Weight decay value")
-    parser.add_argument("-ofm", "--only_feature_embeddings", type=bool,  
+    parser.add_argument("-ofm", "--only_feature_embeddings", type=bool, default=True,
                         help="If True trains the model using only triplet loss and and return feature embeddings (if both otl and ofm are True uses two loss functions simultaneously)")
-    parser.add_argument("-otl", "--only_target_labels", type=bool, 
+    parser.add_argument("-otl", "--only_target_labels", type=bool, default=None,
                         help="If True trains the model using only cross entropy and and return predicted labels (if both otl and ofm are True uses two loss functions simultaneously)")
     
     args = parser.parse_args() 
