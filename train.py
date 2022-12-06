@@ -25,7 +25,6 @@ def run(args):
     expdir = args.expdir
     device = args.device
     path = args.ims_path
-    inp_size = args.input_size
     model_name=args.model_name
     optimizer_name=args.optimizer_name
     lr = args.learning_rate
@@ -48,119 +47,57 @@ def run(args):
     fill = [0,0,0] # distortion 후 채워지는 배경색
     fill_sketch = [255,255,255] # distortion 후 채워지는 배경색
 
-    class MyRotationTransform:
-        """Rotate by one of the given angles."""
-
-        def __init__(self, angles):
-            self.angles = angles
-
-        def __call__(self, x):
-            angle = random.choice(self.angles)
-            return TF.rotate(x, angle, fill = fill)
-
     transformations = {}   
 
     transformations['qry'] = transforms.Compose([
                             transforms.RandomHorizontalFlip(),
-                            transforms.RandomAffine(0, (0.5, 0), fill = fill),
                             transforms.RandomRotation(90, fill = fill),
-                            transforms.ColorJitter([0.3, 1]),
-                            transforms.GaussianBlur(9, (0.5, 3.0)),
+                            # transforms.ColorJitter([0.3, 1]),
+                            # transforms.GaussianBlur(9, (0.5, 3.0)),
                             transforms.ToTensor(),
                                                   ])
 
     transformations['pos'] = transforms.Compose([
-        # MyRotationTransform(angles=angles),
         transforms.RandomRotation(90, fill = fill_sketch),
         transforms.RandomPerspective(distortion_scale = distortion_scale, p = p, fill = fill_sketch),
         transforms.ToTensor(),
     ])  
     transformations['neg'] = transforms.Compose([
-        # MyRotationTransform(angles=angles),
         transforms.RandomRotation(90, fill = fill_sketch),
         transforms.RandomPerspective(distortion_scale = distortion_scale, p = p, fill = fill_sketch),
         transforms.ToTensor(),
     ])
     
-#     transformations = {}  
-#     # qry, pos, neg 서로 다른 transform을 적용 하기 위함  
-        
-#     transformations['qry'] = transforms.Compose([
-#                                 transforms.RandomHorizontalFlip(),
-#                                 transforms.RandomAffine(0, (0.5, 0)),
-#                                 transforms.RandomRotation(90),
-#                                 transforms.ColorJitter([0.3, 1]),
-#                                 transforms.GaussianBlur(9, (0.5, 3.0)),
-#                                 transforms.ToTensor(),
-#                                 # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-#                                ])  
-    
-#     # transformations['qry'] = transforms.Compose([
-#     #     transforms.RandomHorizontalFlip(),
-#     #     AutoAugment.ImageNetPolicy(),
-#     #     transforms.ToTensor(),
-#     #     # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-#     # ])  
-#     transformations['pos'] = transforms.Compose([
-#         transforms.RandomHorizontalFlip(),
-#         transforms.RandomRotation(90),
-
-        
-#         transforms.ToTensor(),
-#         # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-#     ])  
-#     transformations['neg'] = transforms.Compose([
-#         transforms.RandomHorizontalFlip(),
-#         transforms.RandomRotation(90),
-
-#         transforms.ToTensor(),
-#         # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-#     ]) 
-    
-#     dataset = TripletImageDataset(data_dir=path, transform_dic=transformations, load_images=True)
-#     num_classes = dataset.get_prod_length()
-#     print(f"The dataset has {num_classes} classes")
-    
-#     tr_ds, dataset_eval_copy = torch.utils.data.random_split(dataset, [int(len(dataset)*.8), len(dataset)-int(len(dataset)*.8)])
-#     val_ds, test_ds = torch.utils.data.random_split(dataset_eval_copy, [int(len(dataset_eval_copy)*.5), len(dataset_eval_copy)-int(len(dataset_eval_copy)*.5)])
-    
-#     print(f"Number of train set images: {len(tr_ds)}")
-#     print(f"Number of validation set images: {len(val_ds)}")
-#     print(f"Number of test set images: {len(test_ds)}")
-    
-#     with open(f'data/{datetime.now().strftime("%Y%m%d-%H%M%S")}-test_ds.pickle', 'wb') as handle:
-#         pickle.dump(test_ds, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-    # out_path = f'/home/ubuntu/workspace/bekhzod/triplet-loss-pytorch/pytorch_lightning/data/{datetime.now().strftime("%Y%m%d-%H%M%S")}-dataset.json'
-    # workspace/bekhzod/triplet-loss-pytorch/pytorch_lightning/
-    out_path = "/home/ubuntu/workspace/bekhzod/triplet-loss-pytorch/pytorch_lightning/data/tr_val_test.json"
-    # out_json_path = data_split(path, out_path)    
+    out_path = "data/pass_images_dataset_spec49.json"
     
     tr_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='train', load_images=False)
     val_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='val', load_images=False)
     test_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='test', load_images=False)
     
-#     tr_ds = TripletImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='train', load_images=True)
-#     val_ds = TripletImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='val', load_images=True)
-#     test_ds = TripletImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='test', load_images=True)
+    # tr_ds = TripletImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='train', load_images=True)
+    # val_ds = TripletImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='val', load_images=True)
+    # test_ds = TripletImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='test', load_images=True)
     
-    wandb_logger = WandbLogger(name=f'{os.path.basename(tr_ds.data_dir)}-{tr_ds.get_prod_length()}clss-{tr_ds.neg_policy}-{model_name}',project='Image Retrieval')
+    wandb_logger = WandbLogger(name=f'{datetime.now().strftime("%m/%d/%H:%M:%S")}-{os.path.basename(tr_ds.data_dir)}-{tr_ds.get_prod_length()}-clss', project='Pass_Images_Dataset_42_Training')
     num_classes = tr_ds.get_prod_length()
-    print(f"The dataset has {num_classes} classes")
-    
     print(f"Number of train set images: {len(tr_ds)}")
     print(f"Number of validation set images: {len(val_ds)}")
     print(f"Number of test set images: {len(test_ds)}")
+    print(f"\nTrain dataset has {num_classes} classes")
+    print(f"Validation dataset has {val_ds.get_prod_length()} classes")
+    print(f"Test dataset has {test_ds.get_prod_length()} classes")
     
     cos = CosineSimilarity(dim=1, eps=1e-6)
-    train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
-    val_loader = DataLoader(val_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
-    test_loader = DataLoader(test_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)  
+    train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=False, num_workers=8)
+    val_loader = DataLoader(val_ds, batch_size=bs, shuffle=True, drop_last=False, num_workers=8)
+    test_loader = DataLoader(test_ds, batch_size=bs, shuffle=True, drop_last=False, num_workers=8)  
     labels = {"pos": torch.tensor(1.).unsqueeze(0),
               "neg": torch.tensor(-1.).unsqueeze(0)}
     
     alpha = 1
     eps = 5
+    # ce_weight = 1
+    ce_weight = 0.02
     def cos_sim_score(score, eps, alpha, mode):
         # if score > 0.5:
         if mode == "for_pos":
@@ -178,28 +115,7 @@ def run(args):
     elif only_features == True and only_labels == None:
         print("\nTrain using only triplet loss\n")                
     elif only_features == None and only_labels == True:
-        print("\nTrain using only crossentropy loss\n")  
-    
-    class ContrastiveLoss(Module):
-
-        """
-
-        Contrastive loss
-
-        Takes embeddings of two samples and a target label == 1 if samples are from the same class and label == 0 otherwise
-
-        """
-
-        def __init__(self, margin):
-            super(ContrastiveLoss, self).__init__()
-            self.margin = margin
-            self.eps = 1e-9
-
-        def forward(self, output1, output2, target, size_average=True):
-            distances = (output2 - output1).pow(2).sum(1)  # squared distances
-            losses = 0.5 * (target * distances + (1 + -1 * target) * F.relu(self.margin - (distances + self.eps).sqrt()).pow(2))
-            return losses.mean() if size_average else losses.sum() 
-    
+        print("\nTrain using only crossentropy loss\n")      
     
     class Model(pl.LightningModule):
 
@@ -219,12 +135,7 @@ def run(args):
             # Create model
             self.model = create_model(model_name)
             # Create loss module
-            # self.loss_module = ripletMarginLoss(margin=1.0, p=2).to('cuda')
-            # self.loss_module = TripletMarginWithDistanceLoss(distance_function=lambda x, y: 1.0 - F.cosine_similarity(x, y)).to('cuda')
-            # self.loss_module = ContrastiveLoss(margin=0.2).to('cuda')
-            # self.cos_loss = CosineEmbeddingLoss(margin=0.5).to('cuda')
-            # self.ce_loss = CrossEntropyLoss().to('cuda')
-            self.cos_loss = CosineEmbeddingLoss(margin=0.5)
+            self.cos_loss = CosineEmbeddingLoss(margin=0.2)
             self.ce_loss = CrossEntropyLoss()
             # Example input for visualizing the graph in Tensorboard
             self.example_input_array = torch.zeros((1, 3, 224, 224), dtype=torch.float32)
@@ -279,23 +190,31 @@ def run(args):
             
             # Compute loss
             if only_features and only_labels:
-                loss_cos = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) + self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
-                loss_ce = self.ce_loss(lbl_ims, regs) + self.ce_loss(lbl_poss, regs)
-                loss = loss_cos + loss_ce 
+                loss_cos_poss = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) 
+                loss_cos_negs = self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
+                loss_cos = loss_cos_poss + loss_cos_negs
+                loss_ce_ims = self.ce_loss(lbl_ims, regs)
+                loss_ce_poss = self.ce_loss(lbl_poss, regs)
+                loss_ce = loss_ce_ims + loss_ce_poss
+                loss = loss_cos + loss_ce
             elif only_features == True and only_labels == None:
-                loss_cos = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) + self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
+                loss_cos_poss = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) 
+                loss_cos_negs = self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
+                loss_cos = loss_cos_poss + loss_cos_negs
                 loss = loss_cos                 
             elif only_features == None and only_labels == True:
-                loss_ce = self.ce_loss(lbl_ims, regs) + self.ce_loss(lbl_poss, regs)
-                loss = loss_ce 
+                loss_ce_ims = self.ce_loss(lbl_ims, regs)
+                loss_ce_poss = self.ce_loss(lbl_poss, regs)
+                loss_ce = loss_ce_ims + loss_ce_poss
+                loss = loss_ce
                 
             # Compute top3 and top1
             top3, top1 = 0, 0            
             for idx, fm in (enumerate(fm_ims)):
                 sim_pair = cos(fm_ims[idx].unsqueeze(0), fm_poss[idx]) 
+                # print(f"sim_pair: {sim_pair}")
                 sim = cos(fm_ims[idx].unsqueeze(0), fm_poss) 
-#                 print(fm_poss[idx].shape)
-#                 print(fm_ims[idx].shape)
+                # print(f"sim: {sim}")
                 cos_sims.append(sim)
                 vals, inds = torch.topk(sim, k=3)
                 if regs[idx] in regs[inds]:
@@ -304,9 +223,9 @@ def run(args):
                     top1 += 1
 
             # Logs the loss per epoch to tensorboard (weighted average over batches)
-#             self.log("train_cos_loss", loss_cos)
-#             self.log("train_ce_loss", loss_ce)
             self.log("train_loss", loss)
+            self.log("train_loss_cos_poss", loss_cos_poss)
+            self.log("train_loss_cos_negs", loss_cos_negs)
             self.log("train_top3", top3 / len(fm_ims))
             self.log("train_top1", top1 / len(fm_ims))
 
@@ -327,53 +246,52 @@ def run(args):
             fm_negs, lbl_negs = out_negs[0], out_negs[1] # get feature maps [0] and predicted labels [1]
             
             # Compute loss
-            if only_features and only_labels:                
-                loss_cos = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) + self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
-                loss_ce = self.ce_loss(lbl_ims, regs) + self.ce_loss(lbl_poss, regs)
-                print(f"Triplet loss: {loss_cos:.3f}")
-                print(f"Crossentropy loss: {loss_ce:.3f}")
-                loss = loss_cos + loss_ce 
+            if only_features and only_labels:
+                loss_cos_poss = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) 
+                loss_cos_negs = self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
+                loss_cos = loss_cos_poss + loss_cos_negs
+                loss_ce_ims = self.ce_loss(lbl_ims, regs)
+                loss_ce_poss = self.ce_loss(lbl_poss, regs)
+                loss_ce = loss_ce_ims + loss_ce_poss
+                loss = loss_cos + loss_ce
             elif only_features == True and only_labels == None:
-                loss_cos = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) + self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
-                loss = loss_cos
-                print(f"Loss: {loss_cos:.3f}")
+                loss_cos_poss = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) 
+                loss_cos_negs = self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
+                loss_cos = loss_cos_poss + loss_cos_negs
+                loss = loss_cos                 
             elif only_features == None and only_labels == True:
-                loss_ce = self.ce_loss(lbl_ims, regs) + self.ce_loss(lbl_poss, regs)
-                print(f"Loss: {loss_ce:.3f}")
-                loss = loss_ce                
+                loss_ce_ims = self.ce_loss(lbl_ims, regs)
+                loss_ce_poss = self.ce_loss(lbl_poss, regs)
+                loss_ce = loss_ce_ims + loss_ce_poss
+                loss = loss_ce               
             
             # Compute top3 and top1            
             top3, top1 = 0, 0
             
             for idx, fm in (enumerate(fm_ims)):
                 sim_pair = cos(fm_ims[idx].unsqueeze(0), fm_poss[idx]) 
+                # print(f"sim_pair: {sim_pair}")
                 unsim_pair = cos(fm_ims[idx].unsqueeze(0), fm_negs[idx]) 
                 sim = cos(fm_ims[idx].unsqueeze(0), fm_poss) 
+                # print(f"sim: {sim}")
                 cos_sims_pair.append(sim_pair)
                 cos_unsims_pair.append(unsim_pair)
                 
                 vals, inds = torch.topk(sim, k=3)
+                # print(f"GTs: {regs[idx]}")
+                # print(f"Preds: {regs[inds]}")
                 if regs[idx] in regs[inds]:
                     top3 += 1
                 if regs[idx] in regs[inds[0]]:
                     top1 += 1
-                
 
-#             print(f"Total loss: {loss:.3f}")
-#             print(f"Crossentropy loss: {loss_ce:.3f}")
-            # print(f"Val loss: {loss:.3f}")
-            # print(f"Val top3: {top3}")
-            # print(f"Val top1: {top1}")
-            # print(self.hparams.optimizer_hparams['lr'])
-            # print(f"Similarity score: {torch.mean(torch.FloatTensor(cos_sims))}")
 
             # Logs the loss per epoch to tensorboard (weighted average over batches)
             self.log("val_loss", loss)
-#             self.log("val_loss_cos", loss_cos)
-#             self.log("val_loss_ce", loss_ce)
-            self.log("cos_sims_pair", torch.mean(torch.FloatTensor(cos_sims_pair)).item())
-            self.log("cos_unsims_pair", torch.mean(torch.FloatTensor(cos_unsims_pair)).item())
-            # self.log("cos_sims", torch.mean(torch.FloatTensor(cos_sims)).item())
+            self.log("val_loss_cos_poss", loss_cos_poss)
+            self.log("val_loss_cos_negs", loss_cos_negs)
+            self.log("cos_sims", torch.mean(torch.FloatTensor(cos_sims_pair)).item())
+            self.log("cos_unsims", torch.mean(torch.FloatTensor(cos_unsims_pair)).item())
             self.log("val_top3", top3 / len(fm_ims))
             self.log("val_top1", top1 / len(fm_ims))
 
@@ -422,17 +340,25 @@ def run(args):
             # Compute loss, top3, and top1   
             for index, fm in enumerate(fms_ims):
                 
-                # Compute loss
+                # Compute loss                
                 if only_features and only_labels:
-                    loss_cos = self.cos_loss(fm.unsqueeze(0), fms_poss[index].unsqueeze(0), labels["pos"].to("cuda")) + self.cos_loss(fm.unsqueeze(0), fms_negs[index].unsqueeze(0), labels["neg"].to("cuda"))
-                    loss_ce = self.ce_loss(im_pred_lbls_all[index], gts_all[index]) + self.ce_loss(pos_pred_lbls_all[index], gts_all[index])
-                    loss = loss_cos + loss_ce 
+                    loss_cos_poss = self.cos_loss(fm, fms_poss, labels["pos"].to("cuda")) 
+                    loss_cos_negs = self.cos_loss(fm, fms_negs, labels["neg"].to("cuda"))
+                    loss_cos = loss_cos_poss + loss_cos_negs
+                    loss_ce_ims = self.ce_loss(lbl_ims, regs)
+                    loss_ce_poss = self.ce_loss(lbl_poss, regs)
+                    loss_ce = loss_ce_ims + loss_ce_poss
+                    loss = loss_cos + loss_ce
                 elif only_features == True and only_labels == None:
-                    loss_cos = self.cos_loss(fm.unsqueeze(0), fms_poss[index].unsqueeze(0), labels["pos"].to("cuda")) + self.cos_loss(fm.unsqueeze(0), fms_negs[index].unsqueeze(0), labels["neg"].to("cuda"))
+                    loss_cos_poss = self.cos_loss(fm, fms_poss, labels["pos"].to("cuda")) 
+                    loss_cos_negs = self.cos_loss(fm, fms_negs, labels["neg"].to("cuda"))
+                    loss_cos = loss_cos_poss + loss_cos_negs
                     loss = loss_cos                 
                 elif only_features == None and only_labels == True:
-                    loss_ce = self.ce_loss(im_pred_lbls_all[index], gts_all[index]) + self.ce_loss(pos_pred_lbls_all[index], gts_all[index])
-                    loss = loss_ce 
+                    loss_ce_ims = self.ce_loss(lbl_ims, regs)
+                    loss_ce_poss = self.ce_loss(lbl_poss, regs)
+                    loss_ce = loss_ce_ims + loss_ce_poss
+                    loss = loss_ce                
                 
                 score_pair = cos(fm.unsqueeze(0), fms_poss[index].unsqueeze(0)) # (1, fm), (len(dl), fm) = (len(dl), fm)
                 scores.append(score_pair)
@@ -444,13 +370,8 @@ def run(args):
                     top1 += 1                    
 
             print("Calculating metrics is done!\n")
-            
-#             print(f'scores: {torch.mean(torch.FloatTensor(scores)).item():.3f}')
-            print('top1', top1/len(fms_ims))
-            print('top3', top3/len(fms_ims))
-            print('test_loss', loss / len(fms_ims))
 
-            self.log("test_sim_scores_pair", torch.mean(torch.FloatTensor(scores)).item())
+            self.log("test_sim_scores", torch.mean(torch.FloatTensor(scores)).item())
             self.log("test_loss", loss / len(fms_ims))
             self.log("test_top3", top3 / len(fms_ims))
             self.log("test_top1", top1 / len(fms_ims))
@@ -509,9 +430,9 @@ def run(args):
                 ModelCheckpoint(
                     filename='{epoch}-{val_loss:.2f}-{cos_sims:.2f}-{val_top1:.2f}', 
                     every_n_train_steps = None, save_top_k=1,
-                    save_weights_only=True, mode="max", monitor="val_top1" 
+                    save_weights_only=True, mode="max", monitor="cos_sims" 
                 ),  # Save the best checkpoint based on the min val_loss recorded. Saves only weights and not optimizer
-                EarlyStopping(monitor="val_top1", mode="max", patience=10, verbose=True), # set the metric (and change the mode!) to track for early stopping
+                EarlyStopping(monitor="cos_sims", mode="max", patience=20, verbose=True), # set the metric (and change the mode!) to track for early stopping
                 LearningRateMonitor("epoch"), # Log learning rate every epoch
             ]
         )
@@ -528,46 +449,29 @@ def run(args):
         else:
             pl.seed_everything(42)  # To be reproducable
             model = Model(model_name=model_name, **kwargs)
-            # lr_finder = trainer.tuner.lr_find(model)
-            # model.hparams.learning_rate = lr_finder.suggestion()
             trainer.fit(model, train_loader, val_loader)
-#             model = Model.load_from_checkpoint(os.path.join(trainer.checkpoint_callback.best_model_path, 'blabla')) # load best checkpoint after training
 
-        # Test best model on validation and test set
-        test_result = trainer.test(model, dataloaders=test_loader, verbose=True)
-
-        result = {"test_loss": test_result[0]["test_loss"], 
-                  "test_scores": test_result[0]["test_sim_scores"],
-                  "test_top3": test_result[0]["test_top3"],
-                  "test_top1": test_result[0]["test_top1"]}
-
-        return model, result    
+        return model
     
-    trained_model, results = train_model(
+    
+    trained_model = train_model(
     model_name=model_name, optimizer_name=optimizer_name, save_name=f"{model_name}_{optimizer_name}_{lr}",
     optimizer_hparams=optimizer_hparams)
-    test_loss = results['test_loss']
-    test_top1 = results['test_top1']
-    test_top3 = results['test_top3']
-    with open(f"results/{model_name}_{optimizer_name}_{lr}_{test_loss}_{test_top1}_{test_top3}_results.pickle", 'wb') as handle:
-                    pickle.dump(results, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    print(f"Results of the training are saved in results/{model_name}_{optimizer_name}_{lr}_{test_loss}_{test_top1}_{test_top3}_results.pickle") 
+    
 
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description='Triplet Loss PyTorch Lightning Arguments')
     parser.add_argument('-ed', '--expdir', default=None, help='Experiment directory')
     parser.add_argument("-sp", "--save_path", type=str, default='saved_models', help="Path to save trained models")
-#     parser.add_argument('-cp', '--checkpoint_path', type=str, default="/home/ubuntu/workspace/bekhzod/triplet-loss-pytorch/pytorch_lightning/saved_models/model_best.pth.tar", help='Path to the trained model')
     parser.add_argument("-bs", "--batch_size", type=int, default=128, help="Batch size")
     parser.add_argument("-d", "--device", type=str, default='cuda:1', help="GPU device number")
-    # parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/test_dataset_svg/test_dataset_svg_1122_3_org', help="Path to the images")
-    parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/test_dataset_svg/test_dataset_svg_1124_images_worker', help="Path to the images")
-    # parser.add_argument("-ip", "--ims_path", type=str, default='/mnt/test_dataset_svg/test_dataset_svg_1124_images_worker', help="Path to the images")
-    parser.add_argument("-is", "--input_size", type=int, default=(224, 224), help="Size of the images")
+    # parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/test_dataset_svg/test_dataset_svg_1130_black_pad', help="Path to the images")
+    parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/test_dataset_svg/pass_images_dataset_spec49', help="Path to the images")
+    # parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/test_dataset_svg/pass_images_dataset_old_svg', help="Path to the images")
     parser.add_argument("-mn", "--model_name", type=str, default='rexnet_150', help="Model name (from timm library (ex. darknet53, ig_resnext101_32x32d))")
     parser.add_argument("-on", "--optimizer_name", type=str, default='Adam', help="Optimizer name (Adam or SGD)")
-    parser.add_argument("-lr", "--learning_rate", type=float, default=1e-4, help="Learning rate value")
+    parser.add_argument("-lr", "--learning_rate", type=float, default=1e-3, help="Learning rate value")
     parser.add_argument("-wd", "--weight_decay", type=float, default=1e-5, help="Weight decay value")
     parser.add_argument("-ofm", "--only_feature_embeddings", type=bool, default=True,
                         help="If True trains the model using only triplet loss and and return feature embeddings (if both otl and ofm are True uses two loss functions simultaneously)")
