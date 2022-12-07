@@ -14,7 +14,9 @@ from collections import namedtuple as NT
 from softdataset import TripletImageDataset
 from original_dataset import OriginalImageDataset, data_split
 from tqdm import tqdm
+from torchvision.datasets import ImageFolder
 import AutoAugment
+from dataset import TripleDataset
 
 
 def run(args):
@@ -41,52 +43,28 @@ def run(args):
     model_dict[model_name] = 0 
     os.system('wandb login 3204eaa1400fed115e40f43c7c6a5d62a0867ed1')     
     
-    angles=[-30, -15, 0, 15, 30] # rotation 각도, 이중 하나의 각도로 돌아감 [-30, -15, 0, 15, 30]
-    distortion_scale = 0.5 # distortion 각도 (0.5)
-    p = 0.5 # distortion이 적용될 확률 (0.5)
-    fill = [0,0,0] # distortion 후 채워지는 배경색
-    fill_sketch = [255,255,255] # distortion 후 채워지는 배경색
-
-    transformations = {}   
-
-    transformations['qry'] = transforms.Compose([
-                            transforms.RandomHorizontalFlip(),
-                            transforms.RandomRotation(90, fill = fill),
-                            # transforms.ColorJitter([0.3, 1]),
-                            # transforms.GaussianBlur(9, (0.5, 3.0)),
-                            transforms.ToTensor(),
-                                                  ])
-
-    transformations['pos'] = transforms.Compose([
-        transforms.RandomRotation(90, fill = fill_sketch),
-        # transforms.RandomPerspective(distortion_scale = distortion_scale, p = p, fill = fill_sketch),
-        transforms.ToTensor(),
-    ])  
-    transformations['neg'] = transforms.Compose([
-        transforms.RandomRotation(90, fill = fill_sketch),
-        # transforms.RandomPerspective(distortion_scale = distortion_scale, p = p, fill = fill_sketch),
-        transforms.ToTensor(),
-    ])
+    path = "/home/ubuntu/workspace/bekhzod/pytorch-image-models/dataset/real"
+    t = transforms.Compose([transforms.ToTensor()])
+    ds = ImageFolder(path, transform=t)
+    print(len(ds))
+    num_classes = len(ds.classes)
+    tr_ds, val_ds = torch.utils.data.random_split(ds, [5000, 474])
+    train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=False, drop_last=False, num_workers=8)
+    val_loader = DataLoader(val_ds, batch_size=bs, shuffle=False, drop_last=False, num_workers=8)
     
-    out_path = "data/pass_images_dataset_merge_1207.json"
+    def get_fm(fm):
+        pool = AvgPool2d((fm.shape[2],fm.shape[3]))
+        return torch.reshape(pool(fm), (-1, fm.shape[1]))
     
-    tr_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='train', load_images=False)
-    val_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='val', load_images=False)
-    test_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='test', load_images=False)
     
-    wandb_logger = WandbLogger(name=f'{model_name}_{datetime.now().strftime("%m/%d/%H:%M:%S")}_triplet_training', project='PassImages1207-Training')
-    num_classes = tr_ds.get_prod_length()
+    wandb_logger = WandbLogger(name=f'{model_name}_{datetime.now().strftime("%m/%d/%H:%M:%S")}_{os.path.basename(path)}_training', project='Classification')
+    # num_classes = tr_ds.get_prod_length()
     print(f"Number of train set images: {len(tr_ds)}")
     print(f"Number of validation set images: {len(val_ds)}")
-    print(f"Number of test set images: {len(test_ds)}")
     print(f"\nTrain dataset has {num_classes} classes")
-    print(f"Validation dataset has {val_ds.get_prod_length()} classes")
-    print(f"Test dataset has {test_ds.get_prod_length()} classes")
+    # print(f"Validation dataset has {len(val_ds.classes)} classes")
     
     cos = CosineSimilarity(dim=1, eps=1e-6)
-    train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=False, num_workers=8)
-    val_loader = DataLoader(val_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
-    test_loader = DataLoader(test_ds, batch_size=bs, shuffle=True, drop_last=False, num_workers=8)  
     labels = {"pos": torch.tensor(1.).unsqueeze(0),
               "neg": torch.tensor(-1.).unsqueeze(0)}
     
@@ -137,20 +115,7 @@ def run(args):
             self.example_input_array = torch.zeros((1, 3, 224, 224), dtype=torch.float32)
 
         def forward(self, inp):
-            
-            # Function to convert dictionary to namedtuple
-            def dict_to_namedtuple(dic):
-                return NT('GenericDict', dic.keys())(**dic)
-            
-            dic = {}                        
-            fm = self.model.forward_features(inp)
-            pool = AvgPool2d((fm.shape[2],fm.shape[3]))
-            lbl = self.model.forward_head(fm)
-            dic["feature_map"] = torch.reshape(pool(fm), (-1, fm.shape[1]))
-            dic["class_pred"] = lbl
-            out = dict_to_namedtuple(dic)
-            
-            return out
+            return self.model(inp)
         
         def configure_optimizers(self):
             # self.hparams['lr'] = self.hparams.optimizer_hparams['lr']
@@ -173,41 +138,16 @@ def run(args):
             # "batch" is the output of the training data loader.
             
             cos_sims = []
-            ims, poss, negs, clss, regs = batch['qry'], batch['pos'][0], batch['neg'][0], batch['cat_idx'], batch['prod_idx']
-            # ims, poss, negs, clss, regs = ims.to('cuda'), poss.to('cuda'), negs.to('cuda'), clss.to('cuda'), regs.to('cuda')
+            ims, regs = batch
             
             # Get feature maps and pred labels
-            out_ims = self(ims) 
-            fm_ims, lbl_ims = out_ims[0], out_ims[1] # get feature maps [0] and predicted labels [1]
-            out_poss = self(poss)
-            fm_poss, lbl_poss = out_poss[0], out_poss[1] # get feature maps [0] and predicted labels [1]
-            out_negs = self(negs)
-            fm_negs, lbl_negs = out_negs[0], out_negs[1] # get feature maps [0] and predicted labels [1]
+            lbl_ims = self.model(ims)
+            loss = self.ce_loss(lbl_ims, regs)
             
-            # Compute loss
-            if only_features and only_labels:
-                loss_cos_poss = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) 
-                loss_cos_negs = self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
-                loss_cos = loss_cos_poss + loss_cos_negs
-                loss_ce_ims = self.ce_loss(lbl_ims, regs)
-                loss_ce_poss = self.ce_loss(lbl_poss, regs)
-                loss_ce = loss_ce_ims + loss_ce_poss
-                loss = loss_cos + loss_ce
-            elif only_features == True and only_labels == None:
-                loss_cos_poss = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) 
-                loss_cos_negs = self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
-                loss_cos = loss_cos_poss + loss_cos_negs
-                loss = loss_cos                 
-            elif only_features == None and only_labels == True:
-                loss_ce_ims = self.ce_loss(lbl_ims, regs)
-                # loss_ce_poss = self.ce_loss(lbl_poss, regs)
-                loss_ce = loss_ce_ims
-                # loss_ce = loss_ce_poss
-                loss = loss_ce
+            top3, top1 = 0, 0
+            
+            for idx, lbl_im in enumerate(lbl_ims):
                 
-            # Compute top3 and top1
-            top3, top1 = 0, 0            
-            for idx, lbl_im in (enumerate(lbl_ims)):
                 vals, inds = torch.topk(lbl_im, k=3)
                 if regs[idx] in inds:
                     top3 += 1
@@ -216,63 +156,34 @@ def run(args):
 
             # Logs the loss per epoch to tensorboard (weighted average over batches)
             self.log("train_loss", loss)
-            self.log("train_loss_cos_poss", loss_cos_poss)
-            self.log("train_loss_cos_negs", loss_cos_negs)
-            self.log("train_top3", top3 / len(fm_ims))
-            self.log("train_top1", top1 / len(fm_ims))
+            self.log("train_top3", top3 / len(lbl_ims))
+            self.log("train_top1", top1 / len(lbl_ims))
 
             return OD([('loss', loss)]) #, ('train_top3', top3 / len(ims)), ('train_top1', top1 / len(ims))])  # Return tensor to call ".backward" on
 
         def validation_step(self, batch, batch_idx): # triplet loss 
 
             cos_sims, cos_unsims, cos_sims_pair, cos_unsims_pair = [], [], [], []
-            ims, poss, negs, clss, regs = batch['qry'], batch['pos'][0], batch['neg'][0], batch['cat_idx'], batch['prod_idx']
-
-            # Get feature maps and pred labels
-            out_ims = self(ims)
-            fm_ims, lbl_ims = out_ims[0], out_ims[1] # get feature maps [0] and predicted labels [1]
-            out_poss = self(poss)
-            fm_poss, lbl_poss = out_poss[0], out_poss[1] # get feature maps [0] and predicted labels [1]
-            out_negs = self(negs)
-            fm_negs, lbl_negs = out_negs[0], out_negs[1] # get feature maps [0] and predicted labels [1]
+            ims, regs = batch
             
-            # Compute loss
-            if only_features and only_labels:
-                loss_cos_poss = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) 
-                loss_cos_negs = self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
-                loss_cos = loss_cos_poss + loss_cos_negs
-                loss_ce_ims = self.ce_loss(lbl_ims, regs)
-                loss_ce_poss = self.ce_loss(lbl_poss, regs)
-                loss_ce = loss_ce_ims + loss_ce_poss
-                loss = loss_cos + loss_ce
-            elif only_features == True and only_labels == None:
-                loss_cos_poss = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) 
-                loss_cos_negs = self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
-                loss_cos = loss_cos_poss + loss_cos_negs
-                loss = loss_cos                 
-            elif only_features == None and only_labels == True:
-                loss_ce_ims = self.ce_loss(lbl_ims, regs)
-                # loss_ce_poss = self.ce_loss(lbl_poss, regs)
-                loss_ce = loss_ce_ims
-                # loss_ce = loss_ce_poss
-                loss = loss_ce
+            # Get feature maps and pred labels
+            lbl_ims = self.model(ims)
+            loss = self.ce_loss(lbl_ims, regs)
+            
+            top3, top1 = 0, 0
+            
+            for idx, lbl_im in enumerate(lbl_ims):
                 
-            # Compute top3 and top1
-            top3, top1 = 0, 0            
-            for idx, lbl_im in (enumerate(lbl_ims)):
                 vals, inds = torch.topk(lbl_im, k=3)
                 if regs[idx] in inds:
                     top3 += 1
                 if regs[idx] in inds[0]:
                     top1 += 1
 
-
             # Logs the loss per epoch to tensorboard (weighted average over batches)
             self.log("val_loss", loss)
-            self.log("val_loss_cos_poss", loss_cos_poss)
-            self.log("val_loss_cos_negs", loss_cos_negs)
-            self.log("val_top3", top3 / len(fm_ims))
-            self.log("val_top1", top1 / len(fm_ims))
+            self.log("val_top3", top3 / len(lbl_ims))
+            self.log("val_top1", top1 / len(lbl_ims))
 
             # return OD([('loss', loss), ('val_top3', top3), ('val_top1', top1)]) 
             return OD([('loss', loss), ('val_top3', top3),
@@ -365,6 +276,7 @@ def run(args):
 
         if model_name in model_dict:
             base_model = timm.create_model(model_name, pretrained=True, num_classes=num_classes)
+            # base_model.head = Identity()
             print(f"Model {model_name} with the best weights is successfully loaded!")        
             if conv_input:                
                 conv_layer = Sequential(Conv2d(3, 3, kernel_size=(3, 3), stride=(1, 1),padding=(1,1), bias=False), 
@@ -407,11 +319,11 @@ def run(args):
             callbacks=[
                 
                 ModelCheckpoint(
-                    filename='{epoch}-{val_loss:.2f}-{val_top3:.2f}-{val_top1:.2f}', 
+                    filename='{epoch}-{val_loss:.2f}-{train_loss:.2f}-{val_top1:.2f}', 
                     every_n_train_steps = None, save_top_k=1,
                     save_weights_only=True, mode="max", monitor="val_top1" 
                 ),  # Save the best checkpoint based on the min val_loss recorded. Saves only weights and not optimizer
-                EarlyStopping(monitor="val_top1", mode="max", patience=10, verbose=True), # set the metric (and change the mode!) to track for early stopping
+                EarlyStopping(monitor="val_top1", mode="max", patience=20, verbose=True), # set the metric (and change the mode!) to track for early stopping
                 LearningRateMonitor("epoch"), # Log learning rate every epoch
             ]
         )
@@ -428,32 +340,32 @@ def run(args):
         else:
             pl.seed_everything(42)  # To be reproducable
             model = Model(model_name=model_name, **kwargs)
+            # lr_finder = trainer.tuner.lr_find(model)
+            # model.hparams.learning_rate = lr_finder.suggestion()
             trainer.fit(model, train_loader, val_loader)
 
         return model
-    
+
     
     trained_model = train_model(
     model_name=model_name, optimizer_name=optimizer_name, save_name=f"{model_name}_{optimizer_name}_{lr}",
     optimizer_hparams=optimizer_hparams)
-    
 
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description='Triplet Loss PyTorch Lightning Arguments')
     parser.add_argument('-ed', '--expdir', default=None, help='Experiment directory')
     parser.add_argument("-sp", "--save_path", type=str, default='saved_models', help="Path to save trained models")
-    parser.add_argument("-bs", "--batch_size", type=int, default=64, help="Batch size")
+#     parser.add_argument('-cp', '--checkpoint_path', type=str, default="/home/ubuntu/workspace/bekhzod/triplet-loss-pytorch/pytorch_lightning/saved_models/model_best.pth.tar", help='Path to the trained model')
+    parser.add_argument("-bs", "--batch_size", type=int, default=32, help="Batch size")
     parser.add_argument("-d", "--device", type=str, default='cuda:1', help="GPU device number")
-    parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/test_dataset_svg/pass_images_dataset_merge_1207', help="Path to the images")
-    # parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/test_dataset_svg/pass_images_dataset_old_svg', help="Path to the images")
-    parser.add_argument("-mn", "--model_name", type=str, default='rexnet_150', help="Model name (from timm library (ex. darknet53, ig_resnext101_32x32d))")
+    parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/test_dataset_svg/pass_images_dataset_spec49', help="Path to the images")
+    parser.add_argument("-mn", "--model_name", type=str, default='swin_s3_base_224', help="Model name (from timm library (ex. darknet53, ig_resnext101_32x32d))")
     parser.add_argument("-on", "--optimizer_name", type=str, default='Adam', help="Optimizer name (Adam or SGD)")
     parser.add_argument("-lr", "--learning_rate", type=float, default=1e-3, help="Learning rate value")
     parser.add_argument("-wd", "--weight_decay", type=float, default=1e-5, help="Weight decay value")
-    parser.add_argument("-ofm", "--only_feature_embeddings", type=bool, default=True,
-                        help="If True trains the model using only triplet loss and and return feature embeddings (if both otl and ofm are True uses two loss functions simultaneously)")
-    parser.add_argument("-otl", "--only_target_labels", type=bool, default=None,
+    parser.add_argument("-ofm", "--only_feature_embeddings", type=bool, default=None,)
+    parser.add_argument("-otl", "--only_target_labels", type=bool, default=True,
                         help="If True trains the model using only cross entropy and and return predicted labels (if both otl and ofm are True uses two loss functions simultaneously)")
     
     args = parser.parse_args() 
