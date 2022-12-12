@@ -46,9 +46,10 @@ def run(args):
     path = "/home/ubuntu/workspace/bekhzod/pytorch-image-models/dataset/real"
     t = transforms.Compose([transforms.ToTensor()])
     ds = ImageFolder(path, transform=t)
+    len_ds = len(ds)
     print(len(ds))
     num_classes = len(ds.classes)
-    tr_ds, val_ds = torch.utils.data.random_split(ds, [5000, 474])
+    tr_ds, val_ds = torch.utils.data.random_split(ds, [int(len_ds * 0.8), int(len_ds - int(len_ds * 0.8))])
     train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=False, drop_last=False, num_workers=8)
     val_loader = DataLoader(val_ds, batch_size=bs, shuffle=False, drop_last=False, num_workers=8)
     
