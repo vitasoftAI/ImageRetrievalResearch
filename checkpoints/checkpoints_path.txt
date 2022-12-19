@@ -1,1 +1,2 @@
 rexnet_150: https://drive.google.com/file/d/13OYjmRYajHFYcVf_4OAQaWlD904KpUfD/view?usp=share_link
+efficientnet_b3a: https://drive.google.com/file/d/13OYjmRYajHFYcVf_4OAQaWlD904KpUfD/view?usp=share_link
