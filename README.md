@@ -6,6 +6,7 @@ Run training
 ```python
 python train.py --batch_size=64 --optimizer_name="Adam" --lr=3e-4
 ```
+### Pre-trained checkpoints on Sketchy Database: see checkpoints directory
 
 ### ROC curve from scratch
 
