@@ -2,6 +2,13 @@
 
 ![Image](https://user-images.githubusercontent.com/50166164/202942637-e3674ee5-56ae-4ffb-830d-d5e42fb91072.PNG)
 
+### Create virtual environment
+```python
+conda create -n <ENV_NAME> python=3.9
+conda activate <ENV_NAME>
+pip install -r requirements.txt
+```
+
 Run training 
 ```python
 python train.py --batch_size=64 --optimizer_name="Adam" --lr=3e-4 --model_name="efficientnet_b3a"
