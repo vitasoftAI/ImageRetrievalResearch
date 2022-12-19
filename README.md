@@ -4,7 +4,7 @@
 
 Run training 
 ```python
-python train.py --batch_size=64 --optimizer_name="Adam" --lr=3e-4
+python train.py --batch_size=64 --optimizer_name="Adam" --lr=3e-4 --model_name="efficientnet_b3a"
 ```
 ### Pre-trained checkpoints on Sketchy Database: see checkpoints directory
 
