@@ -4,7 +4,7 @@
 
 Run training 
 ```python
-python train.py --batch_size=64 --optimizer_name="Adam" --lr=0.001
+python train.py --batch_size=64 --optimizer_name="Adam" --lr=3e-4
 ```
 
 ### ROC curve from scratch
