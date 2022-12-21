@@ -21,6 +21,14 @@ data_split(root, out_path, hard_split=False)
 
 ### Get Data (Original Image Dataset)
 ```python
+path = "~/1209_refined_data"
+
+transformations = {}   
+transformations['qry'] = transforms.Compose([
+                        transforms.ToTensor()])
+transformations['pos'] = transforms.Compose([transforms.ToTensor()])  
+transformations['neg'] = transforms.Compose([transforms.ToTensor()])
+
 out_path = "data/1209_refined_data.json"
 tr_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='train', load_images=False)
 val_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='val', load_images=False)
