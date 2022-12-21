@@ -1,8 +1,6 @@
 # Image Retrieval Research
 ### Retrieving sketch images given an input (query) image
 
-![Image](https://user-images.githubusercontent.com/50166164/202942637-e3674ee5-56ae-4ffb-830d-d5e42fb91072.PNG)
-
 ### Create virtual environment
 ```python
 conda create -n <ENV_NAME> python=3.9
@@ -40,6 +38,8 @@ test_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, r
 ```python
 python train.py --batch_size=64 --optimizer_name="Adam" --lr=3e-4 --model_name="efficientnet_b3a"
 ```
+![Image](https://user-images.githubusercontent.com/50166164/202942637-e3674ee5-56ae-4ffb-830d-d5e42fb91072.PNG)
+
 ### Pre-trained checkpoints on Sketchy Database: see checkpoints directory
 
 ### ROC curve from scratch
