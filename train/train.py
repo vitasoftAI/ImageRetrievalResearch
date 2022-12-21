@@ -193,9 +193,9 @@ def run(args):
                 # vals, inds = torch.topk(lbl_im, k=3)
                 sim = cos(fm_ims[idx].unsqueeze(0), fm_poss)  # batch                
                 vals, inds = torch.topk(sim, k=3)
-                if clss[idx] in inds:
+                if clss[idx] == clss[inds[0]] or clss[idx] == clss[inds[1]] or clss[idx] == clss[inds[2]]:
                     top3 += 1
-                if clss[idx] in inds[0]:
+                if clss[idx] in clss[inds[0]]:
                     top1 += 1
 
             # Logs the loss per epoch to tensorboard (weighted average over batches)
@@ -250,9 +250,9 @@ def run(args):
                 cos_unsims_pair.append(unsim_pair)
                 # vals, inds = torch.topk(lbl_im, k=3)
                 vals, inds = torch.topk(sim, k=3)
-                if clss[idx] in inds:
+                if clss[idx] == clss[inds[0]] or clss[idx] == clss[inds[1]] or clss[idx] == clss[inds[2]]:
                     top3 += 1
-                if clss[idx] in inds[0]:
+                if clss[idx] in clss[inds[0]]:
                     top1 += 1
 
             # Logs the loss per epoch to tensorboard (weighted average over batches)
