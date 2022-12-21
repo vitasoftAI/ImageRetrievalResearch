@@ -9,7 +9,25 @@ conda activate <ENV_NAME>
 pip install -r requirements.txt
 ```
 
-Run training 
+### Data Split (Original Image Dataset)
+```python
+from original_dataset_downsampling import OriginalImageDataset, data_split
+
+root = '/home/ubuntu/workspace/dataset/test_dataset_svg/spec72'
+out_path = 'data/spec72.json'
+
+data_split(root, out_path, hard_split=False)
+```
+
+### Get Data (Original Image Dataset)
+```python
+out_path = "data/1209_refined_data.json"
+tr_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='train', load_images=False)
+val_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='val', load_images=False)
+test_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='test', load_images=False)
+```
+
+### Run training 
 ```python
 python train.py --batch_size=64 --optimizer_name="Adam" --lr=3e-4 --model_name="efficientnet_b3a"
 ```
