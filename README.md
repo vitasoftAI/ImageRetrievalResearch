@@ -54,6 +54,16 @@ Run using terminal
 python roc_curve_from_scratch.py
 ```
 
+### Run inference code
+
+Download pretrained models from checkpoints directory (google drive links are shared), change checkpoint_path variable below and run the inference code.
+
+```python
+checkpoint_path = <path to the checkpoint>
+m = load_checkpoint(checkpoint_path, device=device, num_classes=125, from_pytorch_lightning=True, model_name='efficientnet_b3a')
+results = inference(m, test_dl, device)
+```
+
 ### Image Retrieval Model Results
 
 ![Capture](https://user-images.githubusercontent.com/50166164/208335211-055d9140-b79f-4594-9fb8-632cfcec409d.PNG)
