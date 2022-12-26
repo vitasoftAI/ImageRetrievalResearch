@@ -62,3 +62,15 @@ python roc_curve_from_scratch.py
 ![Capture3](https://user-images.githubusercontent.com/50166164/208335238-3d67924d-409d-4436-8551-0e08e0be978b.PNG)
 ![Capture4](https://user-images.githubusercontent.com/50166164/208335241-0fcc0f7f-f6a7-431a-ac2b-0cae10e5f82a.PNG)
 ![Capture5](https://user-images.githubusercontent.com/50166164/208335243-2bf5fdcb-7723-45d1-ac77-d5c1c89f972b.PNG)
+
+![Capture](https://user-images.githubusercontent.com/50166164/209511367-077cfe32-f38b-4383-8a66-7b6613ab5728.PNG)
+![Capture1](https://user-images.githubusercontent.com/50166164/209511370-e63b65e7-73ef-4bf0-9e07-cddbb88f276c.PNG)
+
+![Capture2](https://user-images.githubusercontent.com/50166164/209511391-ac03727c-5868-48ed-9e8a-6b0c722c7f1e.PNG)
+![Capture3](https://user-images.githubusercontent.com/50166164/209511394-2a1961f0-9bd5-4138-9b41-5b213d80f733.PNG)
+
+![Capture4](https://user-images.githubusercontent.com/50166164/209511407-dfd43fe5-39aa-4482-8385-32feae4119d9.PNG)
+![Capture5](https://user-images.githubusercontent.com/50166164/209511408-d596e4e5-5652-4109-9487-3d77884ffa5e.PNG)
+
+
+
