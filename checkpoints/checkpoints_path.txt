@@ -1,2 +1,4 @@
 rexnet_150: https://drive.google.com/file/d/13OYjmRYajHFYcVf_4OAQaWlD904KpUfD/view?usp=share_link
 efficientnet_b3a: https://drive.google.com/file/d/13OYjmRYajHFYcVf_4OAQaWlD904KpUfD/view?usp=share_link
+efficientnet_b3a (cosine_embedding + crossentropy_loss): https://drive.google.com/file/d/1qMiC9buhV4mEwxKmZyKWi6nx5ZH3BMq_/view?usp=share_link
+efficientnet_b3a (cosine_embedding + contrastive + crossentropy_loss): https://drive.google.com/file/d/1rwpn3TWBGL4m-K7Dpyrj9tWm7elA8htk/view?usp=share_link
