@@ -20,7 +20,7 @@ pip install -r requirements.txt
 ```python
 from original_dataset_downsampling import OriginalImageDataset, data_split
 
-root = '/home/ubuntu/workspace/dataset/test_dataset_svg/spec72'
+root = '~/spec72'
 out_path = 'data/spec72.json'
 
 data_split(root, out_path, hard_split=False)
