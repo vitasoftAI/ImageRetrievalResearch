@@ -24,6 +24,33 @@ out_path = 'data/spec72.json'
 data_split(root, out_path, hard_split=False)
 ```
 
+```python
+transformations = {}   
+
+    transformations['qry'] = transforms.Compose([
+                            transforms.Resize((224,224)),
+                            AutoAugment.ImageNetPolicy(),
+                            transforms.ToTensor(),
+                                                  ])
+
+    transformations['pos'] = transforms.Compose([
+        transforms.Resize((224,224)),
+        AutoAugment.ImageNetPolicy(),
+        transforms.ToTensor(),
+    ])  
+    transformations['neg'] = transforms.Compose([
+        transforms.Resize((224,224)),
+        AutoAugment.ImageNetPolicy(),
+        transforms.ToTensor(),
+    ])
+    
+    out_path = "data/sketchy_database_256_soft_split_cat.json"
+
+    tr_ds = SketchyImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='train', load_images=False)
+    val_ds = SketchyImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='val', load_images=False)
+    test_ds = SketchyImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='test', load_images=False)
+```
+
 ### Get Data (Original Image Dataset)
 ```python
 path = "~/1209_refined_data"
