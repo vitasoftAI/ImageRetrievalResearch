@@ -1,9 +1,9 @@
 # Image Retrieval Research
 Retrieving sketch images given an input (query) image using various DL-based image classification models: 
 
-*[RexNet](https://github.com/clovaai/rexnet) [(paper)](https://arxiv.org/pdf/2007.00992.pdf)
-*[EfficientNet](https://github.com/rwightman/pytorch-image-models/blob/main/timm/models/efficientnet.py) [(paper)](https://arxiv.org/pdf/1905.11946v5.pdf)
-*[Swin-Transformer](https://github.com/microsoft/Swin-Transformer) [(paper)](https://arxiv.org/pdf/2103.14030.pdf)
+* [RexNet](https://github.com/clovaai/rexnet) [(paper)](https://arxiv.org/pdf/2007.00992.pdf)
+* [EfficientNet](https://github.com/rwightman/pytorch-image-models/blob/main/timm/models/efficientnet.py) [(paper)](https://arxiv.org/pdf/1905.11946v5.pdf)
+* [Swin-Transformer](https://github.com/microsoft/Swin-Transformer) [(paper)](https://arxiv.org/pdf/2103.14030.pdf)
 
 test the model performance on unseen images during training, and perform model analysis using [GradCAM](https://github.com/jacobgil/pytorch-grad-cam).
 
