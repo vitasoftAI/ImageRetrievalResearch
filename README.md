@@ -42,7 +42,7 @@ python train.py --batch_size=64 --optimizer_name="Adam" --lr=3e-4 --model_name="
 
 ### Training with various loss functions:
 * [Cosine Embedding Loss](https://pytorch.org/docs/stable/generated/torch.nn.CosineEmbeddingLoss.html)
-* [Contrastive Loss](https://towardsdatascience.com/contrastive-loss-explaned-159f2d4a87ec) [Implementation](https://github.com/vitasoftAI/ImageRetrievalResearch/blob/main/utils/contrastive_loss.py)
+* [Contrastive Loss](https://towardsdatascience.com/contrastive-loss-explaned-159f2d4a87ec) PyTorch [Implementation](https://github.com/vitasoftAI/ImageRetrievalResearch/blob/main/utils/contrastive_loss.py)
 * [Crossentropy Loss](https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html)
 
 
