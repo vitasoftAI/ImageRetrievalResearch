@@ -45,7 +45,7 @@ python train.py --batch_size=64 --optimizer_name="Adam" --lr=3e-4 --model_name="
 * [Contrastive Loss](https://towardsdatascience.com/contrastive-loss-explaned-159f2d4a87ec) | [PyTorch Implementation](https://github.com/vitasoftAI/ImageRetrievalResearch/blob/main/utils/contrastive_loss.py)
 * [Crossentropy Loss](https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html)
 
-### Results
+### Training Results
 ![Capture](https://user-images.githubusercontent.com/50166164/209595807-5566f4a8-9806-4e42-a8a5-290f03f48d11.PNG)
 Contrastive Loss + Crossentropy Loss performs better than Cosine Embedding + Crossentropy Loss. However, using triplet of loss functions (Contrastive Loss + Crossentropy Loss + Cosine Embedding Loss) does not result in better performance, except for higher results in cosine similarity. Overall, Contrastive Loss + Cross Entropy Loss outperforms all other loss pair (triplets) in the considered metrics (loss, cosine similarity, cosine unsimilarity, top3, top1).
 
