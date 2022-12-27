@@ -39,6 +39,10 @@ tr_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, ran
 val_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='val', load_images=False)
 test_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='test', load_images=False)
 ```
+### Find the best learning rate for the dataset 
+```python
+python train/find_lr.py 
+```
 
 ### Run training 
 ```python
