@@ -46,7 +46,7 @@ python train/find_lr.py
 
 ### Run training 
 ```python
-python train.py --batch_size=64 --optimizer_name="Adam" --lr=3e-4 --model_name="efficientnet_b3a"
+python train/train.py --batch_size=64 --optimizer_name="Adam" --lr=3e-4 --model_name="efficientnet_b3a"
 ```
 ![Image](https://user-images.githubusercontent.com/50166164/202942637-e3674ee5-56ae-4ffb-830d-d5e42fb91072.PNG)
 
@@ -71,7 +71,7 @@ Computes area under curve (AUC) score of receiver operating characteristics (ROC
 
 Run using terminal
 ```python
-python roc_curve_from_scratch.py
+python utils/roc_curve_from_scratch.py
 ```
 
 ### Run inference code
