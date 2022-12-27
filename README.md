@@ -14,7 +14,9 @@ conda activate <ENV_NAME>
 pip install -r requirements.txt
 ```
 
-### Data Split (Original Image Dataset)
+### Data Split
+
+* Original Image Dataset
 ```python
 from original_dataset_downsampling import OriginalImageDataset, data_split
 
@@ -23,6 +25,8 @@ out_path = 'data/spec72.json'
 
 data_split(root, out_path, hard_split=False)
 ```
+
+* Sketchy Database
 
 ```python
 transformations = {}   
