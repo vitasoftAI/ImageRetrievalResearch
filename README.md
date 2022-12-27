@@ -40,6 +40,13 @@ python train.py --batch_size=64 --optimizer_name="Adam" --lr=3e-4 --model_name="
 ```
 ![Image](https://user-images.githubusercontent.com/50166164/202942637-e3674ee5-56ae-4ffb-830d-d5e42fb91072.PNG)
 
+### Training with various loss functions:
+* Cosine Embedding Loss
+* Contrastive Loss
+* Crossentropy Loss
+
+
+
 ### Pre-trained checkpoints on Sketchy Database: see checkpoints directory
 
 ### ROC curve from scratch
