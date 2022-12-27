@@ -109,6 +109,15 @@ python train/train.py --batch_size=64 --optimizer_name="Adam" --lr=3e-4 --model_
 ![Capture](https://user-images.githubusercontent.com/50166164/209595807-5566f4a8-9806-4e42-a8a5-290f03f48d11.PNG)
 Contrastive Loss + Crossentropy Loss performs better than Cosine Embedding + Crossentropy Loss. However, using triplet of loss functions (Contrastive Loss + Crossentropy Loss + Cosine Embedding Loss) does not result in better performance, except for higher results in cosine similarity. Overall, Contrastive Loss + Cross Entropy Loss outperforms all other loss pair (triplets) in the considered metrics (loss, cosine similarity, cosine unsimilarity, top3, top1).
 
+*** Update ***
+![Capture](https://user-images.githubusercontent.com/50166164/209615442-32a9089f-8815-419f-9a5d-f54a4edd0f72.PNG)
+
+Lowering margin value for cosine embedding and contrastive losses result in better performance in terms of distinguishing feature maps of a query image with the corresponding positive and negative images. 
+*** margin=0.5: cos_sim(qry, pos) =  0.957  cos_sim(qry, neg) = 0.230
+*** margin=0.3: cos_sim(qry, pos) =  0.946  cos_sim(qry, neg) = 0.003
+
+val_top3, val_top1 do not change much, though.
+
 
 ### Pre-trained checkpoints on Sketchy Database: see checkpoints directory
 
