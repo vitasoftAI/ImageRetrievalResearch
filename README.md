@@ -29,7 +29,13 @@ data_split(root, out_path, hard_split=False)
 * Sketchy Database
 
 ```python
-from dataset.sketch_dataset import SketchyImageDataset
+from data.sketch_dataset import SketchyImageDataset
+
+root = '~/sketchy_database_256'
+out_path = 'data/sketchy_database_256_soft_split_cat.json'
+
+data_split(root, out_path, hard_split=False)
+
 transformations = {}   
 
 transformations['qry'] = transforms.Compose([
