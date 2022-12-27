@@ -29,12 +29,37 @@ data_split(root, out_path, hard_split=False)
 * Sketchy Database
 
 ```python
-from data.sketch_dataset import SketchyImageDataset
+from data.sketch_dataset import SketchyImageDataset, data_split
 
 root = '~/sketchy_database_256'
 out_path = 'data/sketchy_database_256_soft_split_cat.json'
 
 data_split(root, out_path, hard_split=False)
+
+```
+
+### Get Data
+
+* Original Image Dataset
+
+```python
+path = "~/1209_refined_data"
+
+transformations = {}   
+transformations['qry'] = transforms.Compose([
+                        transforms.ToTensor()])
+transformations['pos'] = transforms.Compose([transforms.ToTensor()])  
+transformations['neg'] = transforms.Compose([transforms.ToTensor()])
+
+out_path = "data/1209_refined_data.json"
+tr_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='train', load_images=False)
+val_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='val', load_images=False)
+test_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='test', load_images=False)
+```
+
+* Sketchy Database
+
+```python
 
 transformations = {}   
 
@@ -62,21 +87,6 @@ val_ds = SketchyImageDataset(data_dir = path, transform_dic=transformations, ran
 test_ds = SketchyImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='test', load_images=False)
 ```
 
-### Get Data (Original Image Dataset)
-```python
-path = "~/1209_refined_data"
-
-transformations = {}   
-transformations['qry'] = transforms.Compose([
-                        transforms.ToTensor()])
-transformations['pos'] = transforms.Compose([transforms.ToTensor()])  
-transformations['neg'] = transforms.Compose([transforms.ToTensor()])
-
-out_path = "data/1209_refined_data.json"
-tr_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='train', load_images=False)
-val_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='val', load_images=False)
-test_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='test', load_images=False)
-```
 ### Find the best learning rate for the dataset 
 ```python
 python train/find_lr.py 
