@@ -60,7 +60,7 @@ test_ds = OriginalImageDataset(data_dir = path, transform_dic=transformations, r
 * Sketchy Database
 
 ```python
-! uzip -r AutoAugment
+! unzip -r utils/AutoAugment
 import utils.AutoAugment
 
 transformations = {}   
