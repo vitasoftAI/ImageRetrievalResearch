@@ -41,10 +41,9 @@ python train.py --batch_size=64 --optimizer_name="Adam" --lr=3e-4 --model_name="
 ![Image](https://user-images.githubusercontent.com/50166164/202942637-e3674ee5-56ae-4ffb-830d-d5e42fb91072.PNG)
 
 ### Training with various loss functions:
-* Cosine Embedding Loss
-* Contrastive Loss
-* Crossentropy Loss
-
+* [Cosine Embedding Loss](https://pytorch.org/docs/stable/generated/torch.nn.CosineEmbeddingLoss.html)
+* [Contrastive Loss](https://towardsdatascience.com/contrastive-loss-explaned-159f2d4a87ec)
+* [Crossentropy Loss](https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html)
 
 
 ### Pre-trained checkpoints on Sketchy Database: see checkpoints directory
