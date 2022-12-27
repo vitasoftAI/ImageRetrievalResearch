@@ -112,11 +112,11 @@ Contrastive Loss + Crossentropy Loss performs better than Cosine Embedding + Cro
 *** Update ***
 ![Capture](https://user-images.githubusercontent.com/50166164/209615442-32a9089f-8815-419f-9a5d-f54a4edd0f72.PNG)
 
-Lowering margin value for cosine embedding and contrastive losses result in better performance in terms of distinguishing feature maps of a query image with the corresponding positive and negative images. 
-*** margin=0.5: cos_sim(qry, pos) =  0.957  cos_sim(qry, neg) = 0.230
-*** margin=0.3: cos_sim(qry, pos) =  0.946  cos_sim(qry, neg) = 0.003
-
+Lowering margin value for cosine embedding and contrastive losses result in better performance in terms of distinguishing feature maps of a query image with the corresponding positive and negative images. \n
+*** margin=0.5: cos_sim(qry, pos) =  0.957  cos_sim(qry, neg) = 0.230 \n
+*** margin=0.3: cos_sim(qry, pos) =  0.946  cos_sim(qry, neg) = 0.003 \n
 val_top3, val_top1 do not change much, though.
+
 
 
 ### Pre-trained checkpoints on Sketchy Database: see checkpoints directory
