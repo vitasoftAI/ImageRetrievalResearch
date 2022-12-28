@@ -121,9 +121,10 @@ val_top3, val_top1 do not change much, though (see results in inference notebook
 Lowering the margin of cosineembedding and contrastive losses exhibit better training performance as follows:\
 *** margin=0.5: cos_sim(qry, pos) =  0.957  cos_sim(qry, neg) = 0.230 \
 *** margin=0.3: cos_sim(qry, pos) =  0.946  cos_sim(qry, neg) = 0.003 \
-*** margin=0.2: cos_sim(qry, pos) =  0.948  cos_sim(qry, neg) = -0.002 \
+*** margin=0.2: cos_sim(qry, pos) =  0.948  cos_sim(qry, neg) = -0.002 
 
-The trained models with lower margin values perform better during inference, too: \ *** margin=0.5: test_top3 =  0.968  test_top1 = 0.943   test_cos_sim = 0.952\
+The trained models with lower margin values perform better during inference, too: \ 
+*** margin=0.5: test_top3 =  0.968  test_top1 = 0.943   test_cos_sim = 0.952\
 *** margin=0.3: test_top3 =  0.967  test_top1 = 0.944   test_cos_sim = 0.938\
 *** margin=0.2: test_top3 =  0.968  test_top1 = 0.0.948   test_cos_sim = 0.942\
 
