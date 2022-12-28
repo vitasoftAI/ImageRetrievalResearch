@@ -3,3 +3,4 @@ efficientnet_b3a: https://drive.google.com/file/d/13OYjmRYajHFYcVf_4OAQaWlD904Kp
 efficientnet_b3a (cosine_embedding + crossentropy_loss): https://drive.google.com/file/d/1qMiC9buhV4mEwxKmZyKWi6nx5ZH3BMq_/view?usp=share_link
 efficientnet_b3a (cosine_embedding + contrastive + crossentropy_loss): https://drive.google.com/file/d/1rwpn3TWBGL4m-K7Dpyrj9tWm7elA8htk/view?usp=share_link
 efficientnet_b3a (cosine_embedding + contrastive + crossentropy_loss margin=0.3): https://drive.google.com/file/d/1u6tkLwQ1b-GZ5EfV2pY3Aif0skFuUIkS/view?usp=share_link
+efficientnet_b3a (cosine_embedding + contrastive + crossentropy_loss margin=0.2): https://drive.google.com/file/d/1lPrW46Ng6NXpPVjfGqaA7ZE8mSyQT1pt/view?usp=share_link
