@@ -95,6 +95,8 @@ def run(args):
     
     alpha = 1
     eps = 5
+    
+    # Similarity score booster function
     def cos_sim_score(score, eps, alpha, mode):
         if mode == "for_pos":
             if score < 0.3:
