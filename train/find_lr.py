@@ -34,9 +34,8 @@ def run(args):
     only_features = args.only_feature_embeddings
     only_labels = args.only_target_labels
     
-    
     argstr = yaml.dump(args.__dict__, default_flow_style=False)
-    print(f"\nTraining Arguments:\n{argstr}\n")
+    print(f"\nTraining Arguments:\n{argstr}")
     
     optimizer_hparams={"lr": lr}
     model_dict[model_name] = 0 
