@@ -91,7 +91,6 @@ def run(args):
     alpha = 1
     eps = 5
     def cos_sim_score(score, eps, alpha, mode):
-        # if score > 0.5:
         if mode == "for_pos":
             if score < 0.3:
                 return (score + eps) / (eps + eps*alpha)
