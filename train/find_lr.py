@@ -41,8 +41,8 @@ def run(args):
     model_dict[model_name] = 0 
     os.system('wandb login 3204eaa1400fed115e40f43c7c6a5d62a0867ed1')
     
+    # Set the transformations
     transformations = {}   
-
     transformations['qry'] = transforms.Compose([
                             transforms.Resize((224,224)),
                             AutoAugment.ImageNetPolicy(),
