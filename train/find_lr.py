@@ -115,6 +115,7 @@ def run(args):
     elif only_features == None and only_labels == True:
         print("\nTrain using only crossentropy loss\n")      
     
+    # Initialize model
     class Model(pl.LightningModule):
 
         def __init__(self, model_name,  optimizer_name, optimizer_hparams):
