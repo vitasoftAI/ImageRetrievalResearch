@@ -47,19 +47,11 @@ def run(args):
     # Transformations for query images
     transformations['qry'] = transforms.Compose([
                             transforms.Resize((224,224)),
-                            AutoAugment.ImageNetPolicy(),
-                            # transforms.RandomHorizontalFlip(),
-                            # transforms.RandomRotation(90, fill = fill),
-                            # transforms.ColorJitter([0.3, 1]),
-                            # transforms.GaussianBlur(9, (0.5, 3.0)),
                             transforms.ToTensor(),
                                                   ])
     # Transformations for positive sketch images
     transformations['pos'] = transforms.Compose([
         transforms.Resize((224,224)),
-        AutoAugment.ImageNetPolicy(),
-        # transforms.RandomRotation(90, fill = fill_sketch),
-        # transforms.RandomPerspective(distortion_scale = distortion_scale, p = p, fill = fill_sketch),
         transforms.ToTensor(),
     ])  
     
@@ -67,8 +59,6 @@ def run(args):
     transformations['neg'] = transforms.Compose([
         transforms.Resize((224,224)),
         AutoAugment.ImageNetPolicy(),
-        # transforms.RandomRotation(90, fill = fill_sketch),
-        # transforms.RandomPerspective(distortion_scale = distortion_scale, p = p, fill = fill_sketch),
         transforms.ToTensor(),
     ])
     
