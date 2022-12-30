@@ -54,7 +54,7 @@ def run(args):
                             # transforms.GaussianBlur(9, (0.5, 3.0)),
                             transforms.ToTensor(),
                                                   ])
-
+    # Transformations for positive sketch images
     transformations['pos'] = transforms.Compose([
         transforms.Resize((224,224)),
         AutoAugment.ImageNetPolicy(),
