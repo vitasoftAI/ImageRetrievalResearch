@@ -62,6 +62,8 @@ def run(args):
         # transforms.RandomPerspective(distortion_scale = distortion_scale, p = p, fill = fill_sketch),
         transforms.ToTensor(),
     ])  
+    
+    # Transformations for negative sketch images
     transformations['neg'] = transforms.Compose([
         transforms.Resize((224,224)),
         AutoAugment.ImageNetPolicy(),
