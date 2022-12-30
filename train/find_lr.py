@@ -86,7 +86,6 @@ def run(args):
     print(f"Number of validation set images: {len(val_ds)}")
     print(f"Number of test set images: {len(test_ds)}")
     print(f"\nTrain dataset has {num_classes} classes")
-    # print(f"Validation dataset has {num_classes} classes")
     print(f"Validation dataset has {val_ds.get_cat_length()} classes")
     print(f"Test dataset has {test_ds.get_cat_length()} classes")
     
