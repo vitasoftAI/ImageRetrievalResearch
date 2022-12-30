@@ -20,6 +20,7 @@ from contrastive_loss import ContrastiveLoss
 
 def run(args):
     
+    # Get the arguments
     model_dict = {}
     sp = args.save_path
     bs = args.batch_size
