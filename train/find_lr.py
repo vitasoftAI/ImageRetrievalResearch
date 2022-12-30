@@ -72,8 +72,8 @@ def run(args):
         transforms.ToTensor(),
     ])
     
+    # Path to the json file
     out_path = "data/sketchy_database_256_soft_split_cat.json"
-    # out_path = data_split(path, out_path)
 
     tr_ds = SketchyImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='train', load_images=False)
     val_ds = SketchyImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='val', load_images=False)
