@@ -135,10 +135,11 @@ def run(args):
 
             # Create model
             self.model = create_model(model_name)
-            # Create loss module
+            # Create loss modules and change them to cuda
             self.cos_loss = CosineEmbeddingLoss(margin=0.3).to('cuda')
             self.con_loss = ContrastiveLoss(margin=0.3).to('cuda')
             self.ce_loss = CrossEntropyLoss().to('cuda')
+            
             # Example input for visualizing the graph in Tensorboard
             self.example_input_array = torch.zeros((1, 3, 224, 224), dtype=torch.float32)
             if self.hparams.optimizer_hparams['lr'] is not None:
