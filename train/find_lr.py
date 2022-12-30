@@ -43,6 +43,8 @@ def run(args):
     
     # Set the transformations
     transformations = {}   
+    
+    # Transformations for query images
     transformations['qry'] = transforms.Compose([
                             transforms.Resize((224,224)),
                             AutoAugment.ImageNetPolicy(),
