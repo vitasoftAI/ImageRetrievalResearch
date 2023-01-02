@@ -25,6 +25,7 @@ out_path = 'data/spec72.json'
 
 data_split(root, out_path, hard_split=False)
 ```
+spec72 dataset training is not going properly because of the dataset problems. 
 
 * Sketchy Database
 
