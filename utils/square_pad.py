@@ -5,8 +5,13 @@ class SquarePad:
   
   """
   
+  Gets an image and adds padding to make the image square.
   
+  Argument:
+  image - input image
   
+  """
+
   def __call__(self, image):
       w, h = image.size
       max_wh = np.max([w, h])
