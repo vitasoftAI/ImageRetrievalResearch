@@ -211,18 +211,21 @@ def run(args):
         print("Embeddings are obtained!")    
 
         print("Calculating metrics...")
-        top1 = 0 
-        top3 = 0
+        # Set initial top1, top3 values
+        top1, top3 = 0, 0
+
+        # Change lists to tensors
         fms_ims_all = torch.stack(fms_ims_all)
         fms_poss_all = torch.stack(fms_poss_all)
         fms_negs_all = torch.stack(fms_negs_all)
 
+        # Go through the obtained feature maps
         for idx, fm in enumerate(fms_ims_all):
-            # print(fm.shape)
-            # print(fms_poss_all[idx].shape)
+
+            # Get similarity score with positive image
             score = cos(fm, fms_poss_all[idx]) #(bs, fm)
-            print(fm.shape)
-            print(fms_poss_all[idx].shape)
+
+            
             score1 = cos(fm, fms_negs_all[idx]) #(bs, fm)
             print((score == score1).sum())
             # print(torch.mean(score).item())
