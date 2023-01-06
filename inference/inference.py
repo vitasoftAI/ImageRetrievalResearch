@@ -244,9 +244,14 @@ def run(args):
         return OD([('loss', np.mean(losses)), ('top1', top1/len(fms_ims_all)), ('top3', top3/len(fms_ims_all)), 
                    ('scores', torch.mean(torch.FloatTensor(scores))), ('normalized_embeddings', fms_ims_all)])
     
+    # Get test dataloader
     test_dl = get_dl(cache = cache)
     print("Dataloader is ready!")
+    
+    # Get the model from the checkpoint
     model = load_checkpoint(checkpoint_path, model_name, pretrained=False, from_pytorch_lightning=True, device)
+    
+    # Get the inference results
     results = inference(model, test_dl, device)
     print(f"\nTest loss: {results['loss']:.3f}")
     print(f"Test top1: {results['top1']:.3f}")
@@ -259,7 +264,6 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description='Inference Arguments')
     parser.add_argument('-ip', '--im_path', type=str, default="/mnt/data/dataset/images-worker_ratio_224", help='Images directory')
-    # parser.add_argument('-cp', '--checkpoint_path', type=str, default="/home/ubuntu/workspace/bekhzod/triplet-loss-pytorch/pytorch_lightning/saved_models/model_best.pth.tar", help='Path to the trained model')
     parser.add_argument('-cp', '--checkpoint_path', type=str, default="/home/ubuntu/workspace/bekhzod/triplet-loss-pytorch/pytorch_lightning/saved_models/rexnet_150_Adam_0.0003/lightning_logs/version_12/checkpoints/epoch=26-val_loss=0.03-cos_sims=1.00.ckpt", help='Path to the trained model')
     parser.add_argument("-mn", "--model_name", type=str, default='rexnet_150', help="Model name (from timm library (ex. darknet53))")
     parser.add_argument("-is", "--input_size", type=int, default=(224,224), help="Size of the images")
