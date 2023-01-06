@@ -128,7 +128,10 @@ def data_split(data_dir, out_path, policy: str='prod', hard_split: bool=True, tr
         return out_path
 
 class OriginalDataset(Dataset):
+    
     def __init__(self, data_dir, random=True, pos_policy='prod', neg_policy='except_cat', trainval_json=None, trainval=None, data_json=None):
+    
+        # Get dataset arguments
         self.pos_policy = pos_policy
         self.neg_policy = neg_policy
         self.random = random
