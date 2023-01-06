@@ -8,7 +8,19 @@ import json
 import tqdm
 import csv
 
+# Data split function
 def data_split(data_dir, out_path, policy: str='prod', hard_split: bool=True, train_essentials: str='', split: list=[0.8, 0.1, 0.1]):
+    
+    """
+    
+    Gets data directory, output path, policy for data split, hard_split note, essential classes for train, and split ratio
+    and returns output path with the data split.
+    
+    Arguments:
+    
+    """    
+    
+    
     assert sum(split) == 1, 'sum of split should be 1'
     train_essential = []
     if train_essentials:
