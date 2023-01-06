@@ -124,17 +124,23 @@ def run(args):
             model.load_state_dict(new_state_dict, strict = False)
             print(f"Model {model_name} trained using pytorch lightning checkpoint is successfully loaded!")
 
-        else: # for a regular torch model  
+        # For a regular torch model checkpoint
+        else: 
+            # If there is a checkpoint
             if pretrained:
-                model = timm.create_model(model_name, num_classes=num_classes)
-                print(f"Model {model_name} with pretrained weights is successfully loaded!")
-            else:
-                model = timm.create_model("rexnet_150")
+                # Load the model
+                model = timm.create_model(model_name)
                 state_dict = torch.load(checkpoint_path)
                 model.load_state_dict(state_dict['state_dict'])
                 num_features = model.head.fc.in_features
                 model.classifier = Linear(num_features, num_classes) if num_classes > 0 else Identity() 
-                print(f"Model {model_name} with the best weights is successfully loaded!")            
+                print(f"Model {model_name} with the best weights is successfully loaded!") 
+            # If there is no checkpoint
+            else:
+                # Load the model
+                model = timm.create_model(model_name, num_classes=num_classes)
+                print(f"Model {model_name} with pretrained weights is successfully loaded!")
+                           
 
         return model
 
