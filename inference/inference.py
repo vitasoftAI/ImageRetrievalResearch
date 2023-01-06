@@ -73,7 +73,8 @@ def run(args):
         
         return test_dl
 
-    def load_checkpoint(checkpoint_path, model_name, pretrained=False, num_classes=0, from_pytorch_lightning=True, conv_input=True):
+    # Load model
+    def load_checkpoint(checkpoint_path, model_name, pretrained = False, num_classes = 0, from_pytorch_lightning = True, conv_input = True):
 
         ''' 
         
@@ -90,7 +91,8 @@ def run(args):
         
         '''        
         
-        if from_pytorch_lightning: # for a pytorch_lightning model
+        # For a model trained using pytorch_lightning
+        if from_pytorch_lightning: 
             checkpoint = torch.load(checkpoint_path, map_location=torch.device('cpu'))
             # print(checkpoint['state_dict'].keys())
             if conv_input:                
