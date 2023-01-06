@@ -31,9 +31,7 @@ class ContrastiveLoss(Module):
         losses = 0.5 * (label * dis + (1 + -1 * label) * F.relu(self.margin - (dis + self.eps).sqrt()).pow(2))
         
         return losses.mean() if mean else losses.sum()
-        
-        
-a = torch.rand(3,4,4)
-b = torch.rand(3,4,4)
-loss_fn = ContrastiveLoss(0.5)
-print(loss_fn(a,b,1))
+# a = torch.rand(3,4,4)
+# b = torch.rand(3,4,4)
+# loss_fn = ContrastiveLoss(0.5)
+# print(loss_fn(a,b,1))
