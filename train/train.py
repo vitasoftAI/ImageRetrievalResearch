@@ -67,7 +67,8 @@ def run(args):
     
     # Initialize project in wandb
     wandb_logger = WandbLogger(name=f'{model_name}_{datetime.now().strftime("%m/%d/%H:%M:%S")}_{bs}_{lr}', project='Sketchy-Dataset-Training')
-
+    
+    # Get number of classes
     num_classes = tr_ds.get_cat_length()
     print(f"Number of train set images: {len(tr_ds)}")
     print(f"Number of validation set images: {len(val_ds)}")
@@ -76,10 +77,15 @@ def run(args):
     print(f"Validation dataset has {val_ds.get_cat_length()} classes")    
     print(f"Test dataset has {test_ds.get_cat_length()} classes")
     
+    # Initialize cosine similarity computation function
     cos = CosineSimilarity(dim=1, eps=1e-6)
+    
+    # Create train, validation and test dataloaders
     train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
     val_loader = DataLoader(val_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
     test_loader = DataLoader(test_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)  
+    
+    # Initialize labels for loss function
     labels = {"pos": torch.tensor(1.).unsqueeze(0),
               "neg": torch.tensor(-1.).unsqueeze(0)}
     
