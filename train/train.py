@@ -89,25 +89,23 @@ def run(args):
     labels = {"pos": torch.tensor(1.).unsqueeze(0),
               "neg": torch.tensor(-1.).unsqueeze(0)}
     
-    alpha = 1
-    eps = 5
-    # ce_weight = 1
-    ce_weight = 0.02
-    
+    # Function to get feature maps
     def get_fm(fm):
+        
+        """
+        
+        Gets feature map with size (bs, fm_shape, 7, 7)
+        applies average pooling and returns feature map
+        with shape (bs, fm_shape).
+        
+        Argument:
+        
+        fm - feature map.
+        
+        """
+        
         pool = AvgPool2d((fm.shape[2],fm.shape[3]))
         return torch.reshape(pool(fm), (-1, fm.shape[1]))
-    
-    def cos_sim_score(score, eps, alpha, mode):
-        # if score > 0.5:
-        if mode == "for_pos":
-            if score < 0.3:
-                return (score + eps) / (eps + eps*alpha)
-            else:
-                return (score + eps) / (eps + alpha)
-        # elif score > 0.5:
-        elif mode == "for_neg":
-            return (score + (alpha / eps)) / (2*eps)
     
     assert only_features or only_labels, "Please choose at least one loss function to train the model (triplet loss or crossentropy loss)"
     if only_features and only_labels:
