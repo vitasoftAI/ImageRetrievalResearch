@@ -168,6 +168,9 @@ def run(args):
         # Initialize cosine similarity computation function
         cos = torch.nn.CosineSimilarity(dim=1, eps=1e-6)
         
+        # Initialize loss function
+        loss_module = ContrastiveLoss(margin=0.5)
+        
         # Move the model to gpu
         model.to(device)
         
@@ -181,17 +184,27 @@ def run(args):
             # Get images and labels
             (ims_all, poss_all, negs_all), clss_all = batch_all
             
+            # Add class labels to the list
             classes_all.extend(clss_all)
             # if i == 10: # CHANGE HERE
             #     break        
+            
+            # Turn off gradient computation
             with torch.no_grad():
+                
+                # Compute with AMP
                 with torch.cuda.amp.autocast():
+                    
+                    # Get feature maps
                     fm_ims_batch = model(ims_all.to(device))
                     fm_poss_batch = model(poss_all.to(device))
                     fm_negs_batch = model(negs_all.to(device))
+                    
+                    # Compute the loss 
                     loss = loss_module(fm_ims_batch, fm_poss_batch, 1.)
                     losses.append(loss.item())
-                    # cos_sims = cos(fm_ims_batch, fm_poss_batch)                
+                    
+                    # Add feature maps to the corresponding lists
                     fms_ims_all.extend([fm_ims_batch])  
                     fms_poss_all.extend([fm_poss_batch])
                     fms_negs_all.extend([fm_negs_batch])
