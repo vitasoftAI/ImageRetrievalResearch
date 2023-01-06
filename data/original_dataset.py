@@ -55,10 +55,14 @@ def data_split(data_dir, out_path, policy: str='prod', hard_split: bool=True, tr
         rslt['test'] = []
     dic = {}
     
-    
+    # Go through the list
     for i in lst:
+        
+        # Get path
         path = i.replace(os.path.join(data_dir, ''), '')
         split_path = path.split('/')
+        
+        # Get cat number and prod number
         cat, prod = split_path[0], split_path[1].split('_')[-2]
         if policy == 'cat':
             pol = cat
@@ -69,6 +73,8 @@ def data_split(data_dir, out_path, policy: str='prod', hard_split: bool=True, tr
         if pol not in dic:
             dic[pol] = []
         dic[pol].append(i)
+    
+    # Check the hard split
     if hard_split:
         keys = list(dic.keys())
         ############
