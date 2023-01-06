@@ -127,6 +127,7 @@ def data_split(data_dir, out_path, policy: str='prod', hard_split: bool=True, tr
         
         return out_path
 
+# Original Dataset
 class OriginalDataset(Dataset):
     
     def __init__(self, data_dir, random=True, pos_policy='prod', neg_policy='except_cat', trainval_json=None, trainval=None, data_json=None):
@@ -252,6 +253,7 @@ class OriginalDataset(Dataset):
         dic[parser][sketch_or_real].append(f_name)
         return dic
 
+# Original Image Dataset
 class OriginalImageDataset(OriginalDataset):
     def __init__(self, transform_dic=None, pos_return_num=1, neg_return_num=1, load_images=False, **kwargs):
         super(OriginalImageDataset, self).__init__(**kwargs)
