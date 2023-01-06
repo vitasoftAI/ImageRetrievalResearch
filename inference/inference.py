@@ -223,17 +223,22 @@ def run(args):
         for idx, fm in enumerate(fms_ims_all):
 
             # Get similarity score with positive image
-            score = cos(fm, fms_poss_all[idx]) #(bs, fm)
+            pos_score = cos(fm, fms_poss_all[idx]) #(bs, fm)
 
+            # Get similarity score with negative image
+            neg_score = cos(fm, fms_negs_all[idx]) #(bs, fm)
             
-            score1 = cos(fm, fms_negs_all[idx]) #(bs, fm)
-            print((score == score1).sum())
-            # print(torch.mean(score).item())
-            scores.append(torch.mean(score).item())
-            # print(scores)
+            # Add the score to the list
+            scores.append(torch.mean(pos_score).item())
+            
+            # Get top3 values and indices
             vals, inds = torch.topk(cos(fm, fms_poss_all), k=3)
+            # Compute top3
             top3 += len(inds[idx == inds])
+            
+            # Get top1 values and indices
             vals, inds = torch.topk(cos(fm, fms_poss_all), k=1)
+            # Compute top1
             top1 += len(inds[idx == inds])
             
         return OD([('loss', np.mean(losses)), ('top1', top1/len(fms_ims_all)), ('top3', top3/len(fms_ims_all)), 
