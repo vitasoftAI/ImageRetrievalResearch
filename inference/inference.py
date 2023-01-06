@@ -74,7 +74,7 @@ def run(args):
         return test_dl
 
     # Load model
-    def load_checkpoint(checkpoint_path, model_name, pretrained = False, num_classes = 0, from_pytorch_lightning = True, conv_input = True):
+    def load_checkpoint(checkpoint_path, model_name, pretrained = False, num_classes = 0, from_pytorch_lightning = True, conv_input = True, device):
 
         ''' 
         
@@ -93,7 +93,9 @@ def run(args):
         
         # For a model trained using pytorch_lightning
         if from_pytorch_lightning: 
-            checkpoint = torch.load(checkpoint_path, map_location=torch.device('cpu'))
+            
+            # Load the checkpoint from the given path
+            checkpoint = torch.load(checkpoint_path, map_location = device)
             # print(checkpoint['state_dict'].keys())
             if conv_input:                
                 base_model = timm.create_model(model_name)
@@ -198,7 +200,7 @@ def run(args):
     
     test_dl = get_dl(cache = cache)
     print("Dataloader is ready!")
-    model = load_checkpoint(checkpoint_path, model_name, pretrained=False, from_pytorch_lightning=True)
+    model = load_checkpoint(checkpoint_path, model_name, pretrained=False, from_pytorch_lightning=True, device)
     results = inference(model, test_dl, device)
     print(f"\nTest loss: {results['loss']:.3f}")
     print(f"Test top1: {results['top1']:.3f}")
