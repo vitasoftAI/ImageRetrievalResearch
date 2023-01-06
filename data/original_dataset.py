@@ -74,17 +74,19 @@ def data_split(data_dir, out_path, policy: str='prod', hard_split: bool=True, tr
             dic[pol] = []
         dic[pol].append(i)
     
-    # Check the hard split
+    # Hard split
     if hard_split:
         keys = list(dic.keys())
-        ############
+        
+        # Get train essentials
         train_essential = list(set(keys) & set(train_essential))
         keys = list(set(keys) - set(train_essential))
         random.shuffle(keys)
         train_idx, val_idx = int(len(keys)*split[0]), int(len(keys)*split[1])
         train_keys = keys[:train_idx] + train_essential
         val_keys = keys[train_idx: train_idx + val_idx]
-
+        
+        # Add test keys
         if len(split) == 3:
             test_keys = keys[train_idx + val_idx:]
         for key in train_keys:
@@ -94,9 +96,13 @@ def data_split(data_dir, out_path, policy: str='prod', hard_split: bool=True, tr
         if len(split) == 3:
             for key in test_keys:
                 rslt['test'] += dic[key]
+        
+        # Create json file and save it
         with open(out_path, 'w') as f:
             json.dump(rslt, f)
         return out_path
+    
+    # Soft split
     else:
         for key, value in dic.items():
             if key in train_essential:
@@ -114,8 +120,11 @@ def data_split(data_dir, out_path, policy: str='prod', hard_split: bool=True, tr
                     rslt['val']+=value
                     rslt['test']+=value
                     rslt['train']+=value
+        
+        # Create json file and save it
         with open(out_path, 'w') as f:
             json.dump(rslt, f)
+        
         return out_path
 
 class OriginalDataset(Dataset):
