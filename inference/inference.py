@@ -27,7 +27,8 @@ def run(args):
     argstr = yaml.dump(args.__dict__, default_flow_style=False)
     print(f"\nTraining Arguments:\n{argstr}\n")
     
-    def get_dl(path=path, inp_size=inp_size, bs=bs, cache=cache):        
+    # Get dataloader for the inference
+    def get_dl(path = path, inp_size = inp_size, bs = bs, cache = cache):        
         
         ''' 
         
@@ -41,36 +42,31 @@ def run(args):
         
         '''
         
+        # Initialize transformations        
         transformations = {}   
         
         transformations['qry'] = transforms.Compose([
             SquarePad(),
-            # transforms.RandomResizedCrop(894),
-            # transforms.RandomHorizontalFlip(),
-            # AutoAugment.ImageNetPolicy(),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])  
         transformations['pos'] = transforms.Compose([
             SquarePad(),
-            # transforms.RandomResizedCrop(894),
-            # transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])  
         transformations['neg'] = transforms.Compose([
             SquarePad(),
-            # transforms.RandomResizedCrop(894),
-            # transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ]) 
         
-        dataset = TRIPLETDATA(path, input_size=inp_size, transform = transformations, cache=cache)  
-        print(len(dataset))
+        # Get the dataset        
+        dataset = TRIPLETDATA(path, input_size = inp_size, transform = transformations, cache = cache)  
         datasets = dataset.train_val_test_dataset(dataset)
+
+        # Get test dataset
         test_ds = datasets['test']
-        print(len(test_ds))
         test_dl = DataLoader(test_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
         
         # test_ds = TRIPLETDATA(path, input_size=inp_size, transform = transformations, cache=cache, test=True)  
