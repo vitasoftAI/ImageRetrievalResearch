@@ -15,6 +15,7 @@ from torch import nn
 
 def run(args):
     
+    # Get inference arguments
     path = args.im_path
     inp_size = args.input_size
     bs = args.batch_size
@@ -22,10 +23,10 @@ def run(args):
     model_name = args.model_name
     device = args.device
     checkpoint_path = args.checkpoint_path
-    
     argstr = yaml.dump(args.__dict__, default_flow_style=False)
     print(f"\nTraining Arguments:\n{argstr}\n")
     
+    # Contrastive
     class ContrastiveLoss(nn.Module):
 
         """
