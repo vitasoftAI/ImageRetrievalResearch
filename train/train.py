@@ -12,12 +12,12 @@ from pytorch_lightning.loggers import WandbLogger
 from collections import OrderedDict as OD
 from collections import namedtuple as NT
 from softdataset import TripletImageDataset
-# from original_dataset import OriginalImageDataset, data_split
 from sketch_dataset import SketchyImageDataset
 from tqdm import tqdm
 
 def run(args):
     
+    # Get train arguments
     model_dict = {}
     sp = args.save_path
     bs = args.batch_size
@@ -28,16 +28,17 @@ def run(args):
     optimizer_name=args.optimizer_name
     lr = args.learning_rate
     wd = args.weight_decay
-#     checkpoint_path = args.checkpoint_path
     only_features = args.only_feature_embeddings
     only_labels = args.only_target_labels
-        
     
     argstr = yaml.dump(args.__dict__, default_flow_style=False)
-    print(f"\nTraining Arguments:\n{argstr}\n")
+    print(f"\nTraining Arguments:\n{argstr}")
     
+    # Initialize train variables
     optimizer_hparams={"lr": lr, "weight_decay": wd}
     model_dict[model_name] = 0 
+    
+    # Login to wandb
     os.system('wandb login 3204eaa1400fed115e40f43c7c6a5d62a0867ed1')     
     
     transformations = {}   
