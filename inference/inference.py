@@ -7,12 +7,12 @@ from collections import OrderedDict as OD
 import numpy as np
 from tqdm import tqdm
 from torchvision import transforms
-import torchvision.transforms.functional as FF
 from torch.nn import functional as F
 import AutoAugment
 from torch.nn import *
 from torch import nn
 from utils.contrastive_loss import ContrastiveLoss
+from utils.square_pad import SquarePad
 
 def run(args):
     
@@ -27,17 +27,6 @@ def run(args):
     argstr = yaml.dump(args.__dict__, default_flow_style=False)
     print(f"\nTraining Arguments:\n{argstr}\n")
     
-    class SquarePad:
-            def __call__(self, image):
-                w, h = image.size
-                max_wh = np.max([w, h])
-                hp = int((max_wh - w)/2)
-                hp_rem = (max_wh - w)%2
-                vp = int((max_wh - h)/2)
-                vp_rem = (max_wh - h)%2
-                padding = (hp, vp, hp+hp_rem, vp+vp_rem)
-                return FF.pad(image, padding, 255, 'constant')
-
     def get_dl(path=path, inp_size=inp_size, bs=bs, cache=cache):        
         
         ''' 
