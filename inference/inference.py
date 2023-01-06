@@ -96,15 +96,16 @@ def run(args):
             
             # Load the checkpoint from the given path
             checkpoint = torch.load(checkpoint_path, map_location = device)
-            # print(checkpoint['state_dict'].keys())
+            
+            # Add conv layers before inputing to the model 
             if conv_input:                
                 base_model = timm.create_model(model_name)
                 conv_layer = torch.nn.Sequential(torch.nn.Conv2d(3, 3, kernel_size=(3, 3), stride=(1, 1),padding=(1,1), bias=False), 
-                 # nn.Conv2d(3, 3, kernel_size=(3, 3), stride=(2, 2),padding=(1,1), bias=False), 
-                 # nn.MaxPool2d(kernel_size=(3,3), stride=(2,2), padding=(1,1)),
                  torch.nn.SiLU(inplace=True))
                 model = torch.nn.Sequential(conv_layer, base_model) 
                 print(f"Model with conv_input {conv_input}")
+            
+            # Start with the base model
             else:
                 model = timm.create_model(model_name, num_classes=num_classes)
                 print(f"Model with conv_input {conv_input}")
