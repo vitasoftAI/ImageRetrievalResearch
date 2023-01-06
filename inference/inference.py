@@ -12,6 +12,7 @@ from torch.nn import functional as F
 import AutoAugment
 from torch.nn import *
 from torch import nn
+from utils.contrastive_loss import ContrastiveLoss
 
 def run(args):
     
@@ -25,27 +26,6 @@ def run(args):
     checkpoint_path = args.checkpoint_path
     argstr = yaml.dump(args.__dict__, default_flow_style=False)
     print(f"\nTraining Arguments:\n{argstr}\n")
-    
-    # Contrastive
-    class ContrastiveLoss(nn.Module):
-
-        """
-
-        Contrastive loss
-
-        Takes embeddings of two samples and a target label == 1 if samples are from the same class and label == 0 otherwise
-
-        """
-
-        def __init__(self, margin):
-            super(ContrastiveLoss, self).__init__()
-            self.margin = margin
-            self.eps = 1e-9
-
-        def forward(self, output1, output2, target, size_average=True):
-            distances = (output2 - output1).pow(2).sum(1)  # squared distances
-            losses = 0.5 * (target * distances + (1 + -1 * target) * F.relu(self.margin - (distances + self.eps).sqrt()).pow(2))
-            return losses.mean() if size_average else losses.sum()
     
     class SquarePad:
             def __call__(self, image):
