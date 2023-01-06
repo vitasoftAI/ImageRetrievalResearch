@@ -41,13 +41,13 @@ def run(args):
     # Login to wandb
     os.system('wandb login 3204eaa1400fed115e40f43c7c6a5d62a0867ed1')     
     
+    # Initialize transformations dictionary
     transformations = {}   
 
     transformations['qry'] = transforms.Compose([
                             transforms.Resize((224,224)),
                             transforms.ToTensor(),
                                                   ])
-
     transformations['pos'] = transforms.Compose([
         transforms.Resize((224,224)),
         transforms.ToTensor(),
@@ -56,15 +56,18 @@ def run(args):
         transforms.Resize((224,224)),
         transforms.ToTensor(),
     ])
-    
+
+    # Set path to the json file with data split
     out_path = "data/sketchy_database_256_soft_split_cat.json"
 
+    # Get train, validation, test datasets
     tr_ds = SketchyImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='train', load_images=False)
     val_ds = SketchyImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='val', load_images=False)
     test_ds = SketchyImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='test', load_images=False)
     
+    # Initialize project in wandb
     wandb_logger = WandbLogger(name=f'{model_name}_{datetime.now().strftime("%m/%d/%H:%M:%S")}_{bs}_{lr}', project='Sketchy-Dataset-Training')
-    # num_classes = tr_ds.get_prod_length()
+
     num_classes = tr_ds.get_cat_length()
     print(f"Number of train set images: {len(tr_ds)}")
     print(f"Number of validation set images: {len(val_ds)}")
