@@ -128,10 +128,15 @@ def run(args):
         else: 
             # If there is a checkpoint
             if pretrained:
+                
                 # Load the model
                 model = timm.create_model(model_name)
+                
+                # Load the checkpoint
                 state_dict = torch.load(checkpoint_path)
                 model.load_state_dict(state_dict['state_dict'])
+                
+                # Change the fully connected layer
                 num_features = model.head.fc.in_features
                 model.classifier = Linear(num_features, num_classes) if num_classes > 0 else Identity() 
                 print(f"Model {model_name} with the best weights is successfully loaded!") 
@@ -141,7 +146,6 @@ def run(args):
                 model = timm.create_model(model_name, num_classes=num_classes)
                 print(f"Model {model_name} with pretrained weights is successfully loaded!")
                            
-
         return model
 
     def inference(model, dataloader, device):
