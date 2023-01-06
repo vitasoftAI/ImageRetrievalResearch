@@ -148,23 +148,19 @@ def run(args):
                            
         return model
 
+    # Inference function    
     def inference(model, dataloader, device):
 
         ''' 
         
-        Loads checkpoint from the given path to the directory with the trained model.
+        Gets trained model, dataloader, and gpu number and conducts inference.
         Arguments:
         
-        checkpoint - path to the dir with the trained model;
-        model_name - name of the trained model (name is the same as in the timm library);
-        from_pytorch_lightning - used to load the trained model from pytorch_lightning.
-        If True the model is trained using pytorch_lightning, else with a regular torch library;
-        Default is False
+        model - pretrained model;
+        dataloader - test dataloader;
+        device - gpu device name.
         
         '''   
-        
-        # loss_module = nn.TripletMarginWithDistanceLoss(distance_function=lambda x, y: 1.0 - F.cosine_similarity(x, y)).to('cuda')
-        loss_module = ContrastiveLoss(margin=1.0).to('cuda')
         scores, fms_ims_all, fms_poss_all, losses, classes_all, fms_negs_all = [], [], [], [], [], []
         cos = torch.nn.CosineSimilarity(dim=1, eps=1e-6)
         model.to(device)
