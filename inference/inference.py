@@ -161,13 +161,26 @@ def run(args):
         device - gpu device name.
         
         '''   
+        
+        # Initialize lists
         scores, fms_ims_all, fms_poss_all, losses, classes_all, fms_negs_all = [], [], [], [], [], []
+        
+        # Initialize cosine similarity computation function
         cos = torch.nn.CosineSimilarity(dim=1, eps=1e-6)
+        
+        # Move the model to gpu
         model.to(device)
+        
+        # Switch the model to evaluation mode
         model.eval()
         print("Obtaining embeddings...")
+        
+        # Go through the dataloader
         for i, batch_all in tqdm(enumerate(dataloader)):
+            
+            # Get images and labels
             (ims_all, poss_all, negs_all), clss_all = batch_all
+            
             classes_all.extend(clss_all)
             # if i == 10: # CHANGE HERE
             #     break        
