@@ -7,7 +7,24 @@ import numpy as np
 import tqdm
 import json
 
-def data_split(data_dir, out_path, policy: str='cat', hard_split: bool=True, train_essentials: str='', split: list=[0.8, 0.1, 0.1], sketch_qry=False):
+def data_split(data_dir, out_path, policy: str = 'cat', hard_split: bool = True, train_essentials: str = '', split: list = [0.8, 0.1, 0.1], sketch_qry = False):
+    
+     """
+    
+    Gets data directory, output path, policy for data split, hard_split note, essential classes for train, and split ratio
+    and returns output path with the data split.
+    
+    Arguments:
+    data_dir - directory with the data;
+    out_path - path to output the json file with data split;
+    policy - policy to split data;
+    hard_split - if True, not all classes in the validation and test sets, else train, val, test sets have samples for all classes;
+    train_essentials - csv file with class names for train;
+    split - data split ratio;
+    sketch_qr - whether sketch images can be query image or not.
+    
+    """    
+    
     assert sum(split) == 1, 'sum of split should be 1'
     train_essential = []
     if train_essentials:
