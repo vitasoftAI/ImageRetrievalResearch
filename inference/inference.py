@@ -67,19 +67,10 @@ def run(args):
 
         # Get test dataset
         test_ds = datasets['test']
-        test_dl = DataLoader(test_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
         
-        # test_ds = TRIPLETDATA(path, input_size=inp_size, transform = transformations, cache=cache, test=True)  
-        # test_dl = DataLoader(test_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
-
-        return test_dl
+        # Create test dataloader
+        test_dl = DataLoader(test_ds, batch_size = bs, shuffle = True, drop_last = True, num_workers = 8)
         
-        # test_ds = TRIPLETDATA(path, input_size=inp_size, transform = transformations, cache=cache, test=True)  
-        # print(len(test_ds))
-        # # datasets = dataset.train_val_test_dataset(dataset)
-        # # test_ds = datasets['test']
-        # test_dl = DataLoader(test_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
-
         return test_dl
 
     def load_checkpoint(checkpoint_path, model_name, pretrained=False, num_classes=0, from_pytorch_lightning=True, conv_input=True):
