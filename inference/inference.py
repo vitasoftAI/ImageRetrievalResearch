@@ -107,16 +107,21 @@ def run(args):
             
             # Start with the base model
             else:
-                model = timm.create_model(model_name, num_classes=num_classes)
+                model = timm.create_model(model_name, num_classes = num_classes)
                 print(f"Model with conv_input {conv_input}")
 
-            # create new OrderedDict that does not contain `model.` (for the checkpoint from the pytorch_lightning)
+            # Create new OrderedDict for the checkpoint from the pytorch_lightning
             new_state_dict = OrderedDict()
+            
+            # Go through the state_dictionary
             for k, v in checkpoint['state_dict'].items():
-                name = k.replace("model.", "") # remove `model.`
+                
+                # Remove "model."
+                name = k.replace("model.", "") 
                 new_state_dict[name] = v
-            # load params
-            model.load_state_dict(new_state_dict, strict=False)
+            
+            # Load params
+            model.load_state_dict(new_state_dict, strict = False)
             print(f"Model {model_name} trained using pytorch lightning checkpoint is successfully loaded!")
 
         else: # for a regular torch model  
