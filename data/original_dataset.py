@@ -17,6 +17,12 @@ def data_split(data_dir, out_path, policy: str='prod', hard_split: bool=True, tr
     and returns output path with the data split.
     
     Arguments:
+    data_dir - directory with the data;
+    out_path - path to output the json file with data split;
+    policy - policy to split data;
+    hard_split - if True, not all classes in the validation and test sets, else train, val, test sets have samples for all classes;
+    train_essentials - json file with class names for train;
+    split - data split ratio.
     
     """    
     
