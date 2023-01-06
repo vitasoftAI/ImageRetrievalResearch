@@ -40,12 +40,22 @@ def data_split(data_dir, out_path, policy: str='prod', hard_split: bool=True, tr
     # Get image list
     lst = glob.glob(os.path.join(data_dir, '**/*'), recursive=True)
     lst = list(set(lst) - set(glob.glob(os.path.join(data_dir, '*/pdf_detail/*'))))
+    
+    # Get only files
     lst = [i for i in lst if os.path.isfile(i)]
+    
+    # Shuffle the list
     random.shuffle(lst)
+    
+    # Create dictionary with train and validation keys
     rslt = {'train':[], 'val':[]}
+    
+    # Create test key in split contains test
     if len(split) == 3:
         rslt['test'] = []
     dic = {}
+    
+    
     for i in lst:
         path = i.replace(os.path.join(data_dir, ''), '')
         split_path = path.split('/')
