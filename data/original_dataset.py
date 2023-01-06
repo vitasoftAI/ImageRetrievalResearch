@@ -21,19 +21,23 @@ def data_split(data_dir, out_path, policy: str='prod', hard_split: bool=True, tr
     out_path - path to output the json file with data split;
     policy - policy to split data;
     hard_split - if True, not all classes in the validation and test sets, else train, val, test sets have samples for all classes;
-    train_essentials - json file with class names for train;
+    train_essentials - csv file with class names for train;
     split - data split ratio.
     
     """    
-    
-    
     assert sum(split) == 1, 'sum of split should be 1'
+    
+    # Initialize train essentials list
     train_essential = []
+    
+    # Read csv file
     if train_essentials:
         with open(train_essentials, 'r') as f:
             data = csv.reader(f)
             for i in data:
-                train_essential+=i
+                train_essential += i
+    
+    # Get image list
     lst = glob.glob(os.path.join(data_dir, '**/*'), recursive=True)
     lst = list(set(lst) - set(glob.glob(os.path.join(data_dir, '*/pdf_detail/*'))))
     lst = [i for i in lst if os.path.isfile(i)]
