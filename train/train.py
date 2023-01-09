@@ -367,7 +367,6 @@ def run(args):
         conv_input - if True, model starts with a conv layer, else default model from timm is used;
         num_classes - number of classes in the dataset.      
         
-        
         """
 
         if model_name in model_dict:
@@ -379,7 +378,8 @@ def run(args):
             
         return model
 
-    def train_model(model_name, save_name=None, **kwargs):
+    # Function to train the model 
+    def train_model(model_name, save_name = None, **kwargs):
         
         """
         Trains the model and returns trained model with its results.
@@ -388,25 +388,28 @@ def run(args):
             model_name - Name of the model you want to run. Is used to look up the class in "model_dict"
             save_name (optional) - If specified, this name will be used for creating the checkpoint and logging directory.
         """
+        
         if save_name is None:
+            # Initialize save name for the trained model
             save_name = model_name
 
         # Create a PyTorch Lightning trainer with the generation callback
         trainer = pl.Trainer(
-            default_root_dir=os.path.join(sp, save_name),  # dir name to save models
-            # Run on a single GPU (if possible)
-            # gpus=1 if str(device) == "cuda:1" else 0,
-            precision=16, amp_backend='native',
+            default_root_dir = os.path.join(sp, save_name),  # dir name to save models
+            # use AMP
+            precision = 16, amp_backend = 'native',
             # total num of epochs
-            max_epochs=300,
-            log_every_n_steps=15,
-            logger=wandb_logger,
-            # auto_lr_find=True,
-            # fast_dev_run=True,
-            strategy="ddp", accelerator="gpu", devices=3, 
+            max_epochs = 300,
+            # log frequency
+            log_every_n_steps = 15,
+            # logger to use
+            logger = wandb_logger,
+            # parallel computing
+            strategy = "ddp", accelerator = "gpu", devices = 3, # change number of gpus basen on your machine specs 
+            # set callbacks
             callbacks=[
-                
                 ModelCheckpoint(
+                    # name to
                     filename='{epoch}-{val_loss:.2f}-{cos_sims:.2f}-{val_top1:.2f}', 
                     every_n_train_steps = None, save_top_k=1,
                     save_weights_only=True, mode="max", monitor="cos_sims" 
