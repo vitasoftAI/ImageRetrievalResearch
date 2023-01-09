@@ -149,19 +149,16 @@ def run(args):
             return self.model(inp)
         
         def configure_optimizers(self):
-            # self.hparams['lr'] = self.hparams.optimizer_hparams['lr']
             if self.hparams.optimizer_name == "Adam":
                 # AdamW is Adam with a correct implementation of weight decay (see here
                 # for details: https://arxiv.org/pdf/1711.05101.pdf)
                 optimizer = torch.optim.AdamW(self.parameters(), **self.hparams.optimizer_hparams)
-                # scheduler = {"scheduler": ReduceLROnPlateau(optimizer, verbose=True),
-                # "monitor": "val_loss"}
             elif self.hparams.optimizer_name == "SGD":
                 optimizer = torch.optim.SGD(self.parameters(), **self.hparams.optimizer_hparams)
             else:
                 assert False, f'Unknown optimizer: "{self.hparams.optimizer_name}"'
             
-            # scheduler = MultiStepLR(optimizer=optimizer, milestones=[6,8,12,15,20,25,30,35,40], gamma=0.1, verbose=True)
+            # Set the scheduler
             scheduler = MultiStepLR(optimizer=optimizer, milestones=[6,12,20,30,35,40], gamma=0.1, verbose=True)
         
             return [optimizer], [scheduler]
