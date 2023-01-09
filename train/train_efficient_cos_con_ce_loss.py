@@ -361,8 +361,8 @@ def run(args):
                 vals, inds = torch.topk(sim, k=3)
                 # Compute top3
                 if clss[idx] == clss[inds[0]] or clss[idx] == clss[inds[1]] or clss[idx] == clss[inds[2]]: top3 += 1
-                if clss[idx] in clss[inds[0]]:
-                    top1 += 1
+                # Compute top1
+                if clss[idx] in clss[inds[0]]: top1 += 1
 
             # Logs the loss per epoch to tensorboard (weighted average over batches)
             self.log("val_loss", loss)
