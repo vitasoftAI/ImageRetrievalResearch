@@ -409,15 +409,20 @@ def run(args):
             # set callbacks
             callbacks=[
                 ModelCheckpoint(
-                    # name to
+                    # name to save the checkpoint
                     filename='{epoch}-{val_loss:.2f}-{cos_sims:.2f}-{val_top1:.2f}', 
-                    every_n_train_steps = None, save_top_k=1,
-                    save_weights_only=True, mode="max", monitor="cos_sims" 
-                ),  # Save the best checkpoint based on the min val_loss recorded. Saves only weights and not optimizer
-                EarlyStopping(monitor="cos_sims", mode="max", patience=10, verbose=True), # set the metric (and change the mode!) to track for early stopping
+                    # saving options
+                    every_n_train_steps = None, save_top_k = 1,
+                    # monitor variable to save
+                    save_weights_only = True, mode = "max", monitor = "cos_sims" 
+                ), 
+                # early stopping callback
+                EarlyStopping(monitor = "cos_sims", mode = "max", patience = 10, verbose = True), # set the metric (and change the mode!) to track for early stopping
                 LearningRateMonitor("epoch"), # Log learning rate every epoch
             ]
         )
+        
+        # Logger options
         trainer.logger._log_graph = True  # If True, we plot the computation graph in tensorboard
         trainer.logger._default_hp_metric = None  # Optional logging argument that we don't need
 
