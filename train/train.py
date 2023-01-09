@@ -440,6 +440,7 @@ def run(args):
 
         return model
     
+    # Start training
     trained_model = train_model(
     model_name=model_name, optimizer_name=optimizer_name, save_name=f"{model_name}_{optimizer_name}_{lr}",
     optimizer_hparams=optimizer_hparams)
