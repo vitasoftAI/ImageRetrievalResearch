@@ -100,7 +100,21 @@ def run(args):
     
     # Function to get feature maps
     def get_fm(fm):
+        
+        """
+        
+        Gets feature map with size (bs, fm_shape, 7, 7)
+        applies average pooling and returns feature map
+        with shape (bs, fm_shape).
+        
+        Argument:
+        
+        fm - feature map.
+        
+        """
+        
         pool = AvgPool2d((fm.shape[2],fm.shape[3]))
+        
         return torch.reshape(pool(fm), (-1, fm.shape[1]))
     
     assert only_features or only_labels, "Please choose at least one loss function to train the model (triplet loss or crossentropy loss)"
