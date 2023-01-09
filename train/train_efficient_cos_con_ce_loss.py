@@ -42,14 +42,14 @@ def run(args):
     # Login to wandb: change to your account with the corresponding key
     os.system('wandb login 3204eaa1400fed115e40f43c7c6a5d62a0867ed1')     
     
+    
+    # Get train transformations
     transformations = {}   
-
     transformations['qry'] = transforms.Compose([
                             transforms.Resize((224,224)),
                             AutoAugment.ImageNetPolicy(),
                             transforms.ToTensor(),
                                                   ])
-
     transformations['pos'] = transforms.Compose([
         transforms.Resize((224,224)),
         AutoAugment.ImageNetPolicy(),
@@ -60,7 +60,8 @@ def run(args):
         AutoAugment.ImageNetPolicy(),
         transforms.ToTensor(),
     ])
-    
+
+    # Set the path to the json file with train, val, test split
     out_path = "data/sketchy_database_256_soft_split_cat.json"
 
     tr_ds = SketchyImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='train', load_images=False)
