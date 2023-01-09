@@ -13,14 +13,13 @@ from collections import OrderedDict as OD
 from collections import namedtuple as NT
 from softdataset import TripletImageDataset
 from contrastive_loss import ContrastiveLoss
-# from original_dataset import OriginalImageDataset, data_split
 from sketch_dataset import SketchyImageDataset
 from tqdm import tqdm
 import torch.nn.functional as F
 
 def run(args):
     
-    model_dict = {}
+    # Get train arguments
     sp = args.save_path
     bs = args.batch_size
     expdir = args.expdir
@@ -32,12 +31,15 @@ def run(args):
     wd = args.weight_decay
     only_features = args.only_feature_embeddings
     only_labels = args.only_target_labels
-    
     argstr = yaml.dump(args.__dict__, default_flow_style=False)
     print(f"\nTraining Arguments:\n{argstr}\n")
     
+    # Initialize train arguments
+    model_dict = {}
     optimizer_hparams={"lr": lr, "weight_decay": wd}
     model_dict[model_name] = 0 
+    
+    # Login to wandb: change to your account with the corresponding key
     os.system('wandb login 3204eaa1400fed115e40f43c7c6a5d62a0867ed1')     
     
     transformations = {}   
