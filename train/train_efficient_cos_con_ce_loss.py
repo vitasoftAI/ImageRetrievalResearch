@@ -91,11 +91,14 @@ def run(args):
     train_loader = DataLoader(tr_ds, batch_size = bs, shuffle = True, drop_last = True, num_workers = 8)
     val_loader = DataLoader(val_ds, batch_size = bs, shuffle = True, drop_last = True, num_workers = 8)
     test_loader = DataLoader(test_ds, batch_size = bs, shuffle = True, drop_last = True, num_workers = 8)  
+    
+    # Initialize labels for the loss functions
     labels = {"con_pos": torch.tensor(1.).unsqueeze(0),
               "con_neg": torch.tensor(0.).unsqueeze(0),
               "cos_pos": torch.tensor(1.).unsqueeze(0),
               "cos_neg": torch.tensor(-1.).unsqueeze(0)}
     
+    # Function to get feature maps
     def get_fm(fm):
         pool = AvgPool2d((fm.shape[2],fm.shape[3]))
         return torch.reshape(pool(fm), (-1, fm.shape[1]))
