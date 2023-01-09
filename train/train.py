@@ -355,11 +355,18 @@ def run(args):
             return OD([('loss', loss), ('val_top3', top3),
                        ('cos_sims', torch.mean(torch.FloatTensor(cos_sims)))])
 
-    def create_model(model_name, conv_input=False, num_classes=num_classes):
+    # Function to create a train model    
+    def create_model(model_name, conv_input = False, num_classes = num_classes):
         
         """ 
         
         Gets model name and creates a timm model.
+        
+        Arguments:
+        model_name - name of the model as in timm library;
+        conv_input - if True, model starts with a conv layer, else default model from timm is used;
+        num_classes - number of classes in the dataset.      
+        
         
         """
 
