@@ -321,10 +321,14 @@ def run(args):
                 cos_sims_pair.append(sim_pair)
                 cos_unsims_pair.append(unsim_pair)
                 
-                
+                # Get top3 values and indices
                 vals, inds = torch.topk(sim, k=3)
+                
+                # Compute top3 
                 if clss[idx] == clss[inds[0]] or clss[idx] == clss[inds[1]] or clss[idx] == clss[inds[2]]:
                     top3 += 1
+                
+                # Compute top1
                 if clss[idx] in clss[inds[0]]:
                     top1 += 1
 
