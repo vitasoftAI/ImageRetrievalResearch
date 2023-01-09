@@ -272,32 +272,56 @@ def run(args):
             
             # Compute loss
             if only_features and only_labels:
+                
+                # Cosine Embedding Loss
                 loss_cos_poss = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) 
                 loss_cos_negs = self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss_cos = loss_cos_poss + loss_cos_negs
+                
+                # Cross Entropy Loss
                 loss_ce_ims = self.ce_loss(lbl_ims, clss)
                 loss_ce_poss = self.ce_loss(lbl_poss, clss)
                 loss_ce = loss_ce_ims + loss_ce_poss
+                
+                # Total Loss
                 loss = loss_cos + loss_ce
+                
             elif only_features == True and only_labels == None:
+                
+                # Cosine Embedding Loss 
                 loss_cos_poss = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) 
                 loss_cos_negs = self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss_cos = loss_cos_poss + loss_cos_negs
+                
+                # Total Loss
                 loss = loss_cos                 
             elif only_features == None and only_labels == True:
+                
+                # Cross Entropy Loss 
                 loss_ce_ims = self.ce_loss(lbl_ims, regs)
                 loss_ce = loss_ce_ims
+                
+                # Total Loss
                 loss = loss_ce
                 
             # Compute top3 and top1
-            top3, top1 = 0, 0            
+            top3, top1 = 0, 0     
+            
+            # Go through every predicted label
             for idx, lbl_im in (enumerate(lbl_ims)):
+                
+                # Compute cosine similarity with a positive image
                 sim_pair = cos(fm_ims[idx].unsqueeze(0), fm_poss[idx].unsqueeze(0)) 
+                
+                # Compute cosine similarity with a negative image
                 unsim_pair = cos(fm_ims[idx].unsqueeze(0), fm_negs[idx].unsqueeze(0)) 
                 sim = cos(fm_ims[idx].unsqueeze(0), fm_poss)  # batch                
+                
+                # Add values to the lists
                 cos_sims_pair.append(sim_pair)
                 cos_unsims_pair.append(unsim_pair)
-                # vals, inds = torch.topk(lbl_im, k=3)
+                
+                
                 vals, inds = torch.topk(sim, k=3)
                 if clss[idx] == clss[inds[0]] or clss[idx] == clss[inds[1]] or clss[idx] == clss[inds[2]]:
                     top3 += 1
