@@ -125,9 +125,11 @@ def run(args):
     elif only_features == None and only_labels == True:
         print("\nTrain using only crossentropy loss\n")      
     
+    # Model class
     class Model(pl.LightningModule):
 
         def __init__(self, model_name,  optimizer_name, optimizer_hparams):
+            
             """
             Gets model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
             
@@ -136,36 +138,37 @@ def run(args):
                 optimizer_name - Name of the optimizer to use. Currently supported: Adam, SGD
                 optimizer_hparams - Hyperparameters for the optimizer, as dictionary. This includes learning rate, weight decay, etc.
             """
+            
             super().__init__()
             # Exports the hyperparameters to a YAML file, and create "self.hparams" namespace
             self.save_hyperparameters()
 
             # Create model
             self.model = create_model(model_name)
-            # Create loss module
-            self.cos_loss = CosineEmbeddingLoss(margin=0.3)
-            self.con_loss = ContrastiveLoss(margin=0.3)
+            
+            # Create loss modules
+            self.cos_loss = CosineEmbeddingLoss(margin = 0.3)
+            self.con_loss = ContrastiveLoss(margin = 0.3)
             self.ce_loss = CrossEntropyLoss()
-            # Example input for visualizing the graph in Tensorboard
-            self.example_input_array = torch.zeros((1, 3, 224, 224), dtype=torch.float32)
+            
+            # Initialize a sample array
+            self.example_input_array = torch.zeros((1, 3, 224, 224), dtype = torch.float32)
 
         def forward(self, inp):
             return self.model(inp)
         
         def configure_optimizers(self):
-            # self.hparams['lr'] = self.hparams.optimizer_hparams['lr']
+            
             if self.hparams.optimizer_name == "Adam":
                 # AdamW is Adam with a correct implementation of weight decay (see here
                 # for details: https://arxiv.org/pdf/1711.05101.pdf)
                 optimizer = torch.optim.AdamW(self.parameters(), **self.hparams.optimizer_hparams)
-                # scheduler = {"scheduler": ReduceLROnPlateau(optimizer, verbose=True),
-                # "monitor": "val_loss"}
             elif self.hparams.optimizer_name == "SGD":
                 optimizer = torch.optim.SGD(self.parameters(), **self.hparams.optimizer_hparams)
             else:
                 assert False, f'Unknown optimizer: "{self.hparams.optimizer_name}"'
             
-            # scheduler = MultiStepLR(optimizer=optimizer, milestones=[6,8,12,15,20,25,30,35,40], gamma=0.1, verbose=True)
+            # Set the scheduler
             scheduler = MultiStepLR(optimizer=optimizer, milestones=[6,15,22,30,35,40], gamma=0.1, verbose=True)
         
             return [optimizer], [scheduler]
