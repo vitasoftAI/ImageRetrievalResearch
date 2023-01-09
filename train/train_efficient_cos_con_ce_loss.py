@@ -86,9 +86,11 @@ def run(args):
     
     # Initialize cosine similarity computation function
     cos = CosineSimilarity(dim=1, eps=1e-6)
-    train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
-    val_loader = DataLoader(val_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
-    test_loader = DataLoader(test_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)  
+    
+    # Initialize train, validation, and test dataloaders
+    train_loader = DataLoader(tr_ds, batch_size = bs, shuffle = True, drop_last = True, num_workers = 8)
+    val_loader = DataLoader(val_ds, batch_size = bs, shuffle = True, drop_last = True, num_workers = 8)
+    test_loader = DataLoader(test_ds, batch_size = bs, shuffle = True, drop_last = True, num_workers = 8)  
     labels = {"con_pos": torch.tensor(1.).unsqueeze(0),
               "con_neg": torch.tensor(0.).unsqueeze(0),
               "cos_pos": torch.tensor(1.).unsqueeze(0),
