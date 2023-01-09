@@ -222,16 +222,27 @@ def run(args):
                 loss_ce_ims = self.ce_loss(lbl_ims, clss)
                 loss_ce_poss = self.ce_loss(lbl_poss, clss)
                 loss_ce = loss_ce_ims + loss_ce_poss
+                
+                # Total loss
                 loss = loss_cos + loss_con + loss_ce
                 
             elif only_features == True and only_labels == None:
+                
+                # Cosine embedding loss
                 loss_cos_poss = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) 
                 loss_cos_negs = self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss_cos = loss_cos_poss + loss_cos_negs
-                loss = loss_cos                 
+                
+                # Total loss
+                loss = loss_cos    
+                
             elif only_features == None and only_labels == True:
+                
+                # Cross entropy loss
                 loss_ce_ims = self.ce_loss(lbl_ims, regs)
                 loss_ce = loss_ce_ims
+                
+                # Total loss
                 loss = loss_ce
                 
             # Compute top3 and top1
