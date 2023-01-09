@@ -348,18 +348,19 @@ def run(args):
                 
                 # Compute cosine similarities of a query image with the corresponding positive image
                 sim_pair = cos(fm_ims[idx].unsqueeze(0), fm_poss[idx].unsqueeze(0)) 
+                cos_sims_pair.append(sim_pair)
                 
                 # Compute cosine similarities of a query image with the corresponding negative image
                 unsim_pair = cos(fm_ims[idx].unsqueeze(0), fm_negs[idx].unsqueeze(0)) 
+                cos_unsims_pair.append(unsim_pair)
                 
                 # Compute cosine similarities of a query image with all the images in the dataloader
                 sim = cos(fm_ims[idx].unsqueeze(0), fm_poss)  # batch                
-                cos_sims_pair.append(sim_pair)
-                cos_unsims_pair.append(unsim_pair)
-                # vals, inds = torch.topk(lbl_im, k=3)
+                
+                # Get top3                
                 vals, inds = torch.topk(sim, k=3)
-                if clss[idx] == clss[inds[0]] or clss[idx] == clss[inds[1]] or clss[idx] == clss[inds[2]]:
-                    top3 += 1
+                # Compute top3
+                if clss[idx] == clss[inds[0]] or clss[idx] == clss[inds[1]] or clss[idx] == clss[inds[2]]: top3 += 1
                 if clss[idx] in clss[inds[0]]:
                     top1 += 1
 
