@@ -177,13 +177,19 @@ def run(args):
             cos_sims = []
             ims, poss, negs, clss, regs = batch['qry'], batch['pos'][0], batch['neg'][0], batch['cat_idx'], batch['prod_idx']
             
-            # Get feature maps and pred labels
+            # Get feature maps and pred labels for query images
             fm_ims = self.model.forward_features(ims)
-            lbl_ims = self.model.head(fm_ims) # get feature maps [0] and predicted labels [1]
+            lbl_ims = self.model.head(fm_ims) 
+            
+            # Get feature maps and pred labels for positive images
             fm_poss = self.model.forward_features(poss)
             lbl_poss = self.model.head(fm_poss)
+            
+            # Get feature maps and pred labels for negative images
             fm_negs = self.model.forward_features(negs)
             lbl_negs = self.model.head(fm_negs)
+            
+            # Get feature maps of the query, positive, and negative images
             fm_ims = get_fm(fm_ims)
             fm_poss = get_fm(fm_poss)
             fm_negs = get_fm(fm_negs)
