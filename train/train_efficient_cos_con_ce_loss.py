@@ -342,11 +342,17 @@ def run(args):
                 
             # Compute top3 and top1
             top3, top1 = 0, 0
-            # print(len(lbl_ims))
-            # print(len(fm_ims))
+            
+            # Go through predicted labels and feature maps
             for idx, lbl_im in (enumerate(lbl_ims)):
+                
+                # Compute cosine similarities of a query image with the corresponding positive image
                 sim_pair = cos(fm_ims[idx].unsqueeze(0), fm_poss[idx].unsqueeze(0)) 
+                
+                # Compute cosine similarities of a query image with the corresponding negative image
                 unsim_pair = cos(fm_ims[idx].unsqueeze(0), fm_negs[idx].unsqueeze(0)) 
+                
+                # Compute cosine similarities of a query image with all the images in the dataloader
                 sim = cos(fm_ims[idx].unsqueeze(0), fm_poss)  # batch                
                 cos_sims_pair.append(sim_pair)
                 cos_unsims_pair.append(unsim_pair)
