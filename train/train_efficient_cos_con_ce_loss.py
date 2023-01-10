@@ -376,25 +376,30 @@ def run(args):
             self.log("cos_unsims", torch.mean(torch.FloatTensor(cos_unsims_pair)).item())
             self.log("val_top3", top3 / len(lbl_ims))
             self.log("val_top1", top1 / len(lbl_ims))
+            
             return OD([('loss', loss), ('val_top3', top3), ('cos_sims', torch.mean(torch.FloatTensor(cos_sims)))])
 
-    def create_model(model_name, conv_input=False, num_classes=num_classes):
+    def create_model(model_name, conv_input = False, num_classes = num_classes):
         
         """ 
         
-        Gets model name and creates a timm model.
+        Gets a model name and creates a timm model.
         
         """
 
+        # Find a model name in the dictionary
         if model_name in model_dict:
-            base_model = timm.create_model(model_name, pretrained=True, num_classes=num_classes)
+            base_model = timm.create_model(model_name, pretrained = True, num_classes = num_classes)
             print(f"Model {model_name} with the best weights is successfully loaded!")  
             model = base_model
+        
+        # Model name is not in the dictionary
         else:
             assert False, f'Unknown model name "{model_name}". Available models are: {str(model_dict.keys())}'
             
         return model
 
+    # Train function
     def train_model(model_name, save_name=None, **kwargs):
         
         """
@@ -404,6 +409,8 @@ def run(args):
             model_name - Name of the model you want to run. Is used to look up the class in "model_dict"
             save_name (optional) - If specified, this name will be used for creating the checkpoint and logging directory.
         """
+        
+        # Set the save name
         if save_name is None:
             save_name = model_name
 
