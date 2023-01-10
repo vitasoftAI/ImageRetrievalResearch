@@ -432,13 +432,23 @@ def run(args):
                 ModelCheckpoint(
                     # name to save the model
                     filename='{epoch}-{val_loss:.2f}-{cos_sims:.2f}-{val_top1:.2f}', 
-                    every_n_train_steps = None, save_top_k=1,
-                    save_weights_only=True, mode="max", monitor="cos_sims" 
-                ),  # Save the best checkpoint based on the min val_loss recorded. Saves only weights and not optimizer
-                EarlyStopping(monitor="cos_sims", mode="max", patience=10, verbose=True), # set the metric (and change the mode!) to track for early stopping
-                LearningRateMonitor("epoch"), # Log learning rate every epoch
+                    every_n_train_steps = None, save_top_k = 1,
+                    # metrics to track
+                    save_weights_only = True, mode = "max", monitor = "cos_sims" 
+                ),
+                
+                EarlyStopping(
+                    # metric to track
+                    monitor = "cos_sims", mode = "max",
+                    # number of epochs to wait
+                    patience = 10, verbose = True
+                ), 
+                
+                # Log learning rate every epoch
+                LearningRateMonitor("epoch") 
             ]
         )
+        
         trainer.logger._log_graph = True  # If True, we plot the computation graph in tensorboard
         trainer.logger._default_hp_metric = None  # Optional logging argument that we don't need
 
