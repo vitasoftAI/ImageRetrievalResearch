@@ -460,22 +460,25 @@ def run(args):
         # pretrained_filename = pretrained_filename + '/epoch=22-val_loss=0.31-cos_sims=0.93-val_top1=0.96.ckpt'
         if os.path.isfile(pretrained_filename):
             print(f"Found pretrained model at {pretrained_filename}, loading...")
-            # Automatically loads the model with the saved hyperparameters
+            # Load model from the checkpoint
             model = Model.load_from_checkpoint(pretrained_filename)
         else:
-            pl.seed_everything(42)  # To be reproducable
-            model = Model(model_name=model_name, **kwargs)
+            pl.seed_everything(42)
+            # Initialize a new model 
+            model = Model(model_name = model_name, **kwargs)
+            # Fit the dataloaders to the model            
             trainer.fit(model, train_loader, val_loader)
 
         return model
     
+    # Training process
     trained_model = train_model(
     model_name=model_name, optimizer_name=optimizer_name, save_name=f"{model_name}_{optimizer_name}_{lr}",
     optimizer_hparams=optimizer_hparams)
 
 if __name__ == "__main__":
     
-    parser = argparse.ArgumentParser(description='Triplet Loss PyTorch Lightning Arguments')
+    parser = argparse.ArgumentParser(description='Sketchy Database Triplet Train PyTorch Lightning Arguments')
     parser.add_argument('-ed', '--expdir', default=None, help='Experiment directory')
     parser.add_argument("-sp", "--save_path", type=str, default='saved_models', help="Path to save trained models")
     parser.add_argument("-bs", "--batch_size", type=int, default=64, help="Batch size")
