@@ -414,20 +414,23 @@ def run(args):
         if save_name is None:
             save_name = model_name
 
-        # Create a PyTorch Lightning trainer with the generation callback
+        # Create a PyTorch Lightning trainer with callbacks
         trainer = pl.Trainer(
             default_root_dir=os.path.join(sp, save_name),  # dir name to save models
-            precision=16, amp_backend='native',
+            # amp
+            precision = 16, amp_backend = 'native',
             # total num of epochs
-            max_epochs=300,
-            log_every_n_steps=15,
-            logger=wandb_logger,
-            # auto_lr_find=True,
-            # fast_dev_run=True,
-            strategy="ddp", accelerator="gpu", devices=3, 
+            max_epochs = 300,
+            # logger
+            logger = wandb_logger,
+            # log_steps
+            log_every_n_steps = 15,
+            # parallel computing
+            strategy = "ddp", accelerator = "gpu", devices = 3, 
+            # callbacks
             callbacks=[
-                
                 ModelCheckpoint(
+                    # name to save the model
                     filename='{epoch}-{val_loss:.2f}-{cos_sims:.2f}-{val_top1:.2f}', 
                     every_n_train_steps = None, save_top_k=1,
                     save_weights_only=True, mode="max", monitor="cos_sims" 
