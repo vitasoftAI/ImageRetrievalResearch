@@ -449,10 +449,13 @@ def run(args):
             ]
         )
         
-        trainer.logger._log_graph = True  # If True, we plot the computation graph in tensorboard
-        trainer.logger._default_hp_metric = None  # Optional logging argument that we don't need
+        # Train loggers
+        # Plot computation graph in TB
+        trainer.logger._log_graph = True  
+        # Optional logging argument
+        trainer.logger._default_hp_metric = None  
 
-        # Check whether pretrained model exists. If yes, load it and skip training
+        # Check the availability of the pretrained file
         pretrained_filename = os.path.join(sp, 'efficientnet_b3a_Adam_0.0047863', 'Sketchy-Dataset-Training', "3qz9sxmq", "checkpoints")
         # pretrained_filename = pretrained_filename + '/epoch=22-val_loss=0.31-cos_sims=0.93-val_top1=0.96.ckpt'
         if os.path.isfile(pretrained_filename):
