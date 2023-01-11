@@ -34,29 +34,36 @@ def run(args):
 
     # Set train dictionaries
     model_dict = {}
-    optimizer_hparams={"lr": lr, "weight_decay": wd}
-    model_dict[model_name] = 0 
-    os.system('wandb login 3204eaa1400fed115e40f43c7c6a5d62a0867ed1')     
     
+    # Optimizer
+    optimizer_hparams={"lr": lr, "weight_decay": wd}
+    
+    # Model
+    model_dict[model_name] = 0 
+    
+    # Augmentations
     transformations = {}   
 
+    # Query Image Transformations
     transformations['qry'] = transforms.Compose([
-                            transforms.Resize((224,224)),
-                            AutoAugment.ImageNetPolicy(),
-                            transforms.ToTensor(),
-                                                  ])
-
+                             transforms.Resize((224,224)),
+                             AutoAugment.ImageNetPolicy(),
+                             transforms.ToTensor()])
+    
+    # Positive Image Transformations
     transformations['pos'] = transforms.Compose([
         transforms.Resize((224,224)),
         AutoAugment.ImageNetPolicy(),
-        transforms.ToTensor(),
-    ])  
+        transforms.ToTensor()])  
+    
+    # Negative Image Transformations
     transformations['neg'] = transforms.Compose([
         transforms.Resize((224,224)),
         AutoAugment.ImageNetPolicy(),
-        transforms.ToTensor(),
-    ])
+        transforms.ToTensor()])
     
+    # Log
+    os.system('wandb login 3204eaa1400fed115e40f43c7c6a5d62a0867ed1')     
     out_path = "data/sketchy_database_256_soft_split_cat.json"
 
     tr_ds = SketchyImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='train', load_images=False)
