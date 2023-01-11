@@ -73,8 +73,10 @@ def run(args):
     val_ds = SketchyImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='val', load_images=False)
     test_ds = SketchyImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='test', load_images=False)
     
+    # Initialize project in wandb
     wandb_logger = WandbLogger(name=f'{model_name}_{datetime.now().strftime("%m/%d/%H:%M:%S")}_{bs}_{lr}', project='Sketchy-Dataset-Training')
-    # num_classes = tr_ds.get_prod_length()
+
+    # Get number of classes
     num_classes = tr_ds.get_cat_length()
     print(f"Number of train set images: {len(tr_ds)}")
     print(f"Number of validation set images: {len(val_ds)}")
@@ -83,6 +85,7 @@ def run(args):
     print(f"Validation dataset has {val_ds.get_cat_length()} classes")    
     print(f"Test dataset has {test_ds.get_cat_length()} classes")
     
+    # Initialize function to compute cosine similarity
     cos = CosineSimilarity(dim=1, eps=1e-6)
     train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
     val_loader = DataLoader(val_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
