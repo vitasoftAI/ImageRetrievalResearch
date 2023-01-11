@@ -115,17 +115,6 @@ def run(args):
         
         return torch.reshape(pool(fm), (-1, fm.shape[1]))
     
-    def cos_sim_score(score, eps, alpha, mode):
-        # if score > 0.5:
-        if mode == "for_pos":
-            if score < 0.3:
-                return (score + eps) / (eps + eps*alpha)
-            else:
-                return (score + eps) / (eps + alpha)
-        # elif score > 0.5:
-        elif mode == "for_neg":
-            return (score + (alpha / eps)) / (2*eps)
-    
     assert only_features or only_labels, "Please choose at least one loss function to train the model (triplet loss or crossentropy loss)"
     if only_features and only_labels:
         print("\nTrain using triplet loss and crossentropy loss\n")
@@ -134,9 +123,10 @@ def run(args):
     elif only_features == None and only_labels == True:
         print("\nTrain using only crossentropy loss\n")      
     
+    # Model class
     class Model(pl.LightningModule):
-
         def __init__(self, model_name,  optimizer_name, optimizer_hparams):
+
             """
             Gets model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
             
@@ -151,15 +141,18 @@ def run(args):
 
             # Create model
             self.model = create_model(model_name)
-            # Create loss module
+            
+            # Create loss modules
             self.cos_loss = CosineEmbeddingLoss(margin=0.5)
             self.ce_loss = CrossEntropyLoss()
-            # Example input for visualizing the graph in Tensorboard
+            
+            # Initialize example array
             self.example_input_array = torch.zeros((1, 3, 224, 224), dtype=torch.float32)
 
         def forward(self, inp):
             return self.model(inp)
         
+        # Optimizers function
         def configure_optimizers(self):
             # self.hparams['lr'] = self.hparams.optimizer_hparams['lr']
             if self.hparams.optimizer_name == "Adam":
