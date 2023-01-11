@@ -292,18 +292,30 @@ def run(args):
             
             # Initialize lists to track validation progress
             cos_sims, cos_unsims, cos_sims_pair, cos_unsims_pair = [], [], [], []
+            
+            # Get images and labels
             ims, poss, negs, clss, regs = batch['qry'], batch['pos'][0], batch['neg'][0], batch['cat_idx'], batch['prod_idx']
-
-            # Get feature maps and pred labels
+            
+            # Get feature maps of query images
             fm_ims = self.model.forward_features(ims)
             fm_ims = get_fm(fm_ims)
-            lbl_ims = self.model.classifier(fm_ims) # get feature maps [0] and predicted labels [1]
+            
+            # Get predicted labels for the query images
+            lbl_ims = self.model.classifier(fm_ims) 
+            
+            # Get feature maps of positive images
             fm_poss = self.model.forward_features(poss)
             fm_poss = get_fm(fm_poss)
+            
+            # Get predicted labels for the positive images
             lbl_poss = self.model.classifier(fm_poss)
+            
+            # Get feature maps of negative images
             fm_negs = self.model.forward_features(negs)
             fm_negs = get_fm(fm_negs)
-            lbl_negs = self.model.classifier(fm_negs)            
+            
+            # Get predicted labels for the negative images
+            lbl_negs = self.model.classifier(fm_negs)          
             
             # Compute loss
             if only_features and only_labels:
