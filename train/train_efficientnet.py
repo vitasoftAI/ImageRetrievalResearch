@@ -274,7 +274,19 @@ def run(args):
 
             return OD([('loss', loss)]) 
 
-        def validation_step(self, batch, batch_idx): # triplet loss 
+        # Function for validation step
+        def validation_step(self, batch, batch_idx): 
+            
+            """ 
+            
+            Gets batch and batch index performs one step of validation and returns validation loss along with cosine similarities. 
+            
+            Arguments:
+            batch - one batch of the validation dataloader;
+            batch_idx - batch index of the corresponding batch from the validation dataloader.
+            
+            """
+            
             self.model.eval()
             cos_sims, cos_unsims, cos_sims_pair, cos_unsims_pair = [], [], [], []
             ims, poss, negs, clss, regs = batch['qry'], batch['pos'][0], batch['neg'][0], batch['cat_idx'], batch['prod_idx']
@@ -337,9 +349,8 @@ def run(args):
             self.log("val_top3", top3 / len(lbl_ims))
             self.log("val_top1", top1 / len(lbl_ims))
             self.model.train()
-            return OD([('loss', loss), 
-                       # ('val_top3', top3),
-                       ('cos_sims', torch.mean(torch.FloatTensor(cos_sims)))])
+            
+            return OD([('loss', loss), ('cos_sims', torch.mean(torch.FloatTensor(cos_sims)))])
 
     def create_model(model_name, conv_input=False, num_classes=num_classes):
         
