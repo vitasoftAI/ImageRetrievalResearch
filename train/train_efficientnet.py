@@ -391,6 +391,7 @@ def run(args):
         
         """
 
+        # Check the model name in the model dictionary
         if model_name in model_dict:
             base_model = timm.create_model(model_name, pretrained=True, num_classes=num_classes)
             print(f"Model {model_name} with the best weights is successfully loaded!")  
@@ -409,14 +410,17 @@ def run(args):
             model_name - Name of the model you want to run. Is used to look up the class in "model_dict"
             save_name (optional) - If specified, this name will be used for creating the checkpoint and logging directory.
         """
+        
+        # Set the save name
         if save_name is None:
             save_name = model_name
 
         # Create a PyTorch Lightning trainer with the generation callback
         trainer = pl.Trainer(
-            default_root_dir=os.path.join(sp, save_name),  # dir name to save models
-            # Run on a single GPU (if possible)
-            # gpus=1 if str(device) == "cuda:1" else 0,
+            
+            # path to save the model checkpoint
+            default_root_dir = os.path.join(sp, save_name),  
+            
             precision=16, amp_backend='native',
             # total num of epochs
             max_epochs=300,
