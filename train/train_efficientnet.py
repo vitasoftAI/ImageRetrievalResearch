@@ -468,11 +468,16 @@ def run(args):
         # No checkpoint 
         else:
             pl.seed_everything(42) 
-            model = Model(model_name=model_name, **kwargs)
+            
+            # Create a model
+            model = Model(model_name = model_name, **kwargs)
+            
+            # Fit train and validation dataloaders
             trainer.fit(model, train_loader, val_loader)
 
         return model
     
+    # Start training
     trained_model = train_model(
     model_name=model_name, optimizer_name=optimizer_name, save_name=f"{model_name}_{optimizer_name}_{lr}",
     optimizer_hparams=optimizer_hparams)
