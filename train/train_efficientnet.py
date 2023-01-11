@@ -420,17 +420,18 @@ def run(args):
             
             # path to save the model checkpoint
             default_root_dir = os.path.join(sp, save_name),  
-            
-            precision=16, amp_backend='native',
-            # total num of epochs
-            max_epochs=300,
-            log_every_n_steps=15,
-            logger=wandb_logger,
-            # auto_lr_find=True,
-            # fast_dev_run=True,
-            strategy="ddp", accelerator="gpu", devices=3, 
-            callbacks=[
-                
+            # set amp option
+            precision = 16, amp_backend = 'native',
+            # epochs to train the model
+            max_epochs = 300,
+            # log steps            
+            log_every_n_steps = 15,
+            # logger
+            logger = wandb_logger,
+            # parallel computing options
+            strategy = "ddp", accelerator = "gpu", devices = 3, 
+            # callbacks
+            callbacks=[                
                 ModelCheckpoint(
                     filename='{epoch}-{val_loss:.2f}-{cos_sims:.2f}-{val_top1:.2f}', 
                     every_n_train_steps = None, save_top_k=1,
