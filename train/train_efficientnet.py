@@ -431,10 +431,14 @@ def run(args):
             # parallel computing options
             strategy = "ddp", accelerator = "gpu", devices = 3, 
             # callbacks
-            callbacks=[                
+            callbacks=[   
+                # Save model checkpoint
                 ModelCheckpoint(
+                    # filename to save the checkpoint
                     filename='{epoch}-{val_loss:.2f}-{cos_sims:.2f}-{val_top1:.2f}', 
+                    # saving options
                     every_n_train_steps = None, save_top_k=1,
+                    # metric tracking options
                     save_weights_only=True, mode="max", monitor="cos_sims" 
                 ),  # Save the best checkpoint based on the min val_loss recorded. Saves only weights and not optimizer
                 EarlyStopping(monitor="cos_sims", mode="max", patience=10, verbose=True), # set the metric (and change the mode!) to track for early stopping
