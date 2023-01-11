@@ -452,18 +452,22 @@ def run(args):
         )
         
         # Logger options
-        trainer.logger._log_graph = True  # If True, we plot the computation graph in tensorboard
-        trainer.logger._default_hp_metric = None  # Optional logging argument that we don't need
+        trainer.logger._log_graph = True  
+        trainer.logger._default_hp_metric = None
 
-        # Check whether pretrained model exists. If yes, load it and skip training
+        # Pretrained file check
         pretrained_filename = os.path.join(sp, 'rexnet_150_Adam_0.0003', 'Image Retrieval', "1tgu7vtc", "checkpoints")
         # pretrained_filename = pretrained_filename + '/epoch=3-val_loss=4.73-cos_sims=0.91-val_top1=0.48.ckpt'
+        
+        # If checkpoint exists
         if os.path.isfile(pretrained_filename):
             print(f"Found pretrained model at {pretrained_filename}, loading...")
-            # Automatically loads the model with the saved hyperparameters
+            # Load the pretrained model from the checkpoint
             model = Model.load_from_checkpoint(pretrained_filename)
+        
+        # No checkpoint 
         else:
-            pl.seed_everything(42)  # To be reproducable
+            pl.seed_everything(42) 
             model = Model(model_name=model_name, **kwargs)
             trainer.fit(model, train_loader, val_loader)
 
