@@ -206,12 +206,18 @@ def run(args):
             # Get predicted labels for the query images
             lbl_ims = self.model.classifier(fm_ims) 
             
-            
+            # Get feature maps of positive images
             fm_poss = self.model.forward_features(poss)
             fm_poss = get_fm(fm_poss)
+            
+            # Get predicted labels for the positive images
             lbl_poss = self.model.classifier(fm_poss)
+            
+            # Get feature maps of negative images
             fm_negs = self.model.forward_features(negs)
             fm_negs = get_fm(fm_negs)
+            
+            # Get predicted labels for the negative images
             lbl_negs = self.model.classifier(fm_negs)
             
             # Compute loss
