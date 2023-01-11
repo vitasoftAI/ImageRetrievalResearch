@@ -99,7 +99,20 @@ def run(args):
 
     # Function to get feature maps
     def get_fm(fm):
+        
+        """
+        
+        Gets feature maps with size (bs, fm, 7, 7), applies average pooling
+        and returns feature maps with (bs, fm) shape.
+        
+        Argument:
+        fm - feature map
+        
+        """
+        
+        # Initialize average pooling layer
         pool = AvgPool2d((fm.shape[2],fm.shape[3]))
+        
         return torch.reshape(pool(fm), (-1, fm.shape[1]))
     
     def cos_sim_score(score, eps, alpha, mode):
