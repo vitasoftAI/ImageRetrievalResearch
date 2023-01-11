@@ -287,7 +287,10 @@ def run(args):
             
             """
             
+            # Switch to evaluation mode
             self.model.eval()
+            
+            # Initialize lists to track validation progress
             cos_sims, cos_unsims, cos_sims_pair, cos_unsims_pair = [], [], [], []
             ims, poss, negs, clss, regs = batch['qry'], batch['pos'][0], batch['neg'][0], batch['cat_idx'], batch['prod_idx']
 
