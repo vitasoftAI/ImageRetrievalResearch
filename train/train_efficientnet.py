@@ -155,7 +155,11 @@ def run(args):
         # Optimizers function
         def configure_optimizers(self):
             
+            """
             
+            Gets optimizer name initialize it and returns the optimizer with the scheduler.
+            
+            """
             
             # AdamW optimizer
             if self.hparams.optimizer_name == "Adam":
@@ -176,8 +180,8 @@ def run(args):
         
             return [optimizer], [scheduler]
         
-        def training_step(self, batch, batch_idx): # triplet loss 
-            # "batch" is the output of the training data loader.
+        # Triplet model training step
+        def training_step(self, batch, batch_idx):
             
             cos_sims = []
             ims, poss, negs, clss, regs = batch['qry'], batch['pos'][0], batch['neg'][0], batch['cat_idx'], batch['prod_idx']
