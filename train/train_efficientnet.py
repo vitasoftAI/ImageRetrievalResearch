@@ -183,6 +183,17 @@ def run(args):
         # Triplet model training step
         def training_step(self, batch, batch_idx):
             
+            """ 
+            
+            Gets batch and batch index performs one step of training and returns train loss. 
+            
+            Arguments:
+            batch - one batch of the train dataloader;
+            batch_idx - batch index of the corresponding batch from the train dataloader.
+            
+            """
+            
+            # Initialize list to track cosine similarities
             cos_sims = []
             ims, poss, negs, clss, regs = batch['qry'], batch['pos'][0], batch['neg'][0], batch['cat_idx'], batch['prod_idx']
             
