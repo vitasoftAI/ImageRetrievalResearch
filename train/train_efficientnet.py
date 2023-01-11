@@ -249,11 +249,16 @@ def run(args):
                 loss_ce = loss_ce_ims
                 loss = loss_ce
                 
-            # Compute top3 and top1
-            top3, top1 = 0, 0            
+            # Set initial top3, top1
+            top3, top1 = 0, 0       
+            
+            # Go through every predicted label
             for idx, lbl_im in (enumerate(lbl_ims)):
-                # vals, inds = torch.topk(lbl_im, k=3)
-                sim = cos(fm_ims[idx].unsqueeze(0), fm_poss)  # batch                
+                
+                # Compute cosine similarity of the feature map with the all feature maps in the batch
+                sim = cos(fm_ims[idx].unsqueeze(0), fm_poss)
+                
+                # Get top3 values and indices
                 vals, inds = torch.topk(sim, k=3)
                 if clss[idx] == clss[inds[0]] or clss[idx] == clss[inds[1]] or clss[idx] == clss[inds[2]]:
                     top3 += 1
