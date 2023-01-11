@@ -319,19 +319,29 @@ def run(args):
             
             # Compute loss
             if only_features and only_labels:
+                
+                # Cosine Embedding Loss
                 loss_cos_poss = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) 
                 loss_cos_negs = self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss_cos = loss_cos_poss + loss_cos_negs
+                
+                # Cross Entropy Loss
                 loss_ce_ims = self.ce_loss(lbl_ims, clss)
                 loss_ce_poss = self.ce_loss(lbl_poss, clss)
                 loss_ce = loss_ce_ims + loss_ce_poss
                 loss = loss_cos + loss_ce
+                
             elif only_features == True and only_labels == None:
+                
+                # Cosine Embedding Loss
                 loss_cos_poss = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) 
                 loss_cos_negs = self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss_cos = loss_cos_poss + loss_cos_negs
-                loss = loss_cos                 
+                loss = loss_cos   
+                
             elif only_features == None and only_labels == True:
+                
+                # Cross Entropy Loss
                 loss_ce_ims = self.ce_loss(lbl_ims, regs)
                 loss_ce = loss_ce_ims
                 loss = loss_ce
