@@ -195,12 +195,18 @@ def run(args):
             
             # Initialize list to track cosine similarities
             cos_sims = []
+            
+            # Get images and labels
             ims, poss, negs, clss, regs = batch['qry'], batch['pos'][0], batch['neg'][0], batch['cat_idx'], batch['prod_idx']
             
-            # Get feature maps and pred labels
+            # Get feature maps of query images
             fm_ims = self.model.forward_features(ims)
             fm_ims = get_fm(fm_ims)
-            lbl_ims = self.model.classifier(fm_ims) # get feature maps [0] and predicted labels [1]
+            
+            # Get predicted labels for the query images
+            lbl_ims = self.model.classifier(fm_ims) 
+            
+            
             fm_poss = self.model.forward_features(poss)
             fm_poss = get_fm(fm_poss)
             lbl_poss = self.model.classifier(fm_poss)
