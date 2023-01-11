@@ -87,17 +87,17 @@ def run(args):
     
     # Initialize function to compute cosine similarity
     cos = CosineSimilarity(dim=1, eps=1e-6)
+    
+    # Initialize train, validation, and test dataloaders
     train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
     val_loader = DataLoader(val_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
     test_loader = DataLoader(test_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)  
+    
+    # Set labels for loss functions
     labels = {"pos": torch.tensor(1.).unsqueeze(0),
               "neg": torch.tensor(-1.).unsqueeze(0)}
-    
-    alpha = 1
-    eps = 5
-    # ce_weight = 1
-    ce_weight = 0.02
-    
+
+    # Function to get feature maps
     def get_fm(fm):
         pool = AvgPool2d((fm.shape[2],fm.shape[3]))
         return torch.reshape(pool(fm), (-1, fm.shape[1]))
