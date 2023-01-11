@@ -346,14 +346,20 @@ def run(args):
                 loss_ce = loss_ce_ims
                 loss = loss_ce
                 
-            # Compute top3 and top1
+            # Set initial top3 and top1
             top3, top1 = 0, 0
-            # print(len(lbl_ims))
-            # print(len(fm_ims))
+
+            # Go through every single predicted label
             for idx, lbl_im in (enumerate(lbl_ims)):
+                
+                # Compute cosine similarity of the query image with the corresponding positive image
                 sim_pair = cos(fm_ims[idx].unsqueeze(0), fm_poss[idx].unsqueeze(0)) 
+                
+                # Compute cosine similarity of the query image with the corresponding negative image
                 unsim_pair = cos(fm_ims[idx].unsqueeze(0), fm_negs[idx].unsqueeze(0)) 
-                sim = cos(fm_ims[idx].unsqueeze(0), fm_poss)  # batch                
+                
+                # Compute cosine similarities of the query image with all feature maps in the dataloader
+                sim = cos(fm_ims[idx].unsqueeze(0), fm_poss)                
                 cos_sims_pair.append(sim_pair)
                 cos_unsims_pair.append(unsim_pair)
                 # vals, inds = torch.topk(lbl_im, k=3)
