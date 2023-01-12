@@ -73,11 +73,15 @@ def roc_curve(path):
     # Add threshold column to the dataframe
     pivot["threshold"] = thresholds
     
+    # Compute AUC score
     auc = round(abs(np.trapz(pivot.tpr, pivot.fpr)), 4)
+    
+    # Visualization
     plt.scatter(pivot.fpr, pivot.tpr, label=f'AUC Score: {auc:.3f}', c='red', alpha=0.7)
     plt.plot([0, 1], c='blue', alpha=0.7)
     plt.xlabel('FAR (FPR)')
     plt.ylabel('FRR (TPR)')
     plt.legend()
 
+# Run the code
 roc_curve('binary-preds.csv')
