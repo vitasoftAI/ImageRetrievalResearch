@@ -158,9 +158,17 @@ def run(args):
         
             return [optimizer], [scheduler]
         
-        def training_step(self, batch, batch_idx): # triplet loss 
-            # "batch" is the output of the training data loader.
+        def training_step(self, batch, batch_idx): 
             
+            """
+            Gets batch and batch index and does one train step and returns train loss.
+            
+            Arguments:
+                batch - one batch with images;
+                batch_idx - index of the batch.
+            """
+            
+            # Initialize list to track cosine similarities 
             cos_sims = []
             ims, regs = batch
             
