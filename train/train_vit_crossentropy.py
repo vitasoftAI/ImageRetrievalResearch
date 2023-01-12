@@ -18,7 +18,6 @@ from torchvision.datasets import ImageFolder
 import AutoAugment
 from dataset import TripleDataset
 
-
 def run(args):
     
     # Get train arguments
@@ -170,14 +169,20 @@ def run(args):
             
             # Initialize list to track cosine similarities 
             cos_sims = []
+            
+            # Get images and labels
             ims, regs = batch
             
             # Get feature maps and pred labels
             lbl_ims = self.model(ims)
+            
+            # Compute loss
             loss = self.ce_loss(lbl_ims, regs)
             
+            # Set initial top3, top1 
             top3, top1 = 0, 0
             
+            # Go through every predicted label
             for idx, lbl_im in enumerate(lbl_ims):
                 
                 vals, inds = torch.topk(lbl_im, k=3)
