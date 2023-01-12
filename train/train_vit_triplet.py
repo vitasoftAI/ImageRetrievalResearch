@@ -44,8 +44,6 @@ def run(args):
     # Optimizer
     optimizer_hparams={"lr": lr, "weight_decay": wd}
     
-    os.system('wandb login 3204eaa1400fed115e40f43c7c6a5d62a0867ed1')     
-    
     t = transforms.Compose([transforms.ToTensor()])
 
     ds = TripleDataset('/home/ubuntu/workspace/bekhzod/pytorch-image-models/dataset/real/', '/home/ubuntu/workspace/bekhzod/pytorch-image-models/dataset/sketch/', transform=t)
@@ -59,6 +57,10 @@ def run(args):
         pool = AvgPool2d((fm.shape[2],fm.shape[3]))
         return torch.reshape(pool(fm), (-1, fm.shape[1]))
     
+    # Wandb login
+    os.system('wandb login 3204eaa1400fed115e40f43c7c6a5d62a0867ed1')     
+    
+    # Initialize a new run (a new project)
     wandb_logger = WandbLogger(name=f'{model_name}_{datetime.now().strftime("%m/%d/%H:%M:%S")}_triplet_training', project='Triplet-Training')
     # num_classes = tr_ds.get_prod_length()
     print(f"Number of train set images: {len(tr_ds)}")
