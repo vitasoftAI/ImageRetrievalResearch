@@ -317,28 +317,30 @@ def run(args):
         # if exists
         if os.path.isfile(pretrained_filename):
             print(f"Found pretrained model at {pretrained_filename}, loading...")
-            # Automatically loads the model with the saved hyperparameters
+            
+            # Load from the checkpoint
             model = Model.load_from_checkpoint(pretrained_filename)
+        
+        # If doesn't exist
         else:
-            pl.seed_everything(42)  # To be reproducable
+            pl.seed_everything(42) 
+            # Initialize model
             model = Model(model_name=model_name, **kwargs)
-            # lr_finder = trainer.tuner.lr_find(model)
-            # model.hparams.learning_rate = lr_finder.suggestion()
+            # Fit the model with train and validation dataloaders
             trainer.fit(model, train_loader, val_loader)
 
         return model
 
-    
+    # Train model
     trained_model = train_model(
-    model_name=model_name, optimizer_name=optimizer_name, save_name=f"{model_name}_{optimizer_name}_{lr}",
-    optimizer_hparams=optimizer_hparams)
+    model_name = model_name, optimizer_name = optimizer_name, save_name = f"{model_name}_{optimizer_name}_{lr}",
+    optimizer_hparams = optimizer_hparams)
 
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description='Triplet Loss PyTorch Lightning Arguments')
     parser.add_argument('-ed', '--expdir', default=None, help='Experiment directory')
     parser.add_argument("-sp", "--save_path", type=str, default='saved_models', help="Path to save trained models")
-#     parser.add_argument('-cp', '--checkpoint_path', type=str, default="/home/ubuntu/workspace/bekhzod/triplet-loss-pytorch/pytorch_lightning/saved_models/model_best.pth.tar", help='Path to the trained model')
     parser.add_argument("-bs", "--batch_size", type=int, default=32, help="Batch size")
     parser.add_argument("-d", "--device", type=str, default='cuda:1', help="GPU device number")
     parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/bekhzod/pytorch-image-models/dataset/real', help="Path to the images")
