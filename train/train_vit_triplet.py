@@ -44,10 +44,14 @@ def run(args):
     # Optimizer
     optimizer_hparams={"lr": lr, "weight_decay": wd}
     
+    # Initialize transformations
     t = transforms.Compose([transforms.ToTensor()])
 
+    # Get dataset
     ds = TripleDataset('/home/ubuntu/workspace/bekhzod/pytorch-image-models/dataset/real/', '/home/ubuntu/workspace/bekhzod/pytorch-image-models/dataset/sketch/', transform=t)
     print(len(ds))
+    
+    # Split the dataset into train and validation sets
     tr_ds, val_ds = torch.utils.data.random_split(ds, [5000, 474])
     train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=False, drop_last=False, num_workers=8)
     val_loader = DataLoader(val_ds, batch_size=bs, shuffle=False, drop_last=False, num_workers=8)
