@@ -22,14 +22,21 @@ def roc_curve(path):
     # Initialize a list for roc points
     roc_point = []
 
+    # Go through every threshold
     for threshold in thresholds:
-
+        
+        # Initialize True Positives, False Positives,
+        # False Negatives, True Negatives
         tp = 0; fp = 0; fn = 0; tn = 0
 
+        # Go through every row of the dataframe
         for index, instance in df.iterrows():
+            
+            # Get gts and predictions
             actual = instance["actual"]
             prediction = instance["prediction"]
 
+            # Classify based on the threshold
             if prediction >= threshold:
                 prediction_class = 1
             else:
