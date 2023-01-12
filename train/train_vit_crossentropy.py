@@ -52,11 +52,17 @@ def run(args):
     len_ds = len(ds)
     print(len(ds))
     
-    
+    # Get number of classes
     num_classes = len(ds.classes)
+    
+    # Split the dataset into train and validation
     tr_ds, val_ds = torch.utils.data.random_split(ds, [int(len_ds * 0.8), int(len_ds - int(len_ds * 0.8))])
+    
+    # Initialize train and validation dataloaders
     train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=False, drop_last=False, num_workers=8)
     val_loader = DataLoader(val_ds, batch_size=bs, shuffle=False, drop_last=False, num_workers=8)
+    
+    # 
     
     def get_fm(fm):
         pool = AvgPool2d((fm.shape[2],fm.shape[3]))
