@@ -153,7 +153,7 @@ def run(args):
                 assert False, f'Unknown optimizer: "{self.hparams.optimizer_name}"'
             
             # Initialize scheduler
-            scheduler = MultiStepLR(optimizer=optimizer, milestones=[10,20,30,40, 50], gamma=0.1, verbose=True)
+            scheduler = MultiStepLR(optimizer=optimizer, milestones=[10,20,30,40, 50], gamma = 0.1, verbose=True)
         
             return [optimizer], [scheduler]
         
@@ -261,7 +261,7 @@ def run(args):
             
         return model
 
-    def train_model(model_name, save_name=None, **kwargs):
+    def train_model(model_name, save_name = None, **kwargs):
         
         """
         Trains the model and returns trained model with its results.
@@ -270,26 +270,30 @@ def run(args):
             model_name - Name of the model you want to run. Is used to look up the class in "model_dict"
             save_name (optional) - If specified, this name will be used for creating the checkpoint and logging directory.
         """
+        
+        # Set save name
         if save_name is None:
             save_name = model_name
 
-        # Create a PyTorch Lightning trainer with the generation callback
+        # Initialize trainer
         trainer = pl.Trainer(
-            default_root_dir=os.path.join(sp, save_name),  # dir name to save models
-            # Run on a single GPU (if possible)
-            # gpus=1 if str(device) == "cuda:1" else 0,
-            precision=16, amp_backend='native',
-            # total num of epochs
-            max_epochs=300,
-            log_every_n_steps=15,
-            logger=wandb_logger,
-            # auto_lr_find=True,
-            # fast_dev_run=True,
-            strategy="ddp", accelerator="gpu", devices=3, 
-            callbacks=[
-                
+            # path to save a trained model
+            default_root_dir = os.path.join(sp, save_name),  
+            # amp options
+            precision = 16, amp_backend = 'native',
+            # train epochs
+            max_epochs = 300,
+            # log steps
+            logger = wandb_logger,
+            log_every_n_steps = 15,            
+            # parallel computing
+            strategy = "ddp", accelerator = "gpu", devices = 3, 
+            # callbacks
+            callbacks=[                
+                # Checkpoint
                 ModelCheckpoint(
-                    filename='{epoch}-{val_loss:.2f}-{train_loss:.2f}-{val_top1:.2f}', 
+                    # name to save checkpoints
+                    filename = '{epoch}-{val_loss:.2f}-{train_loss:.2f}-{val_top1:.2f}', 
                     every_n_train_steps = None, save_top_k=1,
                     save_weights_only=True, mode="max", monitor="val_top1" 
                 ),  # Save the best checkpoint based on the min val_loss recorded. Saves only weights and not optimizer
