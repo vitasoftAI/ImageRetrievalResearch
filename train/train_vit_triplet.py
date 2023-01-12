@@ -37,8 +37,11 @@ def run(args):
     print(f"\nTraining Arguments:\n{argstr}\n")
     
     # Initialize train dictionaries
+    # Model
     model_dict = {}
     model_dict[model_name] = 0 
+    
+    # Optimizer
     optimizer_hparams={"lr": lr, "weight_decay": wd}
     
     os.system('wandb login 3204eaa1400fed115e40f43c7c6a5d62a0867ed1')     
