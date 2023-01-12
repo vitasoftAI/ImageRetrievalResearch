@@ -42,17 +42,17 @@ def run(args):
     model_dict[model_name] = 0 
     # for optimizer;
     optimizer_hparams={"lr": lr, "weight_decay": wd}
-
-    # Set path with images
-    path = "/home/ubuntu/workspace/bekhzod/pytorch-image-models/dataset/real"
     
     # Initialize transformations
     t = transforms.Compose([transforms.ToTensor()])
     
     # Get dataset
-    ds = ImageFolder(path, transform=t)
+    ds = ImageFolder(path, transform = t)
+    # Get length of the dataset
     len_ds = len(ds)
     print(len(ds))
+    
+    
     num_classes = len(ds.classes)
     tr_ds, val_ds = torch.utils.data.random_split(ds, [int(len_ds * 0.8), int(len_ds - int(len_ds * 0.8))])
     train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=False, drop_last=False, num_workers=8)
@@ -366,7 +366,7 @@ if __name__ == "__main__":
 #     parser.add_argument('-cp', '--checkpoint_path', type=str, default="/home/ubuntu/workspace/bekhzod/triplet-loss-pytorch/pytorch_lightning/saved_models/model_best.pth.tar", help='Path to the trained model')
     parser.add_argument("-bs", "--batch_size", type=int, default=32, help="Batch size")
     parser.add_argument("-d", "--device", type=str, default='cuda:1', help="GPU device number")
-    parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/test_dataset_svg/pass_images_dataset_spec49', help="Path to the images")
+    parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/bekhzod/pytorch-image-models/dataset/real', help="Path to the images")
     parser.add_argument("-mn", "--model_name", type=str, default='swin_s3_base_224', help="Model name (from timm library (ex. darknet53, ig_resnext101_32x32d))")
     parser.add_argument("-on", "--optimizer_name", type=str, default='Adam', help="Optimizer name (Adam or SGD)")
     parser.add_argument("-lr", "--learning_rate", type=float, default=1e-3, help="Learning rate value")
