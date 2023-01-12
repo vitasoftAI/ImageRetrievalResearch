@@ -81,13 +81,15 @@ def run(args):
         
         return torch.reshape(pool(fm), (-1, fm.shape[1]))
     
+    # Log in wandb
     os.system('wandb login 3204eaa1400fed115e40f43c7c6a5d62a0867ed1')     
+    
+    # Initialize a new run (a new project)
     wandb_logger = WandbLogger(name=f'{model_name}_{datetime.now().strftime("%m/%d/%H:%M:%S")}_{os.path.basename(path)}_training', project='Classification')
-    # num_classes = tr_ds.get_prod_length()
+
     print(f"Number of train set images: {len(tr_ds)}")
     print(f"Number of validation set images: {len(val_ds)}")
     print(f"\nTrain dataset has {num_classes} classes")
-    # print(f"Validation dataset has {len(val_ds.classes)} classes")
     
     cos = CosineSimilarity(dim=1, eps=1e-6)
     labels = {"pos": torch.tensor(1.).unsqueeze(0),
