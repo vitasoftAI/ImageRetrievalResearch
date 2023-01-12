@@ -21,7 +21,7 @@ from dataset import TripleDataset
 
 def run(args):
     
-    model_dict = {}
+    # Get train arguments
     sp = args.save_path
     bs = args.batch_size
     expdir = args.expdir
@@ -31,20 +31,25 @@ def run(args):
     optimizer_name=args.optimizer_name
     lr = args.learning_rate
     wd = args.weight_decay
-#     checkpoint_path = args.checkpoint_path
     only_features = args.only_feature_embeddings
     only_labels = args.only_target_labels
-        
-    
     argstr = yaml.dump(args.__dict__, default_flow_style=False)
     print(f"\nTraining Arguments:\n{argstr}\n")
     
-    optimizer_hparams={"lr": lr, "weight_decay": wd}
+    # Initialize train dictionaries:
+    # for model;
+    model_dict = {}    
     model_dict[model_name] = 0 
-    os.system('wandb login 3204eaa1400fed115e40f43c7c6a5d62a0867ed1')     
-    
+    # for optimizer;
+    optimizer_hparams={"lr": lr, "weight_decay": wd}
+
+    # Set path with images
     path = "/home/ubuntu/workspace/bekhzod/pytorch-image-models/dataset/real"
+    
+    # Initialize transformations
     t = transforms.Compose([transforms.ToTensor()])
+    
+    # Get dataset
     ds = ImageFolder(path, transform=t)
     len_ds = len(ds)
     print(len(ds))
@@ -58,6 +63,7 @@ def run(args):
         return torch.reshape(pool(fm), (-1, fm.shape[1]))
     
     
+    os.system('wandb login 3204eaa1400fed115e40f43c7c6a5d62a0867ed1')     
     wandb_logger = WandbLogger(name=f'{model_name}_{datetime.now().strftime("%m/%d/%H:%M:%S")}_{os.path.basename(path)}_training', project='Classification')
     # num_classes = tr_ds.get_prod_length()
     print(f"Number of train set images: {len(tr_ds)}")
