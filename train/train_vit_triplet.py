@@ -53,8 +53,12 @@ def run(args):
     
     # Split the dataset into train and validation sets
     tr_ds, val_ds = torch.utils.data.random_split(ds, [5000, 474])
-    train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=False, drop_last=False, num_workers=8)
-    val_loader = DataLoader(val_ds, batch_size=bs, shuffle=False, drop_last=False, num_workers=8)
+    
+    # Initialize train and validation dataloaders
+    train_loader = DataLoader(tr_ds, batch_size = bs, shuffle = False, drop_last = False, num_workers = 8)
+    val_loader = DataLoader(val_ds, batch_size = bs, shuffle = False, drop_last = False, num_workers = 8)
+    
+    # Get number of classes
     num_classes = len(ds.classes)
     
     def get_fm(fm):
