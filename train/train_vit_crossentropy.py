@@ -231,19 +231,18 @@ def run(args):
                 
                 # Get top3 values and indices
                 vals, inds = torch.topk(lbl_im, k=3)
-                if regs[idx] == regs[inds[0]] or regs[idx] == regs[inds[1]] or regs[idx] == regs[inds[2]]:
-                    top3 += 1
-                if regs[idx] in regs[inds[0]]:
-                    top1 += 1
+                
+                # Top3
+                if regs[idx] == regs[inds[0]] or regs[idx] == regs[inds[1]] or regs[idx] == regs[inds[2]]: top3 += 1
+                # Top1
+                if regs[idx] in regs[inds[0]]: top1 += 1
 
-            # Logs the loss per epoch to tensorboard (weighted average over batches)
+            # Wandb logs
             self.log("val_loss", loss)
             self.log("val_top3", top3 / len(lbl_ims))
             self.log("val_top1", top1 / len(lbl_ims))
 
-            # return OD([('loss', loss), ('val_top3', top3), ('val_top1', top1)]) 
-            return OD([('loss', loss), ('val_top3', top3),
-                       ('cos_sims', torch.mean(torch.FloatTensor(cos_sims)))])
+            return OD([('loss', loss), ('val_top3', top3), ('cos_sims', torch.mean(torch.FloatTensor(cos_sims)))])
 
         def test_step(self, batch, batch_idx): # triplet loss 
             
