@@ -11,12 +11,11 @@ def cos_sim_score_with_threshold(score, eps, alpha, threshold):
         threshold - value to classify the score as positive or negative.
     '''   
     
+    # Show initial score
     print(f"Original score: {score}")
     if score >= threshold:
-        # print("Classified as positive, boosting the score!")
         return (score + eps) / (eps + alpha)
     elif score < threshold:
-        # print("Classified as negative, decreasing the score!")
         return abs((score + (alpha / eps)) / (2*eps))
 
 def cos_sim_score_booster(score, eps, alpha, mode):
