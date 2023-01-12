@@ -185,20 +185,23 @@ def run(args):
             # Go through every predicted label
             for idx, lbl_im in enumerate(lbl_ims):
                 
+                # Get top3 values and indices
                 vals, inds = torch.topk(lbl_im, k=3)
-                if regs[idx] == regs[inds[0]] or regs[idx] == regs[inds[1]] or regs[idx] == regs[inds[2]]:
-                    top3 += 1
-                if regs[idx] in regs[inds[0]]:
-                    top1 += 1
+                
+                # Top3
+                if regs[idx] == regs[inds[0]] or regs[idx] == regs[inds[1]] or regs[idx] == regs[inds[2]]: top3 += 1
+                
+                # Top1
+                if regs[idx] in regs[inds[0]]: top1 += 1
 
-            # Logs the loss per epoch to tensorboard (weighted average over batches)
+            # Wandb logs
             self.log("train_loss", loss)
             self.log("train_top3", top3 / len(lbl_ims))
             self.log("train_top1", top1 / len(lbl_ims))
 
-            return OD([('loss', loss)]) #, ('train_top3', top3 / len(ims)), ('train_top1', top1 / len(ims))])  # Return tensor to call ".backward" on
+            return OD([('loss', loss)])
 
-        def validation_step(self, batch, batch_idx): # triplet loss 
+        def validation_step(self, batch, batch_idx):
 
             cos_sims, cos_unsims, cos_sims_pair, cos_unsims_pair = [], [], [], []
             ims, regs = batch
