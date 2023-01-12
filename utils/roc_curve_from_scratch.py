@@ -13,10 +13,13 @@ def roc_curve(path):
         path - a path to the csv file with scores.
     '''   
     
+    # Read the csv file
     df = pd.read_csv(path)
-
+    
+    # Set thresholds list
     thresholds = list(np.array(list(range(0, 105, 5)))/100)
 
+    # Initialize a list for roc points
     roc_point = []
 
     for threshold in thresholds:
