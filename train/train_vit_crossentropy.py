@@ -211,17 +211,25 @@ def run(args):
                 batch_idx - index of the batch.
             """
 
+            # Initialize lists to track the metrics 
             cos_sims, cos_unsims, cos_sims_pair, cos_unsims_pair = [], [], [], []
+            
+            # Get images and labels
             ims, regs = batch
             
             # Get feature maps and pred labels
             lbl_ims = self.model(ims)
+            
+            # Compute loss
             loss = self.ce_loss(lbl_ims, regs)
             
+            # Set initial top3, top1
             top3, top1 = 0, 0
             
+            # Go through every predicted label
             for idx, lbl_im in enumerate(lbl_ims):
                 
+                # Get top3 values and indices
                 vals, inds = torch.topk(lbl_im, k=3)
                 if regs[idx] == regs[inds[0]] or regs[idx] == regs[inds[1]] or regs[idx] == regs[inds[2]]:
                     top3 += 1
