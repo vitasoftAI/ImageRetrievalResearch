@@ -289,24 +289,32 @@ def run(args):
             # parallel computing
             strategy = "ddp", accelerator = "gpu", devices = 3, 
             # callbacks
-            callbacks=[                
+            callbacks = [                
                 # Checkpoint
                 ModelCheckpoint(
                     # name to save checkpoints
                     filename = '{epoch}-{val_loss:.2f}-{train_loss:.2f}-{val_top1:.2f}', 
-                    every_n_train_steps = None, save_top_k=1,
-                    save_weights_only=True, mode="max", monitor="val_top1" 
-                ),  # Save the best checkpoint based on the min val_loss recorded. Saves only weights and not optimizer
-                EarlyStopping(monitor="val_top1", mode="max", patience=20, verbose=True), # set the metric (and change the mode!) to track for early stopping
-                LearningRateMonitor("epoch"), # Log learning rate every epoch
+                    # save options
+                    every_n_train_steps = None, save_top_k = 1,
+                    # monitor options
+                    save_weights_only = True, mode = "max", monitor = "val_top1" 
+                ),
+                # Early Stopping
+                EarlyStopping(monitor = "val_top1", mode = "max", patience = 20, verbose = True),
+                # Log lr every epoch
+                LearningRateMonitor("epoch"), 
             ]
         )
-        trainer.logger._log_graph = True  # If True, we plot the computation graph in tensorboard
-        trainer.logger._default_hp_metric = None  # Optional logging argument that we don't need
+        
+        # Loggers
+        trainer.logger._log_graph = True 
+        trainer.logger._default_hp_metric = None
 
-        # Check whether pretrained model exists. If yes, load it and skip training
+        # Check the availability of the pretrained file
         pretrained_filename = os.path.join(sp, 'rexnet_150_Adam_0.0003', 'Image Retrieval', "1tgu7vtc", "checkpoints")
         # pretrained_filename = pretrained_filename + '/epoch=3-val_loss=4.73-cos_sims=0.91-val_top1=0.48.ckpt'
+        
+        # if exists
         if os.path.isfile(pretrained_filename):
             print(f"Found pretrained model at {pretrained_filename}, loading...")
             # Automatically loads the model with the saved hyperparameters
