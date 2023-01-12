@@ -110,6 +110,7 @@ def run(args):
     class Model(pl.LightningModule):
 
         def __init__(self, model_name,  optimizer_name, optimizer_hparams):
+            
             """
             Gets model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
             
@@ -118,23 +119,25 @@ def run(args):
                 optimizer_name - Name of the optimizer to use. Currently supported: Adam, SGD
                 optimizer_hparams - Hyperparameters for the optimizer, as dictionary. This includes learning rate, weight decay, etc.
             """
+            
             super().__init__()
             # Exports the hyperparameters to a YAML file, and create "self.hparams" namespace
             self.save_hyperparameters()
 
-            # Create model
+            # Create a model
             self.model = create_model(model_name)
-            # Create loss module
+            # Create loss modules
             self.cos_loss = CosineEmbeddingLoss(margin=0.2)
             self.ce_loss = CrossEntropyLoss()
-            # Example input for visualizing the graph in Tensorboard
+            
+            # Example input
             self.example_input_array = torch.zeros((1, 3, 224, 224), dtype=torch.float32)
 
         def forward(self, inp):
             return self.model(inp)
         
+        # Optimizer configurations
         def configure_optimizers(self):
-            # self.hparams['lr'] = self.hparams.optimizer_hparams['lr']
             if self.hparams.optimizer_name == "Adam":
                 # AdamW is Adam with a correct implementation of weight decay (see here
                 # for details: https://arxiv.org/pdf/1711.05101.pdf)
