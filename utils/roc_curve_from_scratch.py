@@ -41,13 +41,20 @@ def roc_curve(path):
                 prediction_class = 1
             else:
                 prediction_class = 0
-
+            
+            # Compute True Positives
             if prediction_class == 1 and actual == 1:
                 tp = tp + 1
+            
+            # Compute False Negatives
             elif actual == 1 and prediction_class == 0:
                 fn = fn + 1
+            
+            # Compute False Positives
             elif actual == 0 and prediction_class == 1: 
                 fp = fp + 1
+                
+            # Compute True Negatives
             elif actual == 0 and prediction_class == 0:
                 tn = tn + 1
 
