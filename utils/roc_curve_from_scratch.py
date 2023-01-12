@@ -58,10 +58,19 @@ def roc_curve(path):
             elif actual == 0 and prediction_class == 0:
                 tn = tn + 1
 
+        # Calculate True Positive Rate
         tpr = tp / (tp + fn)
+        
+        # Calculate False Positive Rate
         fpr = fp / (tn + fp)
+        
+        # Add TPR and FPR to the list
         roc_point.append([tpr, fpr])
+    
+    # Create a dataframe
     pivot = pd.DataFrame(roc_point, columns = ["tpr", "fpr"])
+    
+    # Add threshold column to the dataframe
     pivot["threshold"] = thresholds
     
     auc = round(abs(np.trapz(pivot.tpr, pivot.fpr)), 4)
