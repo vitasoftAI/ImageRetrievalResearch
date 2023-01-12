@@ -21,7 +21,7 @@ from dataset import TripleDataset
 
 def run(args):
     
-    model_dict = {}
+    # Get train arguments
     sp = args.save_path
     bs = args.batch_size
     expdir = args.expdir
@@ -31,16 +31,16 @@ def run(args):
     optimizer_name=args.optimizer_name
     lr = args.learning_rate
     wd = args.weight_decay
-#     checkpoint_path = args.checkpoint_path
     only_features = args.only_feature_embeddings
     only_labels = args.only_target_labels
-        
-    
     argstr = yaml.dump(args.__dict__, default_flow_style=False)
     print(f"\nTraining Arguments:\n{argstr}\n")
     
-    optimizer_hparams={"lr": lr, "weight_decay": wd}
+    # Initialize train dictionaries
+    model_dict = {}
     model_dict[model_name] = 0 
+    optimizer_hparams={"lr": lr, "weight_decay": wd}
+    
     os.system('wandb login 3204eaa1400fed115e40f43c7c6a5d62a0867ed1')     
     
     t = transforms.Compose([transforms.ToTensor()])
