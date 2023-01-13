@@ -138,7 +138,8 @@ def run(args):
         
         # Initialize an optimizer
         def configure_optimizers(self):
-            # self.hparams['lr'] = self.hparams.optimizer_hparams['lr']
+            
+            # AdamW
             if self.hparams.optimizer_name == "Adam":
                 # AdamW is Adam with a correct implementation of weight decay (see here
                 # for details: https://arxiv.org/pdf/1711.05101.pdf)
