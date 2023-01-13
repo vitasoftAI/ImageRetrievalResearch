@@ -196,6 +196,8 @@ def run(args):
             
             # Go through every feature map
             for idx, fm in (enumerate(fm_ims)):
+                
+                # Compute cosine similarity of the fm of the query image with it's corresponding positive image feature map
                 sim_pair = cos(fm_ims[idx].unsqueeze(0), fm_poss[idx].unsqueeze(0)) 
                 unsim_pair = cos(fm_ims[idx].unsqueeze(0), fm_negs[idx].unsqueeze(0)) 
                 sim = cos(fm_ims[idx].unsqueeze(0), fm_poss)  # batch                
