@@ -191,7 +191,7 @@ def run(args):
                 loss_ce = loss_ce_ims
                 loss = loss_ce
                 
-            
+            # Set initial top3, top1
             top3, top1 = 0, 0            
             for idx, fm in (enumerate(fm_ims)):
                 sim_pair = cos(fm_ims[idx].unsqueeze(0), fm_poss[idx].unsqueeze(0)) 
