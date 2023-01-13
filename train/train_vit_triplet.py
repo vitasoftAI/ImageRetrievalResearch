@@ -132,6 +132,7 @@ def run(args):
             # Example tensor
             self.example_input_array = torch.zeros((1, 3, 224, 224), dtype=torch.float32)
 
+        # Forward function of the model    
         def forward(self, inp):
             return self.model(inp)
         
