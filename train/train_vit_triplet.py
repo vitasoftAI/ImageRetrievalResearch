@@ -119,7 +119,7 @@ def run(args):
             
             super().__init__()
             
-            # Exports the hyperparameters to a YAML file, and create "self.hparams" namespace
+            # Save hyperparameters
             self.save_hyperparameters()
 
             # Create model
