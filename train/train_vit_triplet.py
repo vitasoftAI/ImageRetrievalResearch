@@ -63,6 +63,13 @@ def run(args):
     
     # Function to get feature maps
     def get_fm(fm):
+        
+        """
+        
+        Gets feature map with size (bs, fm_shape, 7, 7)
+        applies average pooling and returns feature map
+        with shape (bs, fm_shape).
+        
         pool = AvgPool2d((fm.shape[2],fm.shape[3]))
         return torch.reshape(pool(fm), (-1, fm.shape[1]))
     
