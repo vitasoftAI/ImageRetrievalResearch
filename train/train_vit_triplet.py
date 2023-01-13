@@ -193,6 +193,8 @@ def run(args):
                 
             # Set initial top3, top1
             top3, top1 = 0, 0            
+            
+            # Go through every feature map
             for idx, fm in (enumerate(fm_ims)):
                 sim_pair = cos(fm_ims[idx].unsqueeze(0), fm_poss[idx].unsqueeze(0)) 
                 unsim_pair = cos(fm_ims[idx].unsqueeze(0), fm_negs[idx].unsqueeze(0)) 
