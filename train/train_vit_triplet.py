@@ -61,6 +61,7 @@ def run(args):
     # Get number of classes
     num_classes = len(ds.classes)
     
+    # Function to get feature maps
     def get_fm(fm):
         pool = AvgPool2d((fm.shape[2],fm.shape[3]))
         return torch.reshape(pool(fm), (-1, fm.shape[1]))
