@@ -154,6 +154,7 @@ def run(args):
         
             return [optimizer], [scheduler]
         
+        # One training step
         def training_step(self, batch, batch_idx): # triplet loss 
             # "batch" is the output of the training data loader.
             
