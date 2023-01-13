@@ -180,6 +180,8 @@ def run(args):
             
             # Compute loss
             if only_features == True and only_labels == None:
+                
+                # Cosine embedding loss
                 loss_cos_poss = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) 
                 loss_cos_negs = self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss_cos = loss_cos_poss + loss_cos_negs
