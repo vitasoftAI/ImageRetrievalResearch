@@ -104,7 +104,6 @@ def run(args):
     labels = {"pos": torch.tensor(1.).unsqueeze(0),
               "neg": torch.tensor(-1.).unsqueeze(0)}
     
-    
     assert only_features or only_labels, "Please choose at least one loss function to train the model (triplet loss or crossentropy loss)"
     if only_features and only_labels:
         print("\nTrain using triplet loss and crossentropy loss\n")
