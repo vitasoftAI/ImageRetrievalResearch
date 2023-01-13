@@ -188,11 +188,10 @@ def run(args):
                 loss = loss_cos                 
             elif only_features == None and only_labels == True:
                 loss_ce_ims = self.ce_loss(lbl_ims, regs)
-                # loss_ce_poss = self.ce_loss(lbl_poss, regs)
                 loss_ce = loss_ce_ims
-                # loss_ce = loss_ce_poss
                 loss = loss_ce
                 
+            
             top3, top1 = 0, 0            
             for idx, fm in (enumerate(fm_ims)):
                 sim_pair = cos(fm_ims[idx].unsqueeze(0), fm_poss[idx].unsqueeze(0)) 
