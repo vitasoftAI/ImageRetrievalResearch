@@ -11,8 +11,6 @@ from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.loggers import WandbLogger
 from collections import OrderedDict as OD
 from collections import namedtuple as NT
-from softdataset import TripletImageDataset
-from original_dataset import OriginalImageDataset, data_split
 from tqdm import tqdm
 from torchvision.datasets import ImageFolder
 from dataset import TripleDataset
