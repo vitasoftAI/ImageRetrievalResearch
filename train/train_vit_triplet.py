@@ -148,6 +148,8 @@ def run(args):
             # SGD
             elif self.hparams.optimizer_name == "SGD":
                 optimizer = torch.optim.SGD(self.parameters(), **self.hparams.optimizer_hparams)
+            
+            # Other optimizer name
             else:
                 assert False, f'Unknown optimizer: "{self.hparams.optimizer_name}"'
             
