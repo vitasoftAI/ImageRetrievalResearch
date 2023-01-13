@@ -124,7 +124,8 @@ def run(args):
 
             # Create model
             self.model = create_model(model_name)
-            # Create loss module
+            
+            # Create loss modules
             self.cos_loss = CosineEmbeddingLoss(margin=0.2)
             self.ce_loss = CrossEntropyLoss()
             # Example input for visualizing the graph in Tensorboard
