@@ -169,6 +169,8 @@ def run(args):
             
             # Initialize a list to track cosine similarities
             cos_sims = []
+            
+            # Get images and labels
             ims, poss, negs, regs = batch['P'], batch['S'], batch['N'], batch['L'] 
             
             fm_ims = self.model(ims)
