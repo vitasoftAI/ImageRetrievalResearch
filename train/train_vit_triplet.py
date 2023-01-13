@@ -173,6 +173,7 @@ def run(args):
             # Get images and labels
             ims, poss, negs, regs = batch['P'], batch['S'], batch['N'], batch['L'] 
             
+            # Get predicted labels
             fm_ims = self.model(ims)
             fm_poss = self.model(poss)
             fm_negs = self.model(negs)
