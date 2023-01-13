@@ -129,7 +129,7 @@ def run(args):
             self.cos_loss = CosineEmbeddingLoss(margin=0.2) # for triplet
             self.ce_loss = CrossEntropyLoss() # for classification
             
-            # Example input for visualizing the graph in Tensorboard
+            # Example tensor
             self.example_input_array = torch.zeros((1, 3, 224, 224), dtype=torch.float32)
 
         def forward(self, inp):
