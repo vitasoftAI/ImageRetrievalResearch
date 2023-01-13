@@ -126,8 +126,9 @@ def run(args):
             self.model = create_model(model_name)
             
             # Create loss modules
-            self.cos_loss = CosineEmbeddingLoss(margin=0.2)
-            self.ce_loss = CrossEntropyLoss()
+            self.cos_loss = CosineEmbeddingLoss(margin=0.2) # for triplet
+            self.ce_loss = CrossEntropyLoss() # for classification
+            
             # Example input for visualizing the graph in Tensorboard
             self.example_input_array = torch.zeros((1, 3, 224, 224), dtype=torch.float32)
 
