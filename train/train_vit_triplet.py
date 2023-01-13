@@ -136,6 +136,7 @@ def run(args):
         def forward(self, inp):
             return self.model(inp)
         
+        # Initialize an optimizer
         def configure_optimizers(self):
             # self.hparams['lr'] = self.hparams.optimizer_hparams['lr']
             if self.hparams.optimizer_name == "Adam":
