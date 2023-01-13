@@ -80,6 +80,14 @@ def run(args):
         
        return torch.reshape(pool(fm), (-1, fm.shape[1]))
     
+    assert only_features or only_labels, "Please choose at least one loss function to train the model (triplet loss or crossentropy loss)"
+    if only_features and only_labels:
+        print("\nTrain using triplet loss and crossentropy loss\n")
+    elif only_features == True and only_labels == None:
+        print("\nTrain using only triplet loss\n")                
+    elif only_features == None and only_labels == True:
+        print("\nTrain using only crossentropy loss\n")
+    
     # Wandb login
     os.system('wandb login 3204eaa1400fed115e40f43c7c6a5d62a0867ed1')     
     
