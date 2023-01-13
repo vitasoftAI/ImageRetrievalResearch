@@ -144,8 +144,8 @@ def run(args):
                 # AdamW is Adam with a correct implementation of weight decay (see here
                 # for details: https://arxiv.org/pdf/1711.05101.pdf)
                 optimizer = torch.optim.AdamW(self.parameters(), **self.hparams.optimizer_hparams)
-                # scheduler = {"scheduler": ReduceLROnPlateau(optimizer, verbose=True),
-                # "monitor": "val_loss"}
+                
+            # SGD
             elif self.hparams.optimizer_name == "SGD":
                 optimizer = torch.optim.SGD(self.parameters(), **self.hparams.optimizer_hparams)
             else:
