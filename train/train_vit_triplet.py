@@ -167,6 +167,7 @@ def run(args):
                 
             """
             
+            # Initialize a list to track cosine similarities
             cos_sims = []
             ims, poss, negs, regs = batch['P'], batch['S'], batch['N'], batch['L'] 
             
