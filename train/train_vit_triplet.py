@@ -15,7 +15,6 @@ from softdataset import TripletImageDataset
 from original_dataset import OriginalImageDataset, data_split
 from tqdm import tqdm
 from torchvision.datasets import ImageFolder
-import AutoAugment
 from dataset import TripleDataset
 
 
