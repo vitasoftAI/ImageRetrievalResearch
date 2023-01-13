@@ -76,8 +76,9 @@ def run(args):
         
         """
         
-        pool = AvgPool2d((fm.shape[2],fm.shape[3]))
-        return torch.reshape(pool(fm), (-1, fm.shape[1]))
+       pool = AvgPool2d((fm.shape[2],fm.shape[3]))
+        
+       return torch.reshape(pool(fm), (-1, fm.shape[1]))
     
     # Wandb login
     os.system('wandb login 3204eaa1400fed115e40f43c7c6a5d62a0867ed1')     
