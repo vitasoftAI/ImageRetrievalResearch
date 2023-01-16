@@ -205,7 +205,9 @@ def run(args):
                 
                 # Compute cosine similarity of the fm of the query image with it's corresponding negative image feature map
                 unsim_pair = cos(fm_ims[idx].unsqueeze(0), fm_negs[idx].unsqueeze(0)) 
-                sim = cos(fm_ims[idx].unsqueeze(0), fm_poss)  # batch                
+                
+                # Compute cosine similarity of the fm of the query image with every feature map in the mini-batch
+                sim = cos(fm_ims[idx].unsqueeze(0), fm_poss) 
                 cos_sims.append(sim)
                 vals, inds = torch.topk(sim, k=3)
                 if regs[idx] == regs[inds[0]] or regs[idx] == regs[inds[1]] or regs[idx] == regs[inds[2]]:
