@@ -211,6 +211,8 @@ def run(args):
                 
                 # Add to the list
                 cos_sims.append(sim)
+                
+                # Get top3 values and indices
                 vals, inds = torch.topk(sim, k=3)
                 if regs[idx] == regs[inds[0]] or regs[idx] == regs[inds[1]] or regs[idx] == regs[inds[2]]:
                     top3 += 1
