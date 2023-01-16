@@ -225,7 +225,7 @@ def run(args):
             self.log("train_top3", top3 / len(fm_ims))
             self.log("train_top1", top1 / len(fm_ims))
 
-            return OD([('loss', loss)]) #, ('train_top3', top3 / len(ims)), ('train_top1', top1 / len(ims))])  # Return tensor to call ".backward" on
+            return OD([('loss', loss)])
 
         def validation_step(self, batch, batch_idx): # triplet loss 
 
