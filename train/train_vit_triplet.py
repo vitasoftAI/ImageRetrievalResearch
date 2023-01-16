@@ -244,10 +244,11 @@ def run(args):
             # Get images and labels
             ims, poss, negs, regs = batch['P'], batch['S'], batch['N'], batch['L'] 
             
-            # Get feature maps and pred labels
+            # Get predicted labels for every image
             fm_ims = self.model(ims)
             fm_poss = self.model(poss)
             fm_negs = self.model(negs)
+            
             loss_cos_poss = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) 
             loss_cos_negs = self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
             loss_cos = loss_cos_poss + loss_cos_negs
