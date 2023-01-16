@@ -149,7 +149,7 @@ def run(args):
             else:
                 assert False, f'Unknown optimizer: "{self.hparams.optimizer_name}"'
             
-            scheduler = MultiStepLR(optimizer=optimizer, milestones=[10,20,30,40, 50], gamma=0.1, verbose=True)
+            scheduler = MultiStepLR(optimizer = optimizer, milestones = [10, 20, 30, 40, 50], gamma = 0.1, verbose = True)
         
             return [optimizer], [scheduler]
         
