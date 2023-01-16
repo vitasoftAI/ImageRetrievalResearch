@@ -216,8 +216,9 @@ def run(args):
                 
                 # Compute top1
                 if regs[idx] == regs[inds[0]] or regs[idx] == regs[inds[1]] or regs[idx] == regs[inds[2]]: top3 += 1
-                if regs[idx] in regs[inds[0]]:
-                    top1 += 1
+                
+                # Compute top3
+                if regs[idx] in regs[inds[0]]: top1 += 1
 
             # Logs the loss per epoch to tensorboard (weighted average over batches)
             self.log("train_loss", loss)
