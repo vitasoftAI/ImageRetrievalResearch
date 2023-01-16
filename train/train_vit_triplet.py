@@ -238,6 +238,7 @@ def run(args):
                 batch_idx - index of the batch.
             """
 
+            # Initialize lists to track validation process results
             cos_sims, cos_unsims, cos_sims_pair, cos_unsims_pair = [], [], [], []
             ims, poss, negs, regs = batch['P'], batch['S'], batch['N'], batch['L'] 
             
