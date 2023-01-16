@@ -186,7 +186,10 @@ def run(args):
                 loss_cos_negs = self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss_cos = loss_cos_poss + loss_cos_negs
                 loss = loss_cos                 
+            
             elif only_features == None and only_labels == True:
+                
+                # Cross entropy loss
                 loss_ce_ims = self.ce_loss(lbl_ims, regs)
                 loss_ce = loss_ce_ims
                 loss = loss_ce
