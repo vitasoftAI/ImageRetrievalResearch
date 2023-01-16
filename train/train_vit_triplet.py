@@ -23,8 +23,8 @@ def run(args):
     expdir = args.expdir
     device = args.device
     path = args.ims_path
-    model_name=args.model_name
-    optimizer_name=args.optimizer_name
+    model_name = args.model_name
+    optimizer_name = args.optimizer_name
     lr = args.learning_rate
     wd = args.weight_decay
     only_features = args.only_feature_embeddings
