@@ -220,7 +220,7 @@ def run(args):
                 # Compute top3
                 if regs[idx] in regs[inds[0]]: top1 += 1
 
-            # Logs the loss per epoch to tensorboard (weighted average over batches)
+            # Wand logs
             self.log("train_loss", loss)
             self.log("train_top3", top3 / len(fm_ims))
             self.log("train_top1", top1 / len(fm_ims))
