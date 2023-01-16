@@ -230,7 +230,13 @@ def run(args):
         # Validation step of the training process
         def validation_step(self, batch, batch_idx): 
             
+             """
+            Gets batch and batch index and does one validation step and returns validation loss.
             
+            Arguments:
+                batch - one batch with images;
+                batch_idx - index of the batch.
+            """
 
             cos_sims, cos_unsims, cos_sims_pair, cos_unsims_pair = [], [], [], []
             ims, poss, negs, regs = batch['P'], batch['S'], batch['N'], batch['L'] 
