@@ -208,6 +208,8 @@ def run(args):
                 
                 # Compute cosine similarity of the fm of the query image with every feature map in the mini-batch
                 sim = cos(fm_ims[idx].unsqueeze(0), fm_poss) 
+                
+                # Add to the list
                 cos_sims.append(sim)
                 vals, inds = torch.topk(sim, k=3)
                 if regs[idx] == regs[inds[0]] or regs[idx] == regs[inds[1]] or regs[idx] == regs[inds[2]]:
