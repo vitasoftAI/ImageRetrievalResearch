@@ -228,7 +228,9 @@ def run(args):
             return OD([('loss', loss)])
 
         # Validation step of the training process
-        def validation_step(self, batch, batch_idx): # triplet loss 
+        def validation_step(self, batch, batch_idx): 
+            
+            
 
             cos_sims, cos_unsims, cos_sims_pair, cos_unsims_pair = [], [], [], []
             ims, poss, negs, regs = batch['P'], batch['S'], batch['N'], batch['L'] 
