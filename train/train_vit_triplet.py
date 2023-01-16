@@ -240,6 +240,8 @@ def run(args):
 
             # Initialize lists to track validation process results
             cos_sims, cos_unsims, cos_sims_pair, cos_unsims_pair = [], [], [], []
+            
+            # Get images and labels
             ims, poss, negs, regs = batch['P'], batch['S'], batch['N'], batch['L'] 
             
             # Get feature maps and pred labels
