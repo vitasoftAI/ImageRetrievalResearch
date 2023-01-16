@@ -15,7 +15,6 @@ from tqdm import tqdm
 from torchvision.datasets import ImageFolder
 from dataset import TripleDataset
 
-
 def run(args):
     
     # Get train arguments
