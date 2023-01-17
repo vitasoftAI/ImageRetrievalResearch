@@ -276,6 +276,7 @@ def run(args):
                 # Add to the cos_unsimilarities list
                 cos_unsims_pair.append(unsim_pair)
                 
+                # Get top3 values and indices
                 vals, inds = torch.topk(sim, k=3)
                 # print(f"GTs: {regs[idx]}")
                 # print(f"Preds: {regs[inds]}")
