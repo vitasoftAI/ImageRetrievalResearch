@@ -269,6 +269,8 @@ def run(args):
                 
                 # Compute cosine similarity of the fm of the query image with every feature map in the mini-batch
                 sim = cos(lbl_ims[idx].unsqueeze(0), lbl_poss) 
+                
+                # Add to the cos_similarities list
                 cos_sims_pair.append(sim_pair)
                 cos_unsims_pair.append(unsim_pair)
                 
