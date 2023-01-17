@@ -259,7 +259,7 @@ def run(args):
             
             for idx, fm in enumerate(lbl_ims):
                 sim_pair = cos(lbl_ims[idx].unsqueeze(0), lbl_poss[idx].unsqueeze(0)) 
-                unsim_pair = cos(lbl_ims[idx].unsqueeze(0), fm_negs[idx].unsqueeze(0)) 
+                unsim_pair = cos(lbl_ims[idx].unsqueeze(0), lbl_negs[idx].unsqueeze(0)) 
                 sim = cos(lbl_ims[idx].unsqueeze(0), lbl_poss) 
                 cos_sims_pair.append(sim_pair)
                 cos_unsims_pair.append(unsim_pair)
