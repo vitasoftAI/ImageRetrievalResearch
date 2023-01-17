@@ -272,6 +272,8 @@ def run(args):
                 
                 # Add to the cos_similarities list
                 cos_sims_pair.append(sim_pair)
+                
+                # Add to the cos_unsimilarities list
                 cos_unsims_pair.append(unsim_pair)
                 
                 vals, inds = torch.topk(sim, k=3)
