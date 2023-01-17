@@ -255,6 +255,7 @@ def run(args):
             loss_cos = loss_cos_poss + loss_cos_negs
             loss = loss_cos
             
+            # Set initial top3, top1 values            
             top3, top1 = 0, 0
             
             for idx, fm in enumerate(lbl_ims):
