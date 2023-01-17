@@ -294,7 +294,7 @@ def run(args):
 
             return OD([('loss', loss), ('val_top3', top3), ('cos_sims', torch.mean(torch.FloatTensor(cos_sims)))])
 
-    def create_model(model_name, conv_input=False, num_classes=num_classes):
+    def create_model(model_name, conv_input = False, num_classes = num_classes):
         
         """ 
         
@@ -302,6 +302,7 @@ def run(args):
         
         """
 
+        # Search for the model name in the dict
         if model_name in model_dict:
             base_model = timm.create_model(model_name, pretrained=True, num_classes=num_classes)
             base_model.head = Identity()
