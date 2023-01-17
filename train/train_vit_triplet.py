@@ -294,7 +294,7 @@ def run(args):
 
             return OD([('loss', loss), ('val_top3', top3), ('cos_sims', torch.mean(torch.FloatTensor(cos_sims)))])
 
-    def create_model(model_name, conv_input = False, num_classes = num_classes):
+    def create_model(model_name, num_classes = num_classes):
         
         """ 
         
@@ -304,17 +304,12 @@ def run(args):
 
         # Search for the model name in the dict
         if model_name in model_dict:
-            base_model = timm.create_model(model_name, pretrained=True, num_classes=num_classes)
+            
+            # Get the model 
+            base_model = timm.create_model(model_name, pretrained = True, num_classes = num_classes)
             base_model.head = Identity()
             print(f"Model {model_name} with the best weights is successfully loaded!")        
-            if conv_input:                
-                conv_layer = Sequential(Conv2d(3, 3, kernel_size=(3, 3), stride=(1, 1),padding=(1,1), bias=False), 
-                 # Conv2d(3, 3, kernel_size=(3, 3), stride=(2, 2),padding=(1,1), bias=False), 
-                 # MaxPool2d(kernel_size=(3,3), stride=(2,2), padding=(1,1)),
-                 SiLU(inplace=True))
-                model = Sequential(conv_layer, base_model)  
-            else:
-                model = base_model
+
         else:
             assert False, f'Unknown model name "{model_name}". Available models are: {str(model_dict.keys())}'
             
