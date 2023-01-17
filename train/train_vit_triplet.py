@@ -260,6 +260,8 @@ def run(args):
             
             # Go through every predicted label
             for idx, fm in enumerate(lbl_ims):
+                
+                # Compute cosine similarity of the fm of the query image with it's corresponding positive image feature map
                 sim_pair = cos(lbl_ims[idx].unsqueeze(0), lbl_poss[idx].unsqueeze(0)) 
                 unsim_pair = cos(lbl_ims[idx].unsqueeze(0), lbl_negs[idx].unsqueeze(0)) 
                 sim = cos(lbl_ims[idx].unsqueeze(0), lbl_poss) 
