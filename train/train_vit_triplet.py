@@ -222,8 +222,8 @@ def run(args):
 
             # Wand logs
             self.log("train_loss", loss)
-            self.log("train_top3", top3 / len(fm_ims))
-            self.log("train_top1", top1 / len(fm_ims))
+            self.log("train_top3", top3 / len(lbl_ims))
+            self.log("train_top1", top1 / len(lbl_ims))
 
             return OD([('loss', loss)])
 
@@ -245,7 +245,7 @@ def run(args):
             ims, poss, negs, regs = batch['P'], batch['S'], batch['N'], batch['L'] 
             
             # Get predicted labels for every image
-            fm_ims = self.model(ims)
+            lbl_ims = self.model(ims)
             fm_poss = self.model(poss)
             fm_negs = self.model(negs)
             
@@ -275,8 +275,8 @@ def run(args):
             self.log("val_loss", loss)
             self.log("cos_sims", torch.mean(torch.FloatTensor(cos_sims_pair)).item())
             self.log("cos_unsims", torch.mean(torch.FloatTensor(cos_unsims_pair)).item())
-            self.log("val_top3", top3 / len(fm_ims))
-            self.log("val_top1", top1 / len(fm_ims))
+            self.log("val_top3", top3 / len(lbl_ims))
+            self.log("val_top1", top1 / len(lbl_ims))
 
             return OD([('loss', loss), ('val_top3', top3),
                        ('cos_sims', torch.mean(torch.FloatTensor(cos_sims)))])
