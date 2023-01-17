@@ -246,11 +246,11 @@ def run(args):
             
             # Get predicted labels for every image
             lbl_ims = self.model(ims)
-            fm_poss = self.model(poss)
+            lbl_poss = self.model(poss)
             fm_negs = self.model(negs)
             
             # Compute losses
-            loss_cos_poss = self.cos_loss(lbl_ims, fm_poss, labels["pos"].to("cuda")) 
+            loss_cos_poss = self.cos_loss(lbl_ims, lbl_poss, labels["pos"].to("cuda")) 
             loss_cos_negs = self.cos_loss(lbl_ims, fm_negs, labels["neg"].to("cuda"))
             loss_cos = loss_cos_poss + loss_cos_negs
             loss = loss_cos
@@ -258,9 +258,9 @@ def run(args):
             top3, top1 = 0, 0
             
             for idx, fm in enumerate(lbl_ims):
-                sim_pair = cos(lbl_ims[idx].unsqueeze(0), fm_poss[idx].unsqueeze(0)) 
+                sim_pair = cos(lbl_ims[idx].unsqueeze(0), lbl_poss[idx].unsqueeze(0)) 
                 unsim_pair = cos(lbl_ims[idx].unsqueeze(0), fm_negs[idx].unsqueeze(0)) 
-                sim = cos(lbl_ims[idx].unsqueeze(0), fm_poss) 
+                sim = cos(lbl_ims[idx].unsqueeze(0), lbl_poss) 
                 cos_sims_pair.append(sim_pair)
                 cos_unsims_pair.append(unsim_pair)
                 
