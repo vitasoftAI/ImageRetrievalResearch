@@ -174,14 +174,14 @@ def run(args):
             
             # Get predicted labels
             lbl_ims = self.model(ims)
-            fm_poss = self.model(poss)
+            lbl_poss = self.model(poss)
             fm_negs = self.model(negs)
             
             # Compute loss
             if only_features == True and only_labels == None:
                 
                 # Cosine embedding loss
-                loss_cos_poss = self.cos_loss(lbl_ims, fm_poss, labels["pos"].to("cuda")) 
+                loss_cos_poss = self.cos_loss(lbl_ims, lbl_poss, labels["pos"].to("cuda")) 
                 loss_cos_negs = self.cos_loss(lbl_ims, fm_negs, labels["neg"].to("cuda"))
                 loss_cos = loss_cos_poss + loss_cos_negs
                 loss = loss_cos                 
@@ -200,13 +200,13 @@ def run(args):
             for idx, fm in (enumerate(lbl_ims)):
                 
                 # Compute cosine similarity of the fm of the query image with it's corresponding positive image feature map
-                sim_pair = cos(lbl_ims[idx].unsqueeze(0), fm_poss[idx].unsqueeze(0)) 
+                sim_pair = cos(lbl_ims[idx].unsqueeze(0), lbl_poss[idx].unsqueeze(0)) 
                 
                 # Compute cosine similarity of the fm of the query image with it's corresponding negative image feature map
                 unsim_pair = cos(lbl_ims[idx].unsqueeze(0), fm_negs[idx].unsqueeze(0)) 
                 
                 # Compute cosine similarity of the fm of the query image with every feature map in the mini-batch
-                sim = cos(lbl_ims[idx].unsqueeze(0), fm_poss) 
+                sim = cos(lbl_ims[idx].unsqueeze(0), lbl_poss) 
                 
                 # Add to the list
                 cos_sims.append(sim)
