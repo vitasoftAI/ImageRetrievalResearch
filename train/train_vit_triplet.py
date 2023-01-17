@@ -285,14 +285,14 @@ def run(args):
                 # Compute top1
                 if regs[idx] in regs[inds[0]]: top1 += 1
                 
+            # Wandb logs
             self.log("val_loss", loss)
             self.log("cos_sims", torch.mean(torch.FloatTensor(cos_sims_pair)).item())
             self.log("cos_unsims", torch.mean(torch.FloatTensor(cos_unsims_pair)).item())
             self.log("val_top3", top3 / len(lbl_ims))
             self.log("val_top1", top1 / len(lbl_ims))
 
-            return OD([('loss', loss), ('val_top3', top3),
-                       ('cos_sims', torch.mean(torch.FloatTensor(cos_sims)))])
+            return OD([('loss', loss), ('val_top3', top3), ('cos_sims', torch.mean(torch.FloatTensor(cos_sims)))])
 
     def create_model(model_name, conv_input=False, num_classes=num_classes):
         
