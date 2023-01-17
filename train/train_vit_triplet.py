@@ -196,7 +196,7 @@ def run(args):
             # Set initial top3, top1
             top3, top1 = 0, 0            
             
-            # Go through every feature map
+            # Go through every predicted label
             for idx, fm in (enumerate(lbl_ims)):
                 
                 # Compute cosine similarity of the fm of the query image with it's corresponding positive image feature map
