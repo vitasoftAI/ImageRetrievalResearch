@@ -258,6 +258,7 @@ def run(args):
             # Set initial top3, top1 values            
             top3, top1 = 0, 0
             
+            # Go through every predicted label
             for idx, fm in enumerate(lbl_ims):
                 sim_pair = cos(lbl_ims[idx].unsqueeze(0), lbl_poss[idx].unsqueeze(0)) 
                 unsim_pair = cos(lbl_ims[idx].unsqueeze(0), lbl_negs[idx].unsqueeze(0)) 
