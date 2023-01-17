@@ -278,8 +278,7 @@ def run(args):
                 
                 # Get top3 values and indices
                 vals, inds = torch.topk(sim, k=3)
-                # print(f"GTs: {regs[idx]}")
-                # print(f"Preds: {regs[inds]}")
+
                 if regs[idx] == regs[inds[0]] or regs[idx] == regs[inds[1]] or regs[idx] == regs[inds[2]]:
                     top3 += 1
                 if regs[idx] in regs[inds[0]]:
