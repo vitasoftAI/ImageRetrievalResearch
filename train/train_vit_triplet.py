@@ -281,8 +281,9 @@ def run(args):
 
                 # Compute top3
                 if regs[idx] == regs[inds[0]] or regs[idx] == regs[inds[1]] or regs[idx] == regs[inds[2]]: top3 += 1
-                if regs[idx] in regs[inds[0]]:
-                    top1 += 1
+                    
+                # Compute top1
+                if regs[idx] in regs[inds[0]]: top1 += 1
                 
             self.log("val_loss", loss)
             self.log("cos_sims", torch.mean(torch.FloatTensor(cos_sims_pair)).item())
