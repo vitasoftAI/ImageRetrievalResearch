@@ -263,6 +263,8 @@ def run(args):
                 
                 # Compute cosine similarity of the fm of the query image with it's corresponding positive image feature map
                 sim_pair = cos(lbl_ims[idx].unsqueeze(0), lbl_poss[idx].unsqueeze(0)) 
+                
+                # Compute cosine similarity of the fm of the query image with it's corresponding negative image feature map
                 unsim_pair = cos(lbl_ims[idx].unsqueeze(0), lbl_negs[idx].unsqueeze(0)) 
                 sim = cos(lbl_ims[idx].unsqueeze(0), lbl_poss) 
                 cos_sims_pair.append(sim_pair)
