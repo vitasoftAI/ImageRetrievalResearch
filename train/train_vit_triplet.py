@@ -397,25 +397,23 @@ def run(args):
 
         return model
     
-    
+    # Start training 
     trained_model = train_model(
-    model_name=model_name, optimizer_name=optimizer_name, save_name=f"{model_name}_{optimizer_name}_{lr}",
-    optimizer_hparams=optimizer_hparams)
+        
+    model_name = model_name, optimizer_name = optimizer_name,
+    save_name = f"{model_name}_{optimizer_name}_{lr}", optimizer_hparams = optimizer_hparams
+    
+    )
 
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description='Triplet Loss PyTorch Lightning Arguments')
     parser.add_argument('-ed', '--expdir', default=None, help='Experiment directory')
     parser.add_argument("-sp", "--save_path", type=str, default='saved_models', help="Path to save trained models")
-#     parser.add_argument('-cp', '--checkpoint_path', type=str, default="/home/ubuntu/workspace/bekhzod/triplet-loss-pytorch/pytorch_lightning/saved_models/model_best.pth.tar", help='Path to the trained model')
     parser.add_argument("-bs", "--batch_size", type=int, default=32, help="Batch size")
     parser.add_argument("-d", "--device", type=str, default='cuda:1', help="GPU device number")
-    # parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/test_dataset_svg/test_dataset_svg_1130_black_pad', help="Path to the images")
     parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/test_dataset_svg/pass_images_dataset_spec49', help="Path to the images")
-    # parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/test_dataset_svg/pass_images_dataset_old_svg', help="Path to the images")
     parser.add_argument("-mn", "--model_name", type=str, default='swin_s3_base_224', help="Model name (from timm library (ex. darknet53, ig_resnext101_32x32d))")
-    # parser.add_argument("-mn", "--model_name", type=str, default='rexnet_150', help="Model name (from timm library (ex. darknet53, ig_resnext101_32x32d))")
-    # parser.add_argument("-mn", "--model_name", type=str, default='vit_base_patch32_384', help="Model name (from timm library (ex. darknet53, ig_resnext101_32x32d))")
     parser.add_argument("-on", "--optimizer_name", type=str, default='Adam', help="Optimizer name (Adam or SGD)")
     parser.add_argument("-lr", "--learning_rate", type=float, default=1e-5, help="Learning rate value")
     parser.add_argument("-wd", "--weight_decay", type=float, default=1e-6, help="Weight decay value")
