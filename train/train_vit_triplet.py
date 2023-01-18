@@ -337,8 +337,11 @@ def run(args):
             default_root_dir = os.path.join(sp, save_name),
             # amp options
             precision = 16, amp_backend = 'native',
-            # total num of epochs
-            max_epochs=300,
+            
+            # epochs to train
+            max_epochs = 300,
+            
+            # logger options
             log_every_n_steps=15,
             logger=wandb_logger,
             # auto_lr_find=True,
