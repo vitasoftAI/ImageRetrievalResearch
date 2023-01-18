@@ -343,10 +343,9 @@ def run(args):
             
             # logger options
             logger = wandb_logger, log_every_n_steps = 15,
-            
-            # auto_lr_find=True,
-            # fast_dev_run=True,
-            strategy="ddp", accelerator="gpu", devices=3, 
+
+            # parallel computing options
+            strategy = "ddp", accelerator = "gpu", devices = 3, 
             callbacks=[
                 
                 ModelCheckpoint(
