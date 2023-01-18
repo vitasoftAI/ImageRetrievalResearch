@@ -307,13 +307,15 @@ def run(args):
             
             # Get the model 
             base_model = timm.create_model(model_name, pretrained = True, num_classes = num_classes)
+            
+            # Change model head to Identity to get feature maps
             base_model.head = Identity()
             print(f"Model {model_name} with the best weights is successfully loaded!")        
 
         else:
             assert False, f'Unknown model name "{model_name}". Available models are: {str(model_dict.keys())}'
             
-        return model#.to('cuda')
+        return model
 
     def train_model(model_name, save_name=None, **kwargs):
         
