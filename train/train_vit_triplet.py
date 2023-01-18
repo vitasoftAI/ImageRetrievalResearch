@@ -245,13 +245,13 @@ def run(args):
             ims, poss, negs, regs = batch['P'], batch['S'], batch['N'], batch['L'] 
             
             # Get predicted labels for every image
-            lbl_ims = self.model(ims)
+            fm_ims = self.model(ims)
             lbl_poss = self.model(poss)
             lbl_negs = self.model(negs)
             
             # Compute losses
-            loss_cos_poss = self.cos_loss(lbl_ims, lbl_poss, labels["pos"].to("cuda")) 
-            loss_cos_negs = self.cos_loss(lbl_ims, lbl_negs, labels["neg"].to("cuda"))
+            loss_cos_poss = self.cos_loss(fm_ims, lbl_poss, labels["pos"].to("cuda")) 
+            loss_cos_negs = self.cos_loss(fm_ims, lbl_negs, labels["neg"].to("cuda"))
             loss_cos = loss_cos_poss + loss_cos_negs
             loss = loss_cos
             
@@ -259,7 +259,7 @@ def run(args):
             top3, top1 = 0, 0
             
             # Go through every predicted label
-            for idx, fm in enumerate(lbl_ims):
+            for idx, fm in enumerate(fm_ims):
                 
                 # Compute cosine similarity of the fm of the query image with it's corresponding positive image feature map
                 sim_pair = cos(lbl_ims[idx].unsqueeze(0), lbl_poss[idx].unsqueeze(0)) 
