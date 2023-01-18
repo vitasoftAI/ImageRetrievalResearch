@@ -376,15 +376,23 @@ def run(args):
         # Check pretrained file
         pretrained_filename = os.path.join(sp, 'rexnet_150_Adam_0.0003', 'Image Retrieval', "1tgu7vtc", "checkpoints")
         # pretrained_filename = pretrained_filename + '/epoch=3-val_loss=4.73-cos_sims=0.91-val_top1=0.48.ckpt'
+        
+        # If exists
         if os.path.isfile(pretrained_filename):
             print(f"Found pretrained model at {pretrained_filename}, loading...")
-            # Automatically loads the model with the saved hyperparameters
+            
+            # Load weights from the pretrained file
             model = Model.load_from_checkpoint(pretrained_filename)
+        
+        # Other case
         else:
-            pl.seed_everything(42)  # To be reproducable
-            model = Model(model_name=model_name, **kwargs)
-            # lr_finder = trainer.tuner.lr_find(model)
-            # model.hparams.learning_rate = lr_finder.suggestion()
+            # Set seed
+            pl.seed_everything(42) 
+            
+            # Initialize model
+            model = Model(model_name = model_name, **kwargs)
+            
+            # Fit train and validation dataloaders to the model
             trainer.fit(model, train_loader, val_loader)
 
         return model
