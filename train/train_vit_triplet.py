@@ -173,7 +173,7 @@ def run(args):
             ims, poss, negs, regs = batch['P'], batch['S'], batch['N'], batch['L'] 
             
             # Get predicted labels
-            lbl_ims = self.model(ims)
+            fm_ims = self.model(ims)
             lbl_poss = self.model(poss)
             lbl_negs = self.model(negs)
             
@@ -181,8 +181,8 @@ def run(args):
             if only_features == True and only_labels == None:
                 
                 # Cosine embedding loss
-                loss_cos_poss = self.cos_loss(lbl_ims, lbl_poss, labels["pos"].to("cuda")) 
-                loss_cos_negs = self.cos_loss(lbl_ims, lbl_negs, labels["neg"].to("cuda"))
+                loss_cos_poss = self.cos_loss(fm_ims, lbl_poss, labels["pos"].to("cuda")) 
+                loss_cos_negs = self.cos_loss(fm_ims, lbl_negs, labels["neg"].to("cuda"))
                 loss_cos = loss_cos_poss + loss_cos_negs
                 loss = loss_cos                 
             
