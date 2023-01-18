@@ -357,7 +357,6 @@ def run(args):
                     every_n_train_steps = None, save_top_k = 1, save_weights_only = True,
                     # Tracking metrics
                     mode = "max", monitor = "cos_sims" 
-                    
                 ), 
                 
                 # Early stopping
@@ -369,10 +368,12 @@ def run(args):
                 LearningRateMonitor("epoch"), # Log learning rate every epoch
             ]
         )
-        trainer.logger._log_graph = True  # If True, we plot the computation graph in tensorboard
-        trainer.logger._default_hp_metric = None  # Optional logging argument that we don't need
+        
+        # Log options
+        trainer.logger._log_graph = True  
+        trainer.logger._default_hp_metric = None 
 
-        # Check whether pretrained model exists. If yes, load it and skip training
+        # Check pretrained file
         pretrained_filename = os.path.join(sp, 'rexnet_150_Adam_0.0003', 'Image Retrieval', "1tgu7vtc", "checkpoints")
         # pretrained_filename = pretrained_filename + '/epoch=3-val_loss=4.73-cos_sims=0.91-val_top1=0.48.ckpt'
         if os.path.isfile(pretrained_filename):
