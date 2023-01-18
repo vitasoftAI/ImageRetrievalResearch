@@ -346,8 +346,10 @@ def run(args):
 
             # parallel computing options
             strategy = "ddp", accelerator = "gpu", devices = 3, 
+            
+            # Train callbacks
             callbacks=[
-                
+                # Save checkpoint
                 ModelCheckpoint(
                     filename='{epoch}-{val_loss:.2f}-{cos_sims:.2f}-{val_top1:.2f}', 
                     every_n_train_steps = None, save_top_k=1,
