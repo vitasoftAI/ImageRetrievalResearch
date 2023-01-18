@@ -206,7 +206,7 @@ def run(args):
                 unsim_pair = cos(fm_ims[idx].unsqueeze(0), lbl_negs[idx].unsqueeze(0)) 
                 
                 # Compute cosine similarity of the fm of the query image with every feature map in the mini-batch
-                sim = cos(lbl_ims[idx].unsqueeze(0), lbl_poss) 
+                sim = cos(fm_ims[idx].unsqueeze(0), lbl_poss) 
                 
                 # Add to the list
                 cos_sims.append(sim)
@@ -222,8 +222,8 @@ def run(args):
 
             # Wand logs
             self.log("train_loss", loss)
-            self.log("train_top3", top3 / len(lbl_ims))
-            self.log("train_top1", top1 / len(lbl_ims))
+            self.log("train_top3", top3 / len(fm_ims))
+            self.log("train_top1", top1 / len(fm_ims))
 
             return OD([('loss', loss)])
 
