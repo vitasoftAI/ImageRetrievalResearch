@@ -342,8 +342,8 @@ def run(args):
             max_epochs = 300,
             
             # logger options
-            log_every_n_steps=15,
-            logger=wandb_logger,
+            logger = wandb_logger, log_every_n_steps = 15,
+            
             # auto_lr_find=True,
             # fast_dev_run=True,
             strategy="ddp", accelerator="gpu", devices=3, 
