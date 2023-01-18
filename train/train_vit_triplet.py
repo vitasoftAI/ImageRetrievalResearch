@@ -172,7 +172,7 @@ def run(args):
             # Get images and labels
             ims, poss, negs, regs = batch['P'], batch['S'], batch['N'], batch['L'] 
             
-            # Get predicted labels
+            # Get predicted feature maps
             fm_ims = self.model(ims)
             fm_poss = self.model(poss)
             fm_negs = self.model(negs)
@@ -244,7 +244,7 @@ def run(args):
             # Get images and labels
             ims, poss, negs, regs = batch['P'], batch['S'], batch['N'], batch['L'] 
             
-            # Get predicted labels for every image
+            # Get predicted feature maps
             fm_ims = self.model(ims)
             fm_poss = self.model(poss)
             fm_negs = self.model(negs)
