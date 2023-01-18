@@ -330,12 +330,13 @@ def run(args):
         if save_name is None:
             save_name = model_name
 
-        # Create a PyTorch Lightning trainer with the generation callback
+        # Pytorch lightning trainer
         trainer = pl.Trainer(
-            default_root_dir=os.path.join(sp, save_name),  # dir name to save models
-            # Run on a single GPU (if possible)
-            # gpus=1 if str(device) == "cuda:1" else 0,
-            precision=16, amp_backend='native',
+            
+            # root to save chechpoints
+            default_root_dir = os.path.join(sp, save_name),
+            # amp options
+            precision = 16, amp_backend = 'native',
             # total num of epochs
             max_epochs=300,
             log_every_n_steps=15,
