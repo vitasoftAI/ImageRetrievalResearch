@@ -358,8 +358,14 @@ def run(args):
                     # Tracking metrics
                     mode = "max", monitor = "cos_sims" 
                     
-                ),  # Save the best checkpoint based on the min val_loss recorded. Saves only weights and not optimizer
-                EarlyStopping(monitor="cos_sims", mode="max", patience=10, verbose=True), # set the metric (and change the mode!) to track for early stopping
+                ), 
+                
+                # Early stopping
+                EarlyStopping(
+                    # Tracking metrics
+                    monitor = "cos_sims", mode = "max", patience = 10, verbose = True),
+                
+                
                 LearningRateMonitor("epoch"), # Log learning rate every epoch
             ]
         )
