@@ -189,7 +189,7 @@ def run(args):
             elif only_features == None and only_labels == True:
                 
                 # Cross entropy loss
-                loss_ce_ims = self.ce_loss(lbl_ims, regs)
+                loss_ce_ims = self.ce_loss(fm_ims, regs)
                 loss_ce = loss_ce_ims
                 loss = loss_ce
                 
@@ -197,13 +197,13 @@ def run(args):
             top3, top1 = 0, 0            
             
             # Go through every predicted label
-            for idx, fm in (enumerate(lbl_ims)):
+            for idx, fm in (enumerate(fm_ims)):
                 
                 # Compute cosine similarity of the fm of the query image with it's corresponding positive image feature map
-                sim_pair = cos(lbl_ims[idx].unsqueeze(0), lbl_poss[idx].unsqueeze(0)) 
+                sim_pair = cos(fm_ims[idx].unsqueeze(0), lbl_poss[idx].unsqueeze(0)) 
                 
                 # Compute cosine similarity of the fm of the query image with it's corresponding negative image feature map
-                unsim_pair = cos(lbl_ims[idx].unsqueeze(0), lbl_negs[idx].unsqueeze(0)) 
+                unsim_pair = cos(fm_ims[idx].unsqueeze(0), lbl_negs[idx].unsqueeze(0)) 
                 
                 # Compute cosine similarity of the fm of the query image with every feature map in the mini-batch
                 sim = cos(lbl_ims[idx].unsqueeze(0), lbl_poss) 
