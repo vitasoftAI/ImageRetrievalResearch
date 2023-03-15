@@ -1,3 +1,4 @@
+# Import libraries
 import os, argparse, yaml, torch, torchvision, timm, pickle, wandb, AutoAugment
 from datetime import datetime
 import pytorch_lightning as pl
@@ -45,22 +46,12 @@ def run(args):
     transformations = {}   
     
     # Transformations for query images
-    transformations['qry'] = transforms.Compose([
-                            transforms.Resize((224,224)),
-                            transforms.ToTensor(),
-                                                  ])
+    transformations['qry'] = transforms.Compose([transforms.Resize((224,224)), transforms.ToTensor()])
     # Transformations for positive sketch images
-    transformations['pos'] = transforms.Compose([
-        transforms.Resize((224,224)),
-        transforms.ToTensor(),
-    ])  
+    transformations['pos'] = transforms.Compose([transforms.Resize((224,224)), transforms.ToTensor()])  
     
     # Transformations for negative sketch images
-    transformations['neg'] = transforms.Compose([
-        transforms.Resize((224,224)),
-        AutoAugment.ImageNetPolicy(),
-        transforms.ToTensor(),
-    ])
+    transformations['neg'] = transforms.Compose([transforms.Resize((224,224)), AutoAugment.ImageNetPolicy(), transforms.ToTensor()])
     
     # Path to the json file
     out_path = "data/sketchy_database_256_soft_split_cat.json"
