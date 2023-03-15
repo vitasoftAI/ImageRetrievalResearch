@@ -171,8 +171,23 @@ def run(args):
         
             return [optimizer], [scheduler]
         
-        def training_step(self, batch, batch_idx): # triplet loss 
-            # "batch" is the output of the training data loader.
+        def training_step(self, batch, batch_idx): 
+            
+            """
+            
+            This function gets batch and batch index and conducts one step of training process.
+            
+            Arguments:
+            
+                batch       - batch of the train dataloader;
+                batch_idx   - index of the batch in the train dataloader.
+                
+            Outputs:
+            
+                loss        - loss of training model for the current batch, tensor.
+            
+            """
+            
             
             cos_sims = []
             ims, poss, negs, clss, regs = batch['qry'], batch['pos'][0], batch['neg'][0], batch['cat_idx'], batch['prod_idx']
@@ -187,7 +202,6 @@ def run(args):
             
             # Compute loss
             if only_features and only_labels:
-                
                 
                 # Cosine embedding loss
                 loss_cos_poss = self.cos_loss(fm_ims.to("cuda"), fm_poss.to("cuda"), labels["cos_pos"].to("cuda")) 
@@ -228,7 +242,7 @@ def run(args):
 
             return OD([('loss', loss)]) 
 
-        def validation_step(self, batch, batch_idx): # triplet loss 
+        def validation_step(self, batch, batch_idx):  
 
             cos_sims = []
             ims, poss, negs, clss, regs = batch['qry'], batch['pos'][0], batch['neg'][0], batch['cat_idx'], batch['prod_idx']
