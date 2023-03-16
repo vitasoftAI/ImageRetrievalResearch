@@ -357,13 +357,12 @@ def run(args):
             
         """
         
-        if save_name is None:
-            save_name = model_name
+        if save_name is None: save_name = model_name
 
         # Create a PyTorch Lightning trainer with the generation callback
         trainer = pl.Trainer(
-            default_root_dir=os.path.join(sp, save_name),  # dir name to save models
-            # precision=16, amp_backend='native',
+            # path to the folder to save models
+            default_root_dir=os.path.join(sp, save_name),  
             # total num of epochs
             max_epochs=300,
             log_every_n_steps=15,
