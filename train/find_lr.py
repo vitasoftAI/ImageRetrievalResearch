@@ -372,13 +372,19 @@ def run(args):
             # auto lr finder option
             auto_lr_find=True,
 #             fast_dev_run=True,
-            # strategy="ddp", accelerator="gpu", devices=3,
             callbacks=[
-                
+                # Model Checkpoint
                 ModelCheckpoint(
+                    # name for the checkpoint
                     filename='{epoch}-{val_loss:.2f}-{cos_sims:.2f}-{val_top1:.2f}', 
-                    every_n_train_steps = None, save_top_k=1,
-                    save_weights_only=True, mode="max", monitor="val_top1" 
+                    # save frequency
+                    every_n_train_steps = None,
+                    # option to save the best model
+                    save_top_k=1,
+                    # option to save weights only
+                    save_weights_only=True, 
+                    # metric monitor options
+                    mode="max", monitor="val_top1" 
                 ),  # Save the best checkpoint based on the min val_loss recorded. Saves only weights and not optimizer
                 EarlyStopping(monitor="val_top1", mode="max", patience=10, verbose=True), # set the metric (and change the mode!) to track for early stopping
                 LearningRateMonitor("epoch"), # Log learning rate every epoch
