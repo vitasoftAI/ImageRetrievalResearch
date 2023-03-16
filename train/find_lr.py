@@ -323,9 +323,13 @@ def run(args):
         
         Arguments:
         
-            model_name - name of the model in timm library, str;
-            conv_input - option for the the input to pass convolution layer first, bool;
+            model_name  - name of the model in timm library, str;
+            conv_input  - option for the the input to pass convolution layer first, bool;
             num_classes - number of classes in the dataset.
+            
+        Output:
+        
+            model       - created model from timm library.
         
         """
 
@@ -336,19 +340,18 @@ def run(args):
                 conv_layer = Sequential(Conv2d(3, 3, kernel_size=(3, 3), stride=(1, 1),padding=(1,1), bias=False), 
                  SiLU(inplace=True))
                 model = Sequential(conv_layer, base_model)  
-            else:
-                model = base_model
-        else:
-            assert False, f'Unknown model name "{model_name}". Available models are: {str(model_dict.keys())}'
+            else: model = base_model
+        else: assert False, f'Unknown model name "{model_name}". Available models are: {str(model_dict.keys())}'
             
         return model
 
-    def train_model(model_name, save_name=None, **kwargs):
+    def train_model(model_name, save_name = None, **kwargs):
         
         """
-        Trains the model and returns trained model with its results.
+        This function trains the model and returns trained model with its results.
         
         Arguments:
+        
             model_name - Name of the model you want to run. Is used to look up the class in "model_dict"
             save_name (optional) - If specified, this name will be used for creating the checkpoint and logging directory.
         """
