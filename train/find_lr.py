@@ -304,10 +304,8 @@ def run(args):
                 sim = cos(fm_ims[idx].unsqueeze(0), fm_poss[idx]) 
                 cos_sims.append(sim)
                 vals, inds = torch.topk(lbl_ims[idx], k=3)
-                if regs[idx] in inds:
-                    top3 += 1
-                if regs[idx] in inds[0]:
-                    top1 += 1
+                if regs[idx] in inds: top3 += 1
+                if regs[idx] in inds[0]: top1 += 1
 
             # Logs the loss per epoch to tensorboard (weighted average over batches)
             self.log("val_loss", loss)
@@ -315,8 +313,7 @@ def run(args):
             self.log("val_top3", top3 / len(fm_ims))
             self.log("val_top1", top1 / len(fm_ims))
 
-            return OD([('loss', loss), ('val_top3', top3),
-                       ('cos_sims', torch.mean(torch.FloatTensor(cos_sims)))])
+            return OD([('loss', loss), ('val_top3', top3), ('cos_sims', torch.mean(torch.FloatTensor(cos_sims)))])
 
     def create_model(model_name, conv_input=False, num_classes=num_classes):
         
