@@ -239,6 +239,23 @@ def run(args):
             return OD([('loss', loss)]) 
 
         def validation_step(self, batch, batch_idx):  
+            
+            """
+            
+            This function gets batch and batch index and conducts one step of validation process.
+            
+            Arguments:
+            
+                batch       - batch of the train dataloader;
+                batch_idx   - index of the batch in the train dataloader.
+                
+            Outputs:
+            
+                val_loss        - loss of validation process for the current batch, tensor.
+                val_top3        - top3 validation accuracy of the training model for the current batch, tensor.
+                cos_sims        - cosine similarities of the current batch, list.
+            
+            """
 
             cos_sims = []
             ims, poss, negs, clss, regs = batch['qry'], batch['pos'][0], batch['neg'][0], batch['cat_idx'], batch['prod_idx']
