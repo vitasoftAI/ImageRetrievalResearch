@@ -352,9 +352,11 @@ def run(args):
         
         Arguments:
         
-            model_name - Name of the model you want to run. Is used to look up the class in "model_dict"
-            save_name (optional) - If specified, this name will be used for creating the checkpoint and logging directory.
+            model_name - name of the model in timm library, str;
+            save_name  - name for the saved model, str.
+            
         """
+        
         if save_name is None:
             save_name = model_name
 
