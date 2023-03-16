@@ -363,10 +363,13 @@ def run(args):
         trainer = pl.Trainer(
             # path to the folder to save models
             default_root_dir=os.path.join(sp, save_name),  
-            # total num of epochs
+            # number of epochs to train the model
             max_epochs=300,
+            # log steps
             log_every_n_steps=15,
+            # logger name
             logger=wandb_logger,
+            # auto lr finder option
             auto_lr_find=True,
 #             fast_dev_run=True,
             # strategy="ddp", accelerator="gpu", devices=3,
