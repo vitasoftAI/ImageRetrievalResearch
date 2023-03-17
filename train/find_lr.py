@@ -152,14 +152,8 @@ def run(args):
             return out
         
         def configure_optimizers(self):
-            if self.hparams.optimizer_name == "Adam":
-                # AdamW is Adam with a correct implementation of weight decay (see here
-                # for details: https://arxiv.org/pdf/1711.05101.pdf)
-                optimizer = torch.optim.AdamW(self.parameters(), self.hparams.lr)
-            elif self.hparams.optimizer_name == "SGD":
-                optimizer = torch.optim.SGD(self.parameters(), **self.hparams.optimizer_hparams)
-            else:
-                assert False, f'Unknown optimizer: "{self.hparams.optimizer_name}"'
+            if self.hparams.optimizer_name == "Adam":  optimizer = torch.optim.AdamW(self.parameters(), self.hparams.lr)
+            elif self.hparams.optimizer_name == "SGD": optimizer = torch.optim.SGD(self.parameters(), **self.hparams.optimizer_hparams)
             
             milestones = [5,10,15,20,25,30,35,40,45,50]
             gamma=0.1
