@@ -137,8 +137,8 @@ def run(args):
             Arguments:
             
                 model_name          - model name in the timm library, str;
-                optimizer_name      - name of the optimizer to use. Currently supported: Adam, SGD;
-                optimizer_hparams   - hyperparameters for the optimizer, as dictionary. This includes learning rate, weight decay, etc.
+                optimizer_name      - optimizer name in the torch library, str;
+                optimizer_hparams   - hyperparameters of the optimizer, list.
             
             Output:
             
@@ -161,8 +161,7 @@ def run(args):
             # Initialize a sample array
             self.example_input_array = torch.zeros((1, 3, 224, 224), dtype = torch.float32)
 
-        def forward(self, inp):
-            return self.model(inp)
+        def forward(self, inp): return self.model(inp)
         
         def configure_optimizers(self):
             
