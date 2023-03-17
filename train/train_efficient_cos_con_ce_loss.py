@@ -122,12 +122,9 @@ def run(args):
         return torch.reshape(pool(fm), (-1, fm.shape[1]))
     
     assert only_features or only_labels, "Please choose at least one loss function to train the model (triplet loss or crossentropy loss)"
-    if only_features and only_labels:
-        print("\nTrain using triplet loss and crossentropy loss\n")
-    elif only_features == True and only_labels == None:
-        print("\nTrain using only triplet loss\n")                
-    elif only_features == None and only_labels == True:
-        print("\nTrain using only crossentropy loss\n")      
+    if only_features and only_labels: print("\nTrain using triplet loss and crossentropy loss\n")
+    elif only_features == True and only_labels == None: print("\nTrain using only triplet loss\n")                
+    elif only_features == None and only_labels == True: print("\nTrain using only crossentropy loss\n")      
     
     # Model class
     class Model(pl.LightningModule):
@@ -135,12 +132,18 @@ def run(args):
         def __init__(self, model_name,  optimizer_name, optimizer_hparams):
             
             """
-            Gets model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
+            This class gets model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
             
             Arguments:
-                model_name - Name of the model/CNN to run. Used for creating the model (see function below)
-                optimizer_name - Name of the optimizer to use. Currently supported: Adam, SGD
-                optimizer_hparams - Hyperparameters for the optimizer, as dictionary. This includes learning rate, weight decay, etc.
+            
+                model_name          - model name in the timm library, str;
+                optimizer_name      - name of the optimizer to use. Currently supported: Adam, SGD;
+                optimizer_hparams   - hyperparameters for the optimizer, as dictionary. This includes learning rate, weight decay, etc.
+            
+            Output:
+            
+                train process.
+            
             """
             
             super().__init__()
