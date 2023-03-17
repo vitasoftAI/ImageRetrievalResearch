@@ -152,12 +152,14 @@ def run(args):
             return out
         
         def configure_optimizers(self):
+            
+            assert self.hparams.optimizer_name in ["Adam", "SGD"], "Currently only Adam and SGD optimizer are supported."
             if self.hparams.optimizer_name == "Adam":  optimizer = torch.optim.AdamW(self.parameters(), self.hparams.lr)
             elif self.hparams.optimizer_name == "SGD": optimizer = torch.optim.SGD(self.parameters(), **self.hparams.optimizer_hparams)
             
             milestones = [5,10,15,20,25,30,35,40,45,50]
-            gamma=0.1
-            scheduler = MultiStepLR(optimizer=optimizer, milestones=milestones, gamma=gamma, verbose=True)
+            gamma = 0.1
+            scheduler = MultiStepLR(optimizer = optimizer, milestones = milestones, gamma = gamma, verbose = True)
         
             return [optimizer], [scheduler]
         
