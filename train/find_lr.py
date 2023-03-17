@@ -153,6 +153,18 @@ def run(args):
         
         def configure_optimizers(self):
             
+            
+            """
+            
+            This function initializes optimizer and scheduler.
+            
+            Outputs:
+            
+                optimizer - optimizer to update trainable parameters of the model;
+                scheduler - scheduler of the optimizer.
+            
+            """
+            
             assert self.hparams.optimizer_name in ["Adam", "SGD"], "Currently only Adam and SGD optimizer are supported."
             if self.hparams.optimizer_name == "Adam":  optimizer = torch.optim.AdamW(self.parameters(), self.hparams.lr)
             elif self.hparams.optimizer_name == "SGD": optimizer = torch.optim.SGD(self.parameters(), **self.hparams.optimizer_hparams)
