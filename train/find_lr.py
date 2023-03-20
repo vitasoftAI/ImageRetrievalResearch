@@ -275,13 +275,20 @@ def run(args):
             cos_sims = []
             ims, poss, negs, clss, regs = batch['qry'], batch['pos'][0], batch['neg'][0], batch['cat_idx'], batch['prod_idx']
 
-            # Get feature maps and pred labels
-            out_ims = self(ims)
-            fm_ims, lbl_ims = out_ims[0], out_ims[1] # get feature maps [0] and predicted labels [1]
+            # Get feature maps and pred labels of the input images
+            out_ims = self(ims) 
+            # Get feature maps [0] and predicted labels [1]
+            fm_ims, lbl_ims = out_ims[0], out_ims[1] 
+            
+            # Get feature maps and pred labels of the positive images
             out_poss = self(poss)
-            fm_poss, lbl_poss = out_poss[0], out_poss[1] # get feature maps [0] and predicted labels [1]
+            # Get feature maps [0] and predicted labels [1]
+            fm_poss, lbl_poss = out_poss[0], out_poss[1] 
+            
+            # Get feature maps and pred labels of the negative images
             out_negs = self(negs)
-            fm_negs, lbl_negs = out_negs[0], out_negs[1] # get feature maps [0] and predicted labels [1]
+            # Get feature maps [0] and predicted labels [1]
+            fm_negs, lbl_negs = out_negs[0], out_negs[1]
             
             # Compute loss
             if only_features and only_labels:
@@ -302,11 +309,14 @@ def run(args):
                 loss_ce = loss_ce_ims + loss_ce_poss
                 loss = loss_cos + loss_con + loss_ce
                 
+            # Cosine embedding loss only
             elif only_features == True and only_labels == None:
                 loss_cos_poss = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) 
                 loss_cos_negs = self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss_cos = loss_cos_poss + loss_cos_negs
-                loss = loss_cos                 
+                loss = loss_cos    
+                
+            # Cross entropy loss only
             elif only_features == None and only_labels == True:
                 loss_ce_ims = self.ce_loss(lbl_ims, regs)
                 loss_ce = loss_ce_ims
