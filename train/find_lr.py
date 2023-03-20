@@ -186,23 +186,29 @@ def run(args):
                 batch       - batch of the train dataloader;
                 batch_idx   - index of the batch in the train dataloader.
                 
-            Outputs:
+            Output:
             
                 loss        - loss of training model for the current batch, tensor.
             
             """
             
-            
             cos_sims = []
             ims, poss, negs, clss, regs = batch['qry'], batch['pos'][0], batch['neg'][0], batch['cat_idx'], batch['prod_idx']
             
-            # Get feature maps and pred labels
+            # Get feature maps and pred labels of the input images
             out_ims = self(ims) 
-            fm_ims, lbl_ims = out_ims[0], out_ims[1] # get feature maps [0] and predicted labels [1]
+            # Get feature maps [0] and predicted labels [1]
+            fm_ims, lbl_ims = out_ims[0], out_ims[1] 
+            
+            # Get feature maps and pred labels of the positive images
             out_poss = self(poss)
-            fm_poss, lbl_poss = out_poss[0], out_poss[1] # get feature maps [0] and predicted labels [1]
+            # Get feature maps [0] and predicted labels [1]
+            fm_poss, lbl_poss = out_poss[0], out_poss[1] 
+            
+            # Get feature maps and pred labels of the negative images
             out_negs = self(negs)
-            fm_negs, lbl_negs = out_negs[0], out_negs[1] # get feature maps [0] and predicted labels [1]
+            # Get feature maps [0] and predicted labels [1]
+            fm_negs, lbl_negs = out_negs[0], out_negs[1] 
             
             # Compute loss
             if only_features and only_labels:
