@@ -229,11 +229,14 @@ def run(args):
                 loss_ce = loss_ce_ims + loss_ce_poss
                 loss = loss_cos + loss_con + loss_ce
                 
+            # Cosine embedding loss only               
             elif only_features == True and only_labels == None:
                 loss_cos_poss = self.cos_loss(fm_ims, fm_poss, labels["pos"].to("cuda")) 
                 loss_cos_negs = self.cos_loss(fm_ims, fm_negs, labels["neg"].to("cuda"))
                 loss_cos = loss_cos_poss + loss_cos_negs
-                loss = loss_cos                 
+                loss = loss_cos         
+                
+            # Crossentropy loss only               
             elif only_features == None and only_labels == True:
                 loss_ce_ims = self.ce_loss(lbl_ims, regs)
                 loss_ce = loss_ce_ims
@@ -244,11 +247,9 @@ def run(args):
             for idx, fm in (enumerate(fm_ims)):
                 sim = cos(fm_ims[idx].unsqueeze(0), fm_poss[idx]) 
                 cos_sims.append(sim)
-                vals, inds = torch.topk(lbl_ims[idx], k=3)
-                if regs[idx] in inds:
-                    top3 += 1
-                if regs[idx] in inds[0]:
-                    top1 += 1
+                vals, inds = torch.topk(lbl_ims[idx], k = 3)
+                if regs[idx] in inds: top3 += 1
+                if regs[idx] in inds[0]: top1 += 1
 
             return OD([('loss', loss)]) 
 
