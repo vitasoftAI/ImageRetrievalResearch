@@ -190,10 +190,10 @@ def run(args):
             
             """
             
-            Gets batch and batch index and does one train step and returns train loss.
+            This function gets batch and batch index and does one train step and returns train loss.
             
             Arguments:
-                batch - one batch with images;
+                batch     - one batch with images;
                 batch_idx - index of the batch.
                 
             """
@@ -257,7 +257,7 @@ def run(args):
                 # Total loss
                 loss = loss_ce
                 
-            # Compute top3 and top1
+            # Initialize top3 and top1
             top3, top1 = 0, 0            
             
             # Go through every predicted label and feature map
@@ -289,6 +289,7 @@ def run(args):
             Gets batch and batch index and does one validation step and returns validation loss.
             
             Arguments:
+            
                 batch - one batch with images;
                 batch_idx - index of the batch.
             """
