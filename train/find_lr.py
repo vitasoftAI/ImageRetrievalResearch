@@ -183,8 +183,8 @@ def run(args):
             
             Arguments:
             
-                batch       - batch of the train dataloader;
-                batch_idx   - index of the batch in the train dataloader.
+                batch       - batch of the train dataloader, tensor;
+                batch_idx   - index of the batch in the train dataloader, int.
                 
             Output:
             
@@ -261,8 +261,8 @@ def run(args):
             
             Arguments:
             
-                batch       - batch of the train dataloader;
-                batch_idx   - index of the batch in the train dataloader.
+                batch       - batch of the train dataloader, tensor;
+                batch_idx   - index of the batch in the train dataloader, int.
                 
             Outputs:
             
