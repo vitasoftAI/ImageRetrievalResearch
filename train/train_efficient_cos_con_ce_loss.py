@@ -515,7 +515,10 @@ def run(args):
 
 if __name__ == "__main__":
     
+    # Initialize Argument Parser    
     parser = argparse.ArgumentParser(description='Sketchy Database Triplet Train PyTorch Lightning Arguments')
+    
+    # Add arguments to the parser
     parser.add_argument('-ed', '--expdir', default=None, help='Experiment directory')
     parser.add_argument("-sp", "--save_path", type=str, default='saved_models', help="Path to save trained models")
     parser.add_argument("-bs", "--batch_size", type=int, default=64, help="Batch size")
@@ -530,6 +533,8 @@ if __name__ == "__main__":
     parser.add_argument("-otl", "--only_target_labels", type=bool, default=True,
                         help="If True trains the model using only cross entropy and and return predicted labels (if both otl and ofm are True uses two loss functions simultaneously)")
     
+    # Parse the arguments
     args = parser.parse_args() 
     
-    run(args) 
+    # Run the script
+    run(args)
