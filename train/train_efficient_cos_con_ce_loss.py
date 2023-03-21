@@ -193,9 +193,14 @@ def run(args):
             This function gets batch and batch index and does one train step and returns train loss.
             
             Arguments:
-                batch     - one batch with images;
-                batch_idx - index of the batch.
+            
+                batch     - one batch with images, tensor;
+                batch_idx - index of the batch, int.
                 
+            Output:
+            
+                loss      - loss of training model for the current batch, tensor.
+            
             """
             
             # Initialize a list to track cosine similarities
@@ -267,7 +272,7 @@ def run(args):
                 sim = cos(fm_ims[idx].unsqueeze(0), fm_poss)  # batch                
                 
                 # Get top3 values and indices of the predictions
-                vals, inds = torch.topk(sim, k=3)
+                vals, inds = torch.topk(sim, k = 3)
                 
                 # Compute top3
                 if clss[idx] == clss[inds[0]] or clss[idx] == clss[inds[1]] or clss[idx] == clss[inds[2]]: top3 += 1
@@ -286,12 +291,14 @@ def run(args):
         def validation_step(self, batch, batch_idx): 
             
             """
-            Gets batch and batch index and does one validation step and returns validation loss.
+            
+            This function gets batch and batch index and does one validation step and returns validation loss.
             
             Arguments:
             
                 batch - one batch with images;
                 batch_idx - index of the batch.
+                
             """
             
             # Initialize lists to track validation process results
