@@ -115,12 +115,19 @@ def run(args):
         def __init__(self, model_name,  optimizer_name, optimizer_hparams):
             
             """
-            Gets model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
+            
+            This class gets model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
             
             Arguments:
-                model_name - Name of the model/CNN to run. Used for creating the model (see function below)
-                optimizer_name - Name of the optimizer to use. Currently supported: Adam, SGD
-                optimizer_hparams - Hyperparameters for the optimizer, as dictionary. This includes learning rate, weight decay, etc.
+            
+                model_name          - model name in the timm library, str;
+                optimizer_name      - optimizer name in the torch library, str;
+                optimizer_hparams   - hyperparameters of the optimizer, list.
+            
+            Output:
+            
+                train process.
+            
             """
             
             super().__init__()
