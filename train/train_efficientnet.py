@@ -170,7 +170,12 @@ def run(args):
             
             """
             
-            Gets optimizer name initialize it and returns the optimizer with the scheduler.
+            This function initializes optimizer and scheduler.
+            
+            Outputs:
+            
+                optimizer - optimizer to update trainable parameters of the model;
+                scheduler - scheduler of the optimizer.
             
             """
             
