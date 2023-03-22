@@ -149,6 +149,17 @@ def run(args):
         # Optimizer configurations
         def configure_optimizers(self):
             
+            """
+            
+            This function initializes optimizer and scheduler.
+            
+            Outputs:
+            
+                optimizer - optimizer to update trainable parameters of the model;
+                scheduler - scheduler of the optimizer.
+            
+            """
+            
             # AdamW
             if self.hparams.optimizer_name == "Adam":
                 # AdamW is Adam with a correct implementation of weight decay (see here
