@@ -59,21 +59,24 @@ def run(args):
     tr_ds, val_ds = torch.utils.data.random_split(ds, [int(len_ds * 0.8), int(len_ds - int(len_ds * 0.8))])
     
     # Initialize train and validation dataloaders
-    train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=False, drop_last=False, num_workers=8)
-    val_loader = DataLoader(val_ds, batch_size=bs, shuffle=False, drop_last=False, num_workers=8)
+    train_loader = DataLoader(tr_ds, batch_size = bs, shuffle = False, drop_last = False, num_workers = 8)
+    val_loader = DataLoader(val_ds, batch_size = bs, shuffle = False, drop_last = False, num_workers = 8)
     
     # Function to get feature maps
     def get_fm(fm):
         
         """
         
-        Gets feature map with size (bs, fm_shape, 7, 7)
-        applies average pooling and returns feature map
-        with shape (bs, fm_shape).
+        This function gets feature map with size (bs, fm_shape, 7, 7)
+        applies average pooling and returns feature map with shape (bs, fm_shape).
         
         Argument:
         
-        fm - feature map.
+            fm - feature map, tensor.
+        
+        Output:
+        
+            fm - reshaped feature map, tensor.
         
         """
         
