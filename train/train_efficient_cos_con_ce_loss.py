@@ -132,6 +132,7 @@ def run(args):
         def __init__(self, model_name,  optimizer_name, optimizer_hparams):
             
             """
+            
             This class gets model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
             
             Arguments:
