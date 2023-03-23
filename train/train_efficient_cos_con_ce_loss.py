@@ -182,7 +182,7 @@ def run(args):
             elif self.hparams.optimizer_name == "SGD": optimizer = torch.optim.SGD(self.parameters(), **self.hparams.optimizer_hparams)
             
             # Set the scheduler
-            scheduler = MultiStepLR(optimizer=optimizer, milestones=[6,15,22,30,35,40], gamma=0.1, verbose=True)
+            scheduler = MultiStepLR(optimizer = optimizer, milestones = [6,15,22,30,35,40], gamma = 0.1, verbose = True)
         
             return [optimizer], [scheduler]
         
