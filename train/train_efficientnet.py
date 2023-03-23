@@ -201,13 +201,18 @@ def run(args):
         # Triplet model training step
         def training_step(self, batch, batch_idx):
             
-            """ 
+            """
             
-            Gets batch and batch index performs one step of training and returns train loss. 
+            This function gets batch and batch index and conducts one step of training process.
             
             Arguments:
-            batch - one batch of the train dataloader;
-            batch_idx - batch index of the corresponding batch from the train dataloader.
+            
+                batch       - batch of the train dataloader, tensor;
+                batch_idx   - index of the batch in the train dataloader, int.
+                
+            Output:
+            
+                loss        - loss of training model for the current batch, tensor.
             
             """
             
