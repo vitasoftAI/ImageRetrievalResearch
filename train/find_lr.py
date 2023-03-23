@@ -373,12 +373,18 @@ def run(args):
     def train_model(model_name, save_name = None, **kwargs):
         
         """
+        
         This function trains the model and returns trained model with its results.
         
         Arguments:
         
             model_name - name of the model in timm library, str;
             save_name  - name for the saved model, str.
+            
+        Outputs:
+        
+            model      - a trained model, timm model;
+            result     - train evaluation results, dictionary.
             
         """
         
