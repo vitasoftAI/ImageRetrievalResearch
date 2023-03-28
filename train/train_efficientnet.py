@@ -504,7 +504,6 @@ def run(args):
 
         # Pretrained file check
         pretrained_filename = os.path.join(sp, 'rexnet_150_Adam_0.0003', 'Image Retrieval', "1tgu7vtc", "checkpoints")
-        # pretrained_filename = pretrained_filename + '/epoch=3-val_loss=4.73-cos_sims=0.91-val_top1=0.48.ckpt'
         
         # If checkpoint exists
         if os.path.isfile(pretrained_filename):
@@ -525,9 +524,7 @@ def run(args):
         return model
     
     # Start training
-    trained_model = train_model(
-    model_name=model_name, optimizer_name=optimizer_name, save_name=f"{model_name}_{optimizer_name}_{lr}",
-    optimizer_hparams=optimizer_hparams)
+    trained_model = train_model(model_name = model_name, optimizer_name = optimizer_name, save_name = f"{model_name}_{optimizer_name}_{lr}", optimizer_hparams = optimizer_hparams)
 
 if __name__ == "__main__":
     
