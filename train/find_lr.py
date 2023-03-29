@@ -109,7 +109,7 @@ def run(args):
             
             """
             
-            This function gets model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
+            This class gets a model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
             
             Arguments:
             
