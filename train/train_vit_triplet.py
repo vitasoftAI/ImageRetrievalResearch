@@ -130,8 +130,11 @@ def run(args):
             self.model = create_model(model_name)
             
             # Create loss modules
-            self.cos_loss = CosineEmbeddingLoss(margin=0.2) # for triplet
-            self.ce_loss = CrossEntropyLoss() # for classification
+            
+            # For triplet 
+            self.cos_loss = CosineEmbeddingLoss(margin=0.2) 
+            # For classification
+            self.ce_loss = CrossEntropyLoss()
             
             # Example tensor
             self.example_input_array = torch.zeros((1, 3, 224, 224), dtype=torch.float32)
