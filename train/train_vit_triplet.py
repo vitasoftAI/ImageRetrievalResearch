@@ -108,13 +108,17 @@ def run(args):
     class Model(pl.LightningModule):
 
         def __init__(self, model_name,  optimizer_name, optimizer_hparams):
+            
             """
-            Gets model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
+            
+            This class gets a model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
             
             Arguments:
-                model_name - Name of the model/CNN to run. Used for creating the model (see function below)
-                optimizer_name - Name of the optimizer to use. Currently supported: Adam, SGD
-                optimizer_hparams - Hyperparameters for the optimizer, as dictionary. This includes learning rate, weight decay, etc.
+            
+                model_name        - name of the model/CNN to run. Used for creating the model (see function below)
+                optimizer_name    - name of the optimizer to use. Currently supported: Adam, SGD
+                optimizer_hparams - hyperparameters for the optimizer, as dictionary. This includes learning rate, weight decay, etc.
+                
             """
             
             super().__init__()
