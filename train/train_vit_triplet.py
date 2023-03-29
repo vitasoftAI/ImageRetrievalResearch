@@ -1,3 +1,4 @@
+# Import libraries
 import os, argparse, yaml, torch, torchvision, timm, pickle, wandb
 from datetime import datetime
 import pytorch_lightning as pl
@@ -62,13 +63,16 @@ def run(args):
         
         """
         
-        Gets feature map with size (bs, fm_shape, 7, 7)
-        applies average pooling and returns feature map
-        with shape (bs, fm_shape).
+        This function gets feature map with size (bs, fm_shape, 7, 7)
+        applies average pooling and returns feature map with shape (bs, fm_shape).
         
         Argument:
         
-        fm - feature map.
+            fm - feature map, tensor.
+        
+        Output:
+        
+            fm - reshaped feature map, tensor.
         
         """
         
