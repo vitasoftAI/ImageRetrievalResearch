@@ -90,7 +90,7 @@ def run(args):
     print(f"\nTrain dataset has {num_classes} classes")
 
     # Initialize function to compute cosine similarity
-    cos = CosineSimilarity(dim=1, eps=1e-6)
+    cos = CosineSimilarity(dim =1 , eps = 1e-6)
     
     # Set labels for the loss function
     labels = {"pos": torch.tensor(1.).unsqueeze(0),
@@ -140,12 +140,22 @@ def run(args):
             self.example_input_array = torch.zeros((1, 3, 224, 224), dtype=torch.float32)
 
         # Forward function of the model    
-        def forward(self, inp):
-            return self.model(inp)
+        def forward(self, inp): return self.model(inp)
         
         # Initialize an optimizer
         def configure_optimizers(self):
             
+            """
+            
+            This function initializes optimizer and scheduler.
+            
+            Outputs:
+            
+                optimizer - optimizer to update trainable parameters of the model;
+                scheduler - scheduler of the optimizer.
+            
+            """
+
             # AdamW
             if self.hparams.optimizer_name == "Adam":
                 # AdamW is Adam with a correct implementation of weight decay (see here
@@ -169,12 +179,17 @@ def run(args):
             
             """
             
-            Gets batch and batch index and does one train step and returns train loss.
+            This function gets batch and batch index and conducts one step of training process.
             
             Arguments:
-                batch - one batch with images;
-                batch_idx - index of the batch.
+            
+                batch       - batch of the train dataloader, tensor;
+                batch_idx   - index of the batch in the train dataloader, int.
                 
+            Output:
+            
+                loss        - loss of training model for the current batch, tensor.
+            
             """
             
             # Initialize a list to track cosine similarities
