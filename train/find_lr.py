@@ -71,12 +71,12 @@ def run(args):
     print(f"Test dataset has {test_ds.get_cat_length()} classes")
     
     # Initialize cosine similarity
-    cos = CosineSimilarity(dim=1, eps=1e-6)
+    cos = CosineSimilarity(dim = 1, eps = 1e-6)
     
     # Get train, validation, and test dataloaders
-    train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=False, num_workers=8)
-    val_loader = DataLoader(val_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
-    test_loader = DataLoader(test_ds, batch_size=bs, shuffle=True, drop_last=False, num_workers=8)  
+    train_loader = DataLoader(tr_ds, batch_size = bs, shuffle = True, drop_last = False, num_workers = 8)
+    val_loader = DataLoader(val_ds, batch_size = bs, shuffle = True, drop_last = True, num_workers = 8)
+    test_loader = DataLoader(test_ds, batch_size = bs, shuffle = True, drop_last = False, num_workers = 8)  
     
     # Set labels for the loss functions
     labels = {"con_pos": torch.tensor(1.).unsqueeze(0),
