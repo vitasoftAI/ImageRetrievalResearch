@@ -261,8 +261,8 @@ def run(args):
             
             Arguments:
             
-                batch       - batch of the train dataloader, tensor;
-                batch_idx   - index of the batch in the train dataloader, int.
+                batch           - batch of the train dataloader, tensor;
+                batch_idx       - index of the batch in the train dataloader, int.
                 
             Outputs:
             
