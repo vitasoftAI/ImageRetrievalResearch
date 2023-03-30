@@ -333,7 +333,17 @@ def run(args):
         
         """ 
         
-        Gets model name and creates a timm model.
+        This function gets model name and creates a timm model.
+        
+        Arguments:
+        
+            model_name  - name of the model in timm library, str;
+            conv_input  - option for the the input to pass convolution layer first, bool;
+            num_classes - number of classes in the dataset.
+            
+        Output:
+        
+            model       - a created model from timm library.
         
         """
 
