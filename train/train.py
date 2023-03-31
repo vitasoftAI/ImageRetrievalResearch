@@ -173,11 +173,18 @@ def run(args):
         def training_step(self, batch, batch_idx):
             
             """
-            Gets batch and batch index and does one train step and returns train loss.
+            
+            This function gets batch and batch index and conducts one step of training process.
             
             Arguments:
-                batch - one batch with images;
-                batch_idx - index of the batch.
+            
+                batch       - batch of the train dataloader, tensor;
+                batch_idx   - index of the batch in the train dataloader, int.
+                
+            Output:
+            
+                loss        - loss of training model for the current batch, tensor.
+            
             """
             
             # Initialize list to track cosine similarities            
