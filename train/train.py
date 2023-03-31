@@ -70,16 +70,15 @@ def run(args):
     print(f"Test dataset has {test_ds.get_cat_length()} classes")
     
     # Initialize cosine similarity computation function
-    cos = CosineSimilarity(dim=1, eps=1e-6)
+    cos = CosineSimilarity(dim = 1, eps = 1e-6)
     
     # Create train, validation and test dataloaders
-    train_loader = DataLoader(tr_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
-    val_loader = DataLoader(val_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)
-    test_loader = DataLoader(test_ds, batch_size=bs, shuffle=True, drop_last=True, num_workers=8)  
+    train_loader = DataLoader(tr_ds, batch_size = bs, shuffle = True, drop_last = True, num_workers = 8)
+    val_loader = DataLoader(val_ds, batch_size = bs, shuffle = True, drop_last = True, num_workers = 8)
+    test_loader = DataLoader(test_ds, batch_size = bs, shuffle = True, drop_last = True, num_workers = 8)  
     
     # Initialize labels for loss function
-    labels = {"pos": torch.tensor(1.).unsqueeze(0),
-              "neg": torch.tensor(-1.).unsqueeze(0)}
+    labels = {"pos": torch.tensor(1.).unsqueeze(0), "neg": torch.tensor(-1.).unsqueeze(0)}
     
     # Function to get feature maps
     def get_fm(fm):
@@ -114,12 +113,15 @@ def run(args):
         def __init__(self, model_name,  optimizer_name, optimizer_hparams):
             
             """
-            Gets model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
+            
+            This class gets a model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
             
             Arguments:
-                model_name - Name of the model/CNN to run. Used for creating the model (see function below)
-                optimizer_name - Name of the optimizer to use. Currently supported: Adam, SGD
-                optimizer_hparams - Hyperparameters for the optimizer, as dictionary. This includes learning rate, weight decay, etc.
+            
+                model_name        - name of the model/CNN to run. Used for creating the model (see function below)
+                optimizer_name    - name of the optimizer to use. Currently supported: Adam, SGD
+                optimizer_hparams - hyperparameters for the optimizer, as dictionary. This includes learning rate, weight decay, etc.
+                
             """
             
             super().__init__()
