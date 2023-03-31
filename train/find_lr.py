@@ -57,11 +57,11 @@ def run(args):
     out_path = "data/sketchy_database_256_soft_split_cat.json"
     
     # Get training, validation, and test datasets
-    tr_ds = SketchyImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='train', load_images=False)
-    val_ds = SketchyImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='val', load_images=False)
-    test_ds = SketchyImageDataset(data_dir = path, transform_dic=transformations, random=True, trainval_json=out_path, trainval='test', load_images=False)
+    tr_ds = SketchyImageDataset(data_dir = path, transform_dic = transformations, random = True, trainval_json = out_path, trainval = 'train', load_images = False)
+    val_ds = SketchyImageDataset(data_dir = path, transform_dic = transformations, random = True, trainval_json = out_path, trainval = 'val', load_images = False)
+    test_ds = SketchyImageDataset(data_dir = path, transform_dic = transformations, random = True, trainval_json = out_path, trainval = 'test', load_images = False)
     
-    wandb_logger = WandbLogger(name=f'{model_name}_{datetime.now().strftime("%m/%d/%H:%M:%S")}_triplet_training', project='Train-test-LR')
+    wandb_logger = WandbLogger(name = f'{model_name}_{datetime.now().strftime("%m/%d/%H:%M:%S")}_triplet_training', project = 'Train-test-LR')
     num_classes = tr_ds.get_cat_length()
     print(f"Number of train set images: {len(tr_ds)}")
     print(f"Number of validation set images: {len(val_ds)}")
