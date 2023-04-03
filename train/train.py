@@ -232,7 +232,8 @@ def run(args):
                 loss_cos = loss_cos_poss + loss_cos_negs
                 
                 # Total Loss
-                loss = loss_cos                 
+                loss = loss_cos 
+                
             elif only_features == None and only_labels == True:
                 
                 # Cross Entropy Loss 
@@ -261,7 +262,6 @@ def run(args):
 
             return OD([('loss', loss)]) 
 
-        # Validation step of the training process
         def validation_step(self, batch, batch_idx): 
             
             """
@@ -357,12 +357,10 @@ def run(args):
                 vals, inds = torch.topk(sim, k=3)
                 
                 # Compute top3 
-                if clss[idx] == clss[inds[0]] or clss[idx] == clss[inds[1]] or clss[idx] == clss[inds[2]]:
-                    top3 += 1
+                if clss[idx] == clss[inds[0]] or clss[idx] == clss[inds[1]] or clss[idx] == clss[inds[2]]: top3 += 1
                 
                 # Compute top1
-                if clss[idx] in clss[inds[0]]:
-                    top1 += 1
+                if clss[idx] in clss[inds[0]]: top1 += 1
 
             # Logs the loss per epoch to tensorboard (weighted average over batches)
             self.log("val_loss", loss)
@@ -377,7 +375,6 @@ def run(args):
 
             return OD([('loss', loss), ('val_top3', top3), ('cos_sims', torch.mean(torch.FloatTensor(cos_sims)))])
 
-    # Function to create a train model    
     def create_model(model_name, conv_input = False, num_classes = num_classes):
         
         """ 
