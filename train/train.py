@@ -379,12 +379,17 @@ def run(args):
         
         """ 
         
-        Gets model name and creates a timm model.
+        This function gets model name and creates a timm model.
         
         Arguments:
-        model_name - name of the model as in timm library;
-        conv_input - if True, model starts with a conv layer, else default model from timm is used;
-        num_classes - number of classes in the dataset.      
+        
+            model_name  - name of the model in timm library, str;
+            conv_input  - option for the the input to pass convolution layer first, bool;
+            num_classes - number of classes in the dataset, int.
+            
+        Output:
+        
+            model       - created model from timm library.
         
         """
 
