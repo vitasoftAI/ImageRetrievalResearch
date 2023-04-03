@@ -350,7 +350,7 @@ def run(args):
         
             model_name  - name of the model in timm library, str;
             conv_input  - option for the the input to pass convolution layer first, bool;
-            num_classes - number of classes in the dataset.
+            num_classes - number of classes in the dataset, int.
             
         Output:
         
@@ -362,8 +362,7 @@ def run(args):
             base_model = timm.create_model(model_name, pretrained=True, num_classes=num_classes)
             print(f"Model {model_name} with the best weights is successfully loaded!")        
             if conv_input:                
-                conv_layer = Sequential(Conv2d(3, 3, kernel_size=(3, 3), stride=(1, 1),padding=(1,1), bias=False), 
-                 SiLU(inplace=True))
+                conv_layer = Sequential(Conv2d(3, 3, kernel_size = (3, 3), stride = (1, 1),padding = (1,1), bias = False),  SiLU(inplace = True))
                 model = Sequential(conv_layer, base_model)  
             else: model = base_model
         else: assert False, f'Unknown model name "{model_name}". Available models are: {str(model_dict.keys())}'
