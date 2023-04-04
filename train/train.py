@@ -481,18 +481,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Triplet Loss PyTorch Lightning Arguments')
     
     # Add Arguments to the Parser
-    parser.add_argument('-ed', '--expdir', default=None, help='Experiment directory')
-    parser.add_argument("-sp", "--save_path", type=str, default='saved_models', help="Path to save trained models")
-    parser.add_argument("-bs", "--batch_size", type=int, default=64, help="Batch size")
-    parser.add_argument("-d", "--device", type=str, default='cuda:1', help="GPU device number")
-    parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/sketchy_database_256', help="Path to the images")
-    parser.add_argument("-mn", "--model_name", type=str, default='rexnet_150', help="Model name (from timm library (ex. darknet53, ig_resnext101_32x32d))")
-    parser.add_argument("-on", "--optimizer_name", type=str, default='Adam', help="Optimizer name (Adam or SGD)")
-    parser.add_argument("-lr", "--learning_rate", type=float, default=4.7863e-03, help="Learning rate value") # from find_lr
-    parser.add_argument("-wd", "--weight_decay", type=float, default=1e-5, help="Weight decay value")
-    parser.add_argument("-ofm", "--only_feature_embeddings", type=bool, default=True,
-                        help="If True trains the model using only triplet loss and and return feature embeddings (if both otl and ofm are True uses two loss functions simultaneously)")
-    parser.add_argument("-otl", "--only_target_labels", type=bool, default=True,
+    parser.add_argument('-ed', '--expdir', default = None, help = 'Experiment directory')
+    parser.add_argument("-sp", "--save_path", type = str, default = 'saved_models', help = "Path to save trained models")
+    parser.add_argument("-bs", "--batch_size", type = int, default = 64, help = "Batch size")
+    parser.add_argument("-d", "--device", type = str, default = 'cuda:1', help = "GPU device number")
+    parser.add_argument("-ip", "--ims_path", type = str, default = 'path/to/your/data', help = "Path to the dir with images")
+    parser.add_argument("-mn", "--model_name", type = str, default = 'rexnet_150', help = "Model name (from timm library (ex. darknet53, ig_resnext101_32x32d))")
+    parser.add_argument("-on", "--optimizer_name", type = str, default = 'Adam', help = "Optimizer name (Adam or SGD)")
+    parser.add_argument("-lr", "--learning_rate", type = float, default = 4.7863e-03, help = "Learning rate value") # from find_lr
+    parser.add_argument("-wd", "--weight_decay", type = float, default = 1e-5, help = "Weight decay value")
+    parser.add_argument("-ofm", "--only_feature_embeddings", type = bool, default = True,
+                        help = "If True trains the model using only triplet loss and and return feature embeddings (if both otl and ofm are True uses two loss functions simultaneously)")
+    parser.add_argument("-otl", "--only_target_labels", type = bool, default = True,
                         help="If True trains the model using only cross entropy and and return predicted labels (if both otl and ofm are True uses two loss functions simultaneously)")
     
     # Parse the Arguments
