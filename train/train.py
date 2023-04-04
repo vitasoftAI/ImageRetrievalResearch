@@ -467,15 +467,13 @@ def run(args):
             model = Model.load_from_checkpoint(pretrained_filename)
         else:
             pl.seed_everything(42)  # To be reproducable
-            model = Model(model_name=model_name, **kwargs)
+            model = Model(model_name = model_name, **kwargs)
             trainer.fit(model, train_loader, val_loader)
 
         return model
     
     # Start training
-    trained_model = train_model(
-    model_name=model_name, optimizer_name=optimizer_name, save_name=f"{model_name}_{optimizer_name}_{lr}",
-    optimizer_hparams=optimizer_hparams)
+    trained_model = train_model(model_name = model_name, optimizer_name = optimizer_name, save_name = f"{model_name}_{optimizer_name}_{lr}", optimizer_hparams = optimizer_hparams)
 
 if __name__ == "__main__":
     
