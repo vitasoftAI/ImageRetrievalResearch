@@ -406,11 +406,19 @@ def run(args):
     def train_model(model_name, save_name = None, **kwargs):
         
         """
-        Trains the model and returns trained model with its results.
+        
+        This function trains the model and returns trained model with its results.
         
         Arguments:
-            model_name - Name of the model you want to run. Is used to look up the class in "model_dict"
-            save_name (optional) - If specified, this name will be used for creating the checkpoint and logging directory.
+        
+            model_name - name of the model in timm library, str;
+            save_name  - name for the saved model, str.
+            
+        Outputs:
+        
+            model      - a trained model, timm model;
+            result     - train evaluation results, dictionary.
+            
         """
         
         if save_name is None:
