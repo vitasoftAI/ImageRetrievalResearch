@@ -4,7 +4,6 @@ import glob, os, random, json, tqdm, csv
 from PIL import Image
 import numpy as np
 
-# Data split function
 def data_split(data_dir, out_path, policy: str = 'prod', hard_split: bool = True, train_essentials: str = '', split: list = [0.8, 0.1, 0.1]):
     
     """
@@ -18,10 +17,14 @@ def data_split(data_dir, out_path, policy: str = 'prod', hard_split: bool = True
         hard_split          - if True, not all classes in the validation and test sets, else train, val, test sets have samples for all classes, bool;
         train_essentials    - csv file with class names for train, str;
         split               - data split ratio, list.
+        
+    Output:
+    
+        out_path            - path to output with the json file that has data split, str.
     
     """    
     
-    assert sum(split) == 1, 'sum of split should be 1'
+    assert sum(split) == 1, " Please, make sure that sum of split list equals to exactly 1"
     
     # Initialize train essentials list
     train_essential = []
