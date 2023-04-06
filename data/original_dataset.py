@@ -254,7 +254,20 @@ class OriginalDataset(Dataset):
 
 # Original Image Dataset
 class OriginalImageDataset(OriginalDataset):
-    def __init__(self, transform_dic=None, pos_return_num=1, neg_return_num=1, load_images=False, **kwargs):
+    
+    """
+    
+    This class gets several arguments and returns dictionary with data.
+    
+    Arguments:
+    
+        transform_dic - transformations, dictionary;
+        
+    
+    """
+    
+    
+    def __init__(self, transform_dic = None, pos_return_num = 1, neg_return_num = 1, load_images = False, **kwargs):
         super(OriginalImageDataset, self).__init__(**kwargs)
         self.load_images = load_images
         if self.load_images:
