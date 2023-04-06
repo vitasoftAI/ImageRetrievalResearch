@@ -265,9 +265,12 @@ class OriginalImageDataset(OriginalDataset):
         pos_return_num - number of images to be returned as a positive image, int;
         neg_return_num - number of images to be returned as a negative image, int;
         load_images    - option to load images or not, bool;
+        
+    Output:
+    
+        di             - a dictionary contaning input, positive, and negative images, category index, and product number index.
     
     """
-    
     
     def __init__(self, transform_dic = None, pos_return_num = 1, neg_return_num = 1, load_images = False, **kwargs):
         super(OriginalImageDataset, self).__init__(**kwargs)
