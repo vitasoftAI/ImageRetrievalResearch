@@ -261,8 +261,10 @@ class OriginalImageDataset(OriginalDataset):
     
     Arguments:
     
-        transform_dic - transformations, dictionary;
-        
+        transform_dic  - transformations, dictionary;
+        pos_return_num - number of images to be returned as a positive image, int;
+        neg_return_num - number of images to be returned as a negative image, int;
+        load_images    - option to load images or not, bool;
     
     """
     
