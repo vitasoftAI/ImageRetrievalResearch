@@ -275,16 +275,29 @@ class OriginalImageDataset(OriginalDataset):
     def __init__(self, transform_dic = None, pos_return_num = 1, neg_return_num = 1, load_images = False, **kwargs):
         super(OriginalImageDataset, self).__init__(**kwargs)
         self.load_images = load_images
+        # Load images
         if self.load_images:
             self.sketch_lst_im = {i: Image.open(i).convert('RGB') for i in self.sketch_lst}
             self.image_lst_im = {i: Image.open(i).convert('RGB') for i in self.image_lst}
         
+        # Get transformations dictionary
         self.transform_dic = transform_dic
+        
+        # Apply transformations
         if transform_dic:
             self.qry_trans, self.pos_trans, self.neg_trans = transform_dic['qry'], transform_dic['pos'], transform_dic['neg']
+        
+        # Get positive and negative images numbers
         self.pos_return_num = pos_return_num
         self.neg_return_num = neg_return_num
+        
     def __getitem__(self, idx):
+        
+        """
+        
+        
+        
+        """
         rslt_dic = super(OriginalImageDataset, self).__getitem__(idx)
         qry, pos_lst, neg_lst, pos_pol, neg_pol = rslt_dic['qry'], rslt_dic['pos'], rslt_dic['neg'], rslt_dic['pos_policy'], rslt_dic['neg_policy']
         try:
