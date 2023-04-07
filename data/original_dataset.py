@@ -223,27 +223,35 @@ class OriginalDataset(Dataset):
             return len(self.data)
         return len(self.image_lst)
     
-    def get_basepath(self, path):
-        return path.replace(os.path.join(self.data_dir, ''), '')
-    def get_cat_length(self):
-        return len(self.cat_idx)
-    def get_prod_length(self):
-        return len(self.prod_idx)
+    def get_basepath(self, path): return path.replace(os.path.join(self.data_dir, ''), '')
+    
+    def get_cat_length(self): return len(self.cat_idx)
+    
+    def get_prod_length(self): return len(self.prod_idx)
+    
     def image_classify(self, path):
+        
         path = self.get_basepath(path)
         split_path = path.split('/')
         cat, prod = split_path[0], split_path[1].split('_')[-2]
+        
         return cat, prod
+    
     def sketch_classify(self, path):
+        
         path = self.get_basepath(path)
         split_path = path.split('/')
         cat, prod = split_path[0], split_path[2].split('_')[-2]
+        
         return cat, prod
+    
     def gen_dic(self, dic, f_name, parser, sketch_or_real):
+        
         basepath = self.get_basepath(f_name)
         if parser not in dic:
             dic[parser] = {'sketch': [], 'real': []}
         dic[parser][sketch_or_real].append(f_name)
+        
         return dic
 
 # Original Image Dataset
