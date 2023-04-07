@@ -207,18 +207,22 @@ class OriginalDataset(Dataset):
                     self.pos_neg_dic[qry] = {'pos':pos_lst, 'neg': neg_lst, 'pos_policy': pos_policy, 'neg_policy': neg_policy}
             
             self.image_lst = list(self.pos_neg_dic.keys())
+    
     def __getitem__(self, idx):
-        if not self.random:
-            return self.data[idx]
+        
+        if not self.random: return self.data[idx]
         qry = self.image_lst[idx]
         pos_neg = self.pos_neg_dic[self.image_lst[idx]]
         pos_lst, neg_lst, pos_policy, neg_policy = pos_neg['pos'], pos_neg['neg'], pos_neg['pos_policy'], pos_neg['neg_policy']
         
         return {'qry':qry, 'pos':pos_neg['pos'], 'neg':pos_neg['neg'], 'pos_policy': pos_neg['pos_policy'], 'neg_policy': pos_neg['neg_policy']}
+    
     def __len__(self):
+        
         if not self.random:
             return len(self.data)
         return len(self.image_lst)
+    
     def get_basepath(self, path):
         return path.replace(os.path.join(self.data_dir, ''), '')
     def get_cat_length(self):
