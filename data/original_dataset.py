@@ -33,8 +33,7 @@ def data_split(data_dir, out_path, policy: str = 'prod', hard_split: bool = True
     if train_essentials:
         with open(train_essentials, 'r') as f:
             data = csv.reader(f)
-            for i in data:
-                train_essential += i
+            for i in data: train_essential += i
     
     # Get image list
     lst = glob.glob(os.path.join(data_dir, '**/*'), recursive = True)
@@ -50,8 +49,7 @@ def data_split(data_dir, out_path, policy: str = 'prod', hard_split: bool = True
     rslt = {'train':[], 'val':[]}
     
     # Create test key in split contains test
-    if len(split) == 3:
-        rslt['test'] = []
+    if len(split) == 3: rslt['test'] = []
     dic = {}
     
     # Go through the list
@@ -70,8 +68,7 @@ def data_split(data_dir, out_path, policy: str = 'prod', hard_split: bool = True
         dic[pol].append(i)
     
     # Hard split
-    if hard_split:
-        keys = list(dic.keys())
+    if hard_split: keys = list(dic.keys())
         
         # Get train essentials
         train_essential = list(set(keys) & set(train_essential))
