@@ -37,7 +37,7 @@ def data_split(data_dir, out_path, policy: str = 'prod', hard_split: bool = True
                 train_essential += i
     
     # Get image list
-    lst = glob.glob(os.path.join(data_dir, '**/*'), recursive=True)
+    lst = glob.glob(os.path.join(data_dir, '**/*'), recursive = True)
     lst = list(set(lst) - set(glob.glob(os.path.join(data_dir, '*/pdf_detail/*'))))
     
     # Get only files
@@ -63,14 +63,10 @@ def data_split(data_dir, out_path, policy: str = 'prod', hard_split: bool = True
         
         # Get cat number and prod number
         cat, prod = split_path[0], split_path[1].split('_')[-2]
-        if policy == 'cat':
-            pol = cat
-        elif policy == 'prod':
-            pol = prod
-        else:
-            raise Exception('policy must be one of [cat, prod]')
-        if pol not in dic:
-            dic[pol] = []
+        if policy == 'cat': pol = cat
+        elif policy == 'prod': pol = prod
+        else: raise Exception('policy must be one of [cat, prod]')
+        if pol not in dic: dic[pol] = []
         dic[pol].append(i)
     
     # Hard split
