@@ -97,8 +97,7 @@ def data_split(data_dir, out_path, policy: str = 'prod', hard_split: bool = True
     # Soft split
     else:
         for key, value in dic.items():
-            if key in train_essential:
-                rslt['train']+=value
+            if key in train_essential: rslt['train'] += value
             else:
                 idx = int(len(value)*split[1])
                 val_len = max(idx, 1)
@@ -114,9 +113,7 @@ def data_split(data_dir, out_path, policy: str = 'prod', hard_split: bool = True
                     rslt['train']+=value
         
         # Create json file and save it
-        with open(out_path, 'w') as f:
-            json.dump(rslt, f)
-        
+        with open(out_path, 'w') as f: json.dump(rslt, f)
         return out_path
 
 # Original Dataset
