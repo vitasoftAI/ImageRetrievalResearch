@@ -124,15 +124,15 @@ class OriginalDataset(Dataset):
     Arguments:
     
         data_dir            - directory with the data, str;
-        out_path            - path to output the json file with data split, str;
-        policy              - policy to split data, str;
-        hard_split          - if True, not all classes in the validation and test sets, else train, val, test sets have samples for all classes, bool;
-        train_essentials    - csv file with class names for train, str;
-        split               - data split ratio, list.
+        random              - option for random image extraction, bool;
+        pos_policy          - type of the calling positive images from the folder, str;
+        neg_policy          - type of the calling negative images from the folder, str;
+        data_json           - path to the json file, str;
+        trainval            - option for train or validation, str;
         
     Output:
     
-        out_path            - path to output with the json file that has data split, str.
+        ds                  - dataset, torch dataset object.
     
     """    
     
