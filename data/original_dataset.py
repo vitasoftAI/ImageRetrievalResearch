@@ -79,12 +79,9 @@ def data_split(data_dir, out_path, policy: str = 'prod', hard_split: bool = True
         val_keys = keys[train_idx: train_idx + val_idx]
         
         # Add test keys
-        if len(split) == 3:
-            test_keys = keys[train_idx + val_idx:]
-        for key in train_keys:
-            rslt['train'] += dic[key]
-        for key in val_keys:
-            rslt['val'] += dic[key]
+        if len(split) == 3: test_keys = keys[train_idx + val_idx:]
+        for key in train_keys: rslt['train'] += dic[key]
+        for key in val_keys: rslt['val'] += dic[key]
         if len(split) == 3:
             for key in test_keys:
                 rslt['test'] += dic[key]
@@ -92,6 +89,7 @@ def data_split(data_dir, out_path, policy: str = 'prod', hard_split: bool = True
         # Create json file and save it
         with open(out_path, 'w') as f:
             json.dump(rslt, f)
+            
         return out_path
     
     # Soft split
@@ -99,14 +97,14 @@ def data_split(data_dir, out_path, policy: str = 'prod', hard_split: bool = True
         for key, value in dic.items():
             if key in train_essential: rslt['train'] += value
             else:
-                idx = int(len(value)*split[1])
+                idx = int(len(value) * split[1])
                 val_len = max(idx, 1)
-                test_len = max(int(len(value)*split[2]), 1)
+                test_len = max(int(len(value) * split[2]), 1)
                 train_len = len(value) - val_len - test_len
                 if val_len > 0 and test_len > 0 and train_len > 0:
-                    rslt['val']+=value[:val_len]
-                    rslt['test']+=value[val_len:val_len+test_len]
-                    rslt['train']+=value[val_len+test_len:]
+                    rslt['val'] + =value[:val_len]
+                    rslt['test'] += value[val_len:val_len + test_len]
+                    rslt['train'] += value[val_len + test_len:]
                 else:
                     rslt['val']+=value
                     rslt['test']+=value
