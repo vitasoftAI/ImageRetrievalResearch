@@ -7,6 +7,7 @@ import numpy as np
 def data_split(data_dir, out_path, policy: str = 'prod', hard_split: bool = True, train_essentials: str = '', split: list = [0.8, 0.1, 0.1]):
     
     """
+    
     This function gets data directory, output path, policy for data split, hard_split note, essential classes for train, and split ratio and returns output path with the data split.
     
     Arguments:
@@ -114,10 +115,28 @@ def data_split(data_dir, out_path, policy: str = 'prod', hard_split: bool = True
         with open(out_path, 'w') as f: json.dump(rslt, f)
         return out_path
 
-# Original Dataset
 class OriginalDataset(Dataset):
     
-    def __init__(self, data_dir, random=True, pos_policy='prod', neg_policy='except_cat', trainval_json=None, trainval=None, data_json=None):
+    """
+    
+    This function gets several arguments and return a dataset object with data from the given directory path.
+    
+    Arguments:
+    
+        data_dir            - directory with the data, str;
+        out_path            - path to output the json file with data split, str;
+        policy              - policy to split data, str;
+        hard_split          - if True, not all classes in the validation and test sets, else train, val, test sets have samples for all classes, bool;
+        train_essentials    - csv file with class names for train, str;
+        split               - data split ratio, list.
+        
+    Output:
+    
+        out_path            - path to output with the json file that has data split, str.
+    
+    """    
+    
+    def __init__(self, data_dir, random = True, pos_policy = 'prod', neg_policy = 'except_cat', trainval_json = None, trainval = None, data_json = None):
     
         # Get dataset arguments
         self.pos_policy = pos_policy
