@@ -144,22 +144,29 @@ class OriginalDataset(Dataset):
         # Initialize dictionaries
         self.cat_idx, self.prod_idx, self.pos_neg_dic, self.neg_dic = {}, {}, {}, {}
         
+        # Not random case
         if not self.random:
-            assert data_json != None, 'data_json is required if not random'
+            assert data_json != None, "data_json is required if not random"
             assert trainval_json == None and trainval == None, 'random false mode doesn\t support trainval mode'
-            with open(data_json, 'r') as f:
-                json_data = json.loads(f.read())
+            
+            # Read data from the json file 
+            with open(data_json, 'r') as f: json_data = json.loads(f.read())
+            
+            # Get information from the json file
             self.cat_idx = json_data['meta']['cat_idx']
             self.prod_idx = json_data['meta']['prod_idx']
             self.sketch_lst = json_data['meta']['sketch_lst']
             self.image_lst = json_data['meta']['image_lst']
             self.data = json_data['data']
+            
+        # Random case
         else:
+            # From a json file
             if trainval_json:
-                assert trainval != None, 'you should declare whether this is train or val dataset'
-                with open(trainval_json, 'r') as f:
-                    trainval_data = json.loads(f.read())
+                assert trainval != None, "Please declare whether this is train or val dataset"
+                with open(trainval_json, 'r') as f: trainval_data = json.loads(f.read())
                 self.image_lst = trainval_data[trainval]
+            # Not from a json file
             else:
                 self.image_lst = glob.glob(os.path.join(self.data_dir, '**/*'), recursive=True)
             self.sketch_lst = glob.glob(os.path.join(self.data_dir, '*/pdf_detail/*'))
