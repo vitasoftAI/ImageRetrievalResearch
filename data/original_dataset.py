@@ -139,14 +139,10 @@ class OriginalDataset(Dataset):
     def __init__(self, data_dir, random = True, pos_policy = 'prod', neg_policy = 'except_cat', trainval_json = None, trainval = None, data_json = None):
     
         # Get dataset arguments
-        self.pos_policy = pos_policy
-        self.neg_policy = neg_policy
-        self.random = random
-        self.data_dir = data_dir
-        self.cat_idx = {}
-        self.prod_idx = {}
-        self.pos_neg_dic = {}
-        self.neg_dic = {}
+        self.pos_policy, self.neg_policy, self.random, self.data_dir = pos_policy, neg_policy, random, data_dir
+        
+        # Initialize dictionaries
+        self.cat_idx, self.prod_idx, self.pos_neg_dic, self.neg_dic = {}, {}, {}, {}
         
         if not self.random:
             assert data_json != None, 'data_json is required if not random'
