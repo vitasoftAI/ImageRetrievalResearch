@@ -166,13 +166,17 @@ class OriginalDataset(Dataset):
                 assert trainval != None, "Please declare whether this is train or val dataset"
                 with open(trainval_json, 'r') as f: trainval_data = json.loads(f.read())
                 self.image_lst = trainval_data[trainval]
+            
             # Not from a json file
-            else:
-                self.image_lst = glob.glob(os.path.join(self.data_dir, '**/*'), recursive=True)
+            else: self.image_lst = glob.glob(os.path.join(self.data_dir, '**/*'), recursive=True)
+            
+            # Get image lists
             self.sketch_lst = glob.glob(os.path.join(self.data_dir, '*/pdf_detail/*'))
             self.image_lst = list(set(self.image_lst) - set(self.sketch_lst))
             self.image_lst = [i for i in self.image_lst if os.path.isfile(i)]
             self.sketch_lst = [i for i in self.sketch_lst if os.path.isfile(i)]
+            
+            # Initialize dictionaries
             self.cat_dic, self.prod_dic, self.sketch_dic = {}, {}, {}
             
             for i in self.image_lst:
@@ -229,6 +233,21 @@ class OriginalDataset(Dataset):
             self.image_lst = list(self.pos_neg_dic.keys())
     
     def __getitem__(self, idx):
+    
+    
+    """
+    
+    This function gets an index and returns dictionary with data.
+    
+    Argument:
+    
+        idx     - index of the dataset, int.
+        
+    Output:
+    
+        dic     - dictionary with data, dictionary.
+    
+    """
         
         if not self.random: return self.data[idx]
         qry = self.image_lst[idx]
@@ -238,7 +257,6 @@ class OriginalDataset(Dataset):
         return {'qry':qry, 'pos':pos_neg['pos'], 'neg':pos_neg['neg'], 'pos_policy': pos_neg['pos_policy'], 'neg_policy': pos_neg['neg_policy']}
     
     def __len__(self):
-        
         if not self.random:
             return len(self.data)
         return len(self.image_lst)
