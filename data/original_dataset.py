@@ -234,7 +234,6 @@ class OriginalDataset(Dataset):
     
     def __getitem__(self, idx):
     
-    
     """
     
     This function gets an index and returns dictionary with data.
@@ -292,7 +291,6 @@ class OriginalDataset(Dataset):
         
         return dic
 
-# Original Image Dataset
 class OriginalImageDataset(OriginalDataset):
     
     """
@@ -335,20 +333,32 @@ class OriginalImageDataset(OriginalDataset):
         
         """
         
+        This function gets an index and returns data in a dictionary form.
         
+        Argument:
+        
+            idx    - index in the dataset, int.
+            
+        Output:
+        
+            di     - dictionary containing necessary data for training, dictionary.
         
         """
+        
         rslt_dic = super(OriginalImageDataset, self).__getitem__(idx)
+        
+        # Get images
         qry, pos_lst, neg_lst, pos_pol, neg_pol = rslt_dic['qry'], rslt_dic['pos'], rslt_dic['neg'], rslt_dic['pos_policy'], rslt_dic['neg_policy']
-        try:
-            pos = random.sample(pos_lst, self.pos_return_num)
-        except:
-            raise Exception(f'pos_return_num should be smaller than length of positive list')
-        try:
-            neg = random.sample(neg_lst, self.neg_return_num)
-        except:
-            raise Exception(f'neg_return_num should be smaller than length of negative list')
+        
+        try: pos = random.sample(pos_lst, self.pos_return_num)
+        except: raise Exception(f'pos_return_num should be smaller than length of positive list')
+        
+        try: neg = random.sample(neg_lst, self.neg_return_num)
+        except: raise Exception(f'neg_return_num should be smaller than length of negative list')
+        
+        # Get category and product numbers using query image
         cat, prod = self.image_classify(qry)
+        
         if self.load_images:
             qry_rslt = self.image_lst_im[qry]
             pos_rslt = [self.sketch_lst_im[i] for i in pos]
@@ -357,6 +367,7 @@ class OriginalImageDataset(OriginalDataset):
             qry_rslt = Image.open(qry).convert('RGB')
             pos_rslt = [Image.open(i).convert('RGB') for i in pos]
             neg_rslt = [Image.open(i).convert('RGB') for i in neg]
+        
         if self.transform_dic:
             qry_rslt = self.qry_trans(qry_rslt)
             pos_rslt = [self.pos_trans(i) for i in pos_rslt]
@@ -365,4 +376,5 @@ class OriginalImageDataset(OriginalDataset):
             qry_rslt = np.array(qry_rslt)
             pos_rslt = [np.array(i) for i in pos_rslt]
             neg_rslt = [np.array(i) for i in neg_rslt]
+        
         return {'qry': qry_rslt, 'pos': pos_rslt, 'neg': neg_rslt, 'cat_idx': self.cat_idx[cat], 'prod_idx': self.prod_idx[prod]}
