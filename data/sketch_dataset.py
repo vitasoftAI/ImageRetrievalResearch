@@ -1,15 +1,11 @@
+# Import libraries
 from torch.utils.data import Dataset
-import glob
-import os
+import glob, os, random, tqdm, json, numpy as np
 from PIL import Image
-import random
-import numpy as np
-import tqdm
-import json
 
 def data_split(data_dir, out_path, policy: str = 'cat', hard_split: bool = True, train_essentials: str = '', split: list = [0.8, 0.1, 0.1], sketch_qry = False):
     
-     """
+    """
     
     Gets data directory, output path, policy for data split, hard_split note, essential classes for train, and split ratio
     and returns output path with the data split.
