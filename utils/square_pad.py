@@ -7,7 +7,7 @@ class SquarePad:
   
   This class gets an image and adds padding to make the image square.
   
-  Argument:
+  Parameter:
   
        image - an input image, array;
        
