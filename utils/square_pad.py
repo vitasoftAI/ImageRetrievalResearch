@@ -1,14 +1,19 @@
-import torchvision.transforms.functional as FF
-import numpy as np
+# Import libraries
+import torchvision.transforms.functional as FF, numpy as np
 
 class SquarePad:
   
   """
   
-  Gets an image and adds padding to make the image square.
+  This class gets an image and adds padding to make the image square.
   
   Argument:
-  image - input image
+  
+       image - an input image, array;
+       
+  Output:
+  
+       image - a square padded output image, array;
   
   """
 
