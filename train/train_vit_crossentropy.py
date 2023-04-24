@@ -278,7 +278,8 @@ def run(args):
         
         Parameters:
         
-            
+            model_name    - a name of a model from timm library, str;
+            num_classes   - number of classes in the dataset, int.      
         
         """
 
@@ -294,16 +295,18 @@ def run(args):
     def train_model(model_name, save_name = None, **kwargs):
         
         """
-        Trains the model and returns trained model with its results.
         
-        Arguments:
-            model_name - Name of the model you want to run. Is used to look up the class in "model_dict"
-            save_name (optional) - If specified, this name will be used for creating the checkpoint and logging directory.
+        This function trains the model and returns trained model with its results.
+        
+        Parameters:
+        
+            model_name           - a name of the model you want to run, str;
+            save_name            - the name that is used for creating the checkpoint and logging directory, str.
+        
         """
         
         # Set save name
-        if save_name is None:
-            save_name = model_name
+        if save_name is None: save_name = model_name
 
         # Initialize trainer
         trainer = pl.Trainer(
