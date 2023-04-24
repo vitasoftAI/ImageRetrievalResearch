@@ -137,14 +137,12 @@ def run(args):
             # Create a model
             self.model = create_model(model_name)
             # Create loss modules
-            self.cos_loss = CosineEmbeddingLoss(margin=0.2)
-            self.ce_loss = CrossEntropyLoss()
+            self.cos_loss, self.ce_loss = CosineEmbeddingLoss(margin = 0.2), CrossEntropyLoss()
             
             # Example input
-            self.example_input_array = torch.zeros((1, 3, 224, 224), dtype=torch.float32)
+            self.example_input_array = torch.zeros((1, 3, 224, 224), dtype = torch.float32)
 
-        def forward(self, inp):
-            return self.model(inp)
+        def forward(self, inp): return self.model(inp)
         
         # Optimizer configurations
         def configure_optimizers(self):
@@ -229,11 +227,14 @@ def run(args):
         def validation_step(self, batch, batch_idx):
             
             """
-            Gets batch and batch index and does one validation step and returns validation loss.
             
-            Arguments:
-                batch - one batch with images;
-                batch_idx - index of the batch.
+            This function gets batch and batch index and does one validation step and returns validation loss.
+            
+            Parameters:
+            
+                batch     - one batch with images, torch dataloader object;
+                batch_idx - index of the batch, int.
+                
             """
 
             # Initialize lists to track the metrics 
@@ -273,7 +274,11 @@ def run(args):
         
         """ 
         
-        Gets model name and creates a timm model.
+        This function gets a model name and creates a timm model.
+        
+        Parameters:
+        
+            
         
         """
 
