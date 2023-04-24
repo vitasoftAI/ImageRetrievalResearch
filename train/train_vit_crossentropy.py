@@ -70,7 +70,7 @@ def run(args):
         This function gets feature map with size (bs, fm_shape, 7, 7)
         applies average pooling and returns feature map with shape (bs, fm_shape).
         
-        Argument:
+        Parameter:
         
             fm - feature map, tensor.
         
@@ -118,7 +118,7 @@ def run(args):
             
             This class gets model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
             
-            Arguments:
+            Parameters:
             
                 model_name          - model name in the timm library, str;
                 optimizer_name      - optimizer name in the torch library, str;
@@ -175,18 +175,21 @@ def run(args):
                 assert False, f'Unknown optimizer: "{self.hparams.optimizer_name}"'
             
             # Initialize scheduler
-            scheduler = MultiStepLR(optimizer=optimizer, milestones=[10,20,30,40, 50], gamma = 0.1, verbose=True)
+            scheduler = MultiStepLR(optimizer = optimizer, milestones = [10, 20, 30, 40, 50], gamma = 0.1, verbose = True)
         
             return [optimizer], [scheduler]
         
         def training_step(self, batch, batch_idx): 
             
             """
-            Gets batch and batch index and does one train step and returns train loss.
             
-            Arguments:
+            This function gets batch and batch index and does one train step and returns train loss.
+            
+            Parameters:
+            
                 batch - one batch with images;
                 batch_idx - index of the batch.
+                
             """
             
             # Initialize list to track cosine similarities 
