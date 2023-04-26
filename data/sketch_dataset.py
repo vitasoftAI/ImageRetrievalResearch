@@ -86,15 +86,14 @@ def data_split(data_dir, out_path, policy: str = 'cat', hard_split: bool = True,
                 test_len = max(int(len(value)*split[2]), 1)
                 train_len = len(value) - val_len - test_len
                 if val_len > 0 and test_len > 0 and train_len > 0:
-                    rslt['val']+=value[:val_len]
-                    rslt['test']+=value[val_len:val_len+test_len]
-                    rslt['train']+=value[val_len+test_len:]
+                    rslt['val'] += value[:val_len]
+                    rslt['test'] += value[val_len:val_len + test_len]
+                    rslt['train'] += value[val_len+test_len:]
                 else:
-                    rslt['val']+=value
-                    rslt['test']+=value
-                    rslt['train']+=value
-        with open(out_path, 'w') as f:
-            json.dump(rslt, f)
+                    rslt['val'] += value
+                    rslt['test'] += value
+                    rslt['train'] += value
+        with open(out_path, 'w') as f: json.dump(rslt, f)
         return out_path
 
 class SketchyDataset(Dataset):
