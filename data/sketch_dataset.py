@@ -102,7 +102,13 @@ class SketchyDataset(Dataset):
 
 This class gets several parameters and returns Sketchy Dataset.
 
-Paremter
+Paremters:
+
+    data_dir          - path to directory with data, str
+    random            - option for random data extraction, bool;
+    pos_policy        - policy for positive image selection, bool;
+    neg_policy        - policy for negative image selection
+    , bool;='except_cat', trainval_json=None, trainval=None, data_json=None, sketch_qry=False
 
 
 
