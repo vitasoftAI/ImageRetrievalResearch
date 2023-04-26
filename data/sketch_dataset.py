@@ -118,16 +118,18 @@ Paremters:
         self.pos_policy, self.neg_policy, self.random, self.data_dir = pos_policy, neg_policy, random, data_dir
         self.neg_dic, self.pos_neg_dic, self.prod_idx, self.cat_idx = {}, {}, {}, {}
         
+        # When random option is off
         if not self.random:
             assert data_json != None, 'data_json is required if not random'
             assert trainval_json == None and trainval == None, 'random false mode doesn\t support trainval mode'
-            with open(data_json, 'r') as f:
-                json_data = json.loads(f.read())
+            with open(data_json, 'r') as f: json_data = json.loads(f.read())
             self.cat_idx = json_data['meta']['cat_idx']
             self.prod_idx = json_data['meta']['prod_idx']
             self.sketch_lst = json_data['meta']['sketch_lst']
             self.image_lst = json_data['meta']['image_lst']
             self.data = json_data['data']
+        
+        # When random option is on
         else:
             if trainval_json:
                 assert trainval != None, 'you should declare whether this is train or val dataset'
@@ -136,6 +138,7 @@ Paremters:
                 self.image_lst = trainval_data[trainval]
             else:
                 self.image_lst = glob.glob(os.path.join(self.data_dir, 'photo/tx_000000000000/*/*'))
+            
             self.sketch_lst = glob.glob(os.path.join(self.data_dir, 'sketch/tx_000000000000/*/*'))
             self.image_lst = [i for i in self.image_lst if os.path.isfile(i)]
             self.sketch_lst = [i for i in self.sketch_lst if os.path.isfile(i)]
@@ -150,7 +153,6 @@ Paremters:
                 self.cat_idx[key] = idx
             for idx, key in enumerate(self.prod_dic.keys()):
                 self.prod_idx[key] = idx
-                
                 
             if sketch_qry:
                 self.image_lst = self.image_lst + self.sketch_lst
