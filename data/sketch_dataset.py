@@ -97,8 +97,14 @@ def data_split(data_dir, out_path, policy: str = 'cat', hard_split: bool = True,
             json.dump(rslt, f)
         return out_path
 
-
 class SketchyDataset(Dataset):
+
+"""
+
+
+"""
+
+
     def __init__(self, data_dir, random=True, pos_policy='cat', neg_policy='except_cat', trainval_json=None, trainval=None, data_json=None, sketch_qry=False):
         self.pos_policy = pos_policy
         self.neg_policy = neg_policy
