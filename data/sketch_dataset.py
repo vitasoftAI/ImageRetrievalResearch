@@ -101,6 +101,9 @@ class SketchyDataset(Dataset):
 
 """
 
+This class gets several parameters and returns Sketchy Dataset.
+
+
 
 """
 
