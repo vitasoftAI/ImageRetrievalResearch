@@ -102,7 +102,7 @@ class SketchyDataset(Dataset):
 
 This class gets several parameters and returns Sketchy Dataset.
 
-Paremters:
+Parameters:
 
     data_dir          - path to directory with data, str
     random            - option for random data extraction, bool;
@@ -197,6 +197,21 @@ Paremters:
             self.image_lst = list(self.pos_neg_dic.keys())
 
     def __getitem__(self, idx):
+        
+        """
+        
+        This function gets index and returns a dictionary with necessary information.
+        
+        Parameter:
+        
+            idx    - index, int.
+            
+        Output:
+        
+            dic    - information necessary for training, dictionary. 
+        
+        """
+        
         if not self.random:
             return self.data[idx]
         qry = self.image_lst[idx]
