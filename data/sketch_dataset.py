@@ -56,7 +56,6 @@ def data_split(data_dir, out_path, policy: str = 'cat', hard_split: bool = True,
         dic[pol].append(i)
     if hard_split:
         keys = list(dic.keys())
-        ############
         train_essential = list(set(keys) & set(train_essential))
         keys = list(set(keys) - set(train_essential))
         random.shuffle(keys)
@@ -76,6 +75,7 @@ def data_split(data_dir, out_path, policy: str = 'cat', hard_split: bool = True,
         with open(out_path, 'w') as f:
             json.dump(rslt, f)
         return out_path
+    
     else:
         for key, value in dic.items():
             if key in train_essential:
@@ -101,6 +101,8 @@ class SketchyDataset(Dataset):
 """
 
 This class gets several parameters and returns Sketchy Dataset.
+
+Paremter
 
 
 
