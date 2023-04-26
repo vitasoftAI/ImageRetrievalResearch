@@ -115,13 +115,9 @@ Paremters:
 """
 
     def __init__(self, data_dir, random = True, pos_policy = 'cat', neg_policy = 'except_cat', trainval_json = None, trainval = None, data_json = None, sketch_qry = False):
-        self.pos_policy, self.neg_policy, self.random = pos_policy, neg_policy, random
-         = 
-        self.data_dir = data_dir
-        self.cat_idx = {}
-        self.prod_idx = {}
-        self.pos_neg_dic = {}
-        self.neg_dic = {}
+        self.pos_policy, self.neg_policy, self.random, self.data_dir = pos_policy, neg_policy, random, data_dir
+        self.neg_dic, self.pos_neg_dic, self.prod_idx, self.cat_idx = {}, {}, {}, {}
+        
         if not self.random:
             assert data_json != None, 'data_json is required if not random'
             assert trainval_json == None and trainval == None, 'random false mode doesn\t support trainval mode'
