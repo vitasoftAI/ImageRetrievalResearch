@@ -108,9 +108,9 @@ Paremters:
     random            - option for random data extraction, bool;
     pos_policy        - policy for positive image selection, bool;
     neg_policy        - policy for negative image selection
-    , bool;='except_cat', trainval_json=None, trainval=None, data_json=None, sketch_qry=False
-
-
+    trainval          - option for train or validation, str;
+    data_json         - json data file, json;
+    sketch_qry        - whether a sketch image can be query or not, bool.
 
 """
 
