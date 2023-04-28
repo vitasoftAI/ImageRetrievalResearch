@@ -212,35 +212,35 @@ Parameters:
         
         """
         
-        if not self.random:
-            return self.data[idx]
+        if not self.random: return self.data[idx]
         qry = self.image_lst[idx]
         pos_neg = self.pos_neg_dic[self.image_lst[idx]]
         pos_lst, neg_lst, pos_policy, neg_policy = pos_neg['pos'], pos_neg['neg'], pos_neg['pos_policy'], pos_neg['neg_policy']
         
         return {'qry':qry, 'pos':pos_neg['pos'], 'neg':pos_neg['neg'], 'pos_policy': pos_neg['pos_policy'], 'neg_policy': pos_neg['neg_policy']}
+    
     def __len__(self):
         if not self.random:
             return len(self.data)
         return len(self.image_lst)
-    def get_basepath(self, path):
-        return path.replace(os.path.join(self.data_dir, ''), '')
+    
+    def get_basepath(self, path): return path.replace(os.path.join(self.data_dir, ''), '')
+    
     def classify(self, path):
         basename = os.path.basename(path)
         cat, prod = os.path.basename(os.path.dirname(path)), basename.split('-')[0].replace('.jpg', '')
         return cat, prod
-    def get_cat_length(self):
-        return len(self.cat_dic)
-    def get_prod_length(self):
-        return len(self.prod_dic)
+    
+    def get_cat_length(self): return len(self.cat_dic)
+    def get_prod_length(self): return len(self.prod_dic)
     
     def gen_dic(self, dic, f_name, parser):
         basepath = self.get_basepath(f_name)
         if parser not in dic:
             dic[parser] = {'sketch': [], 'photo': []}
         dic[parser][basepath.split('/')[0]].append(f_name)
+        
         return dic
-    
     
 class SketchyImageDataset(SketchyDataset):
     def __init__(self, transform_dic=None, pos_return_num=1, neg_return_num=1, load_images=False, **kwargs):
