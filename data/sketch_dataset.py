@@ -252,10 +252,15 @@ class SketchyImageDataset(SketchyDataset):
     Parameters:
     
         transform_dic      - transformations to be applied, dict;
+        pos_return_num     - number of images to be returned as a positive image, int;
+        neg_return_num     - number of images to be returned as a negatuve image, int;
+        load_images        - whether or not to load images, bool.
         
+    Output:
+    
+        out_di             - output of the class with necessary information, dict.
     
     """
-    
     
     def __init__(self, transform_dic=None, pos_return_num=1, neg_return_num=1, load_images=False, **kwargs):
         super(SketchyImageDataset, self).__init__(**kwargs)
