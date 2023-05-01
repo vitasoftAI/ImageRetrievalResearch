@@ -297,20 +297,13 @@ class SketchyImageDataset(SketchyDataset):
         except: raise Exception(f'neg_return_num should be smaller than length of negative list')
         
         cat, prod = self.classify(self.get_basepath(qry))
-        if self.load_images:
-            qry_rslt = self.image_lst_im[qry]
-            pos_rslt = [self.sketch_lst_im[i] for i in pos]
-            neg_rslt = [self.sketch_lst_im[i] for i in neg]
-        else:
-            qry_rslt = Image.open(qry).convert('RGB')
-            pos_rslt = [Image.open(i).convert('RGB') for i in pos]
-            neg_rslt = [Image.open(i).convert('RGB') for i in neg]
-        if self.transform_dic:
-            qry_rslt = self.qry_trans(qry_rslt)
-            pos_rslt = [self.pos_trans(i) for i in pos_rslt]
-            neg_rslt = [self.neg_trans(i) for i in neg_rslt]
-        else:
-            qry_rslt = np.array(qry_rslt)
-            pos_rslt = [np.array(i) for i in pos_rslt]
-            neg_rslt = [np.array(i) for i in neg_rslt]
+        
+        if self.load_images: qry_rslt, pos_rslt, neg_rslt = self.image_lst_im[qry], [self.sketch_lst_im[i] for i in pos], [self.sketch_lst_im[i] for i in neg]
+            
+        else: qry_rslt, pos_rslt, neg_rslt = Image.open(qry).convert('RGB'), [Image.open(i).convert('RGB') for i in pos], [Image.open(i).convert('RGB') for i in neg]
+             
+        if self.transform_dic: qry_rslt, pos_rslt, neg_rslt = self.qry_trans(qry_rslt), [self.pos_trans(i) for i in pos_rslt], [self.neg_trans(i) for i in neg_rslt]
+             
+        else: qry_rslt, pos_rslt, neg_rslt = np.array(qry_rslt), [np.array(i) for i in pos_rslt], [np.array(i) for i in neg_rslt]
+             
         return {'qry': qry_rslt, 'pos': pos_rslt, 'neg': neg_rslt, 'cat_idx': self.cat_idx[cat], 'prod_idx': self.prod_idx[prod]}
