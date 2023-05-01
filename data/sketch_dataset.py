@@ -258,33 +258,44 @@ class SketchyImageDataset(SketchyDataset):
         
     Output:
     
-        out_di             - output of the class with necessary information, dict.
+        dic                - output of the class with necessary information, dict.
     
     """
     
-    def __init__(self, transform_dic=None, pos_return_num=1, neg_return_num=1, load_images=False, **kwargs):
+    def __init__(self, transform_dic = None, pos_return_num = 1, neg_return_num = 1, load_images = False, **kwargs):
         super(SketchyImageDataset, self).__init__(**kwargs)
-        self.load_images = load_images
+        self.load_images, self.transform_dic = load_images, transform_dic
         if self.load_images:
             self.sketch_lst_im = {i: Image.open(i).convert('RGB') for i in self.sketch_lst}
             self.image_lst_im = {i: Image.open(i).convert('RGB') for i in self.image_lst}
         
-        self.transform_dic = transform_dic
-        if transform_dic:
-            self.qry_trans, self.pos_trans, self.neg_trans = transform_dic['qry'], transform_dic['pos'], transform_dic['neg']
-        self.pos_return_num = pos_return_num
-        self.neg_return_num = neg_return_num
+        if transform_dic: self.qry_trans, self.pos_trans, self.neg_trans = transform_dic['qry'], transform_dic['pos'], transform_dic['neg']
+        
+        self.pos_return_num, self.neg_return_num = pos_return_num, neg_return_num
+        
     def __getitem__(self, idx):
+        
+        """
+        
+        This function gets index and returns a dictionary with necessary information.
+        
+        Parameter:
+        
+            idx    - index, int.
+            
+        Output:
+        
+            dic    - information necessary for training, dictionary. 
+        
+        """
+        
         rslt_dic = super(SketchyImageDataset, self).__getitem__(idx)
         qry, pos_lst, neg_lst, pos_pol, neg_pol = rslt_dic['qry'], rslt_dic['pos'], rslt_dic['neg'], rslt_dic['pos_policy'], rslt_dic['neg_policy']
-        try:
-            pos = random.sample(pos_lst, self.pos_return_num)
-        except:
-            raise Exception(f'pos_return_num should be smaller than length of positive list')
-        try:
-            neg = random.sample(neg_lst, self.neg_return_num)
-        except:
-            raise Exception(f'neg_return_num should be smaller than length of negative list')
+        try: pos = random.sample(pos_lst, self.pos_return_num)
+        except: raise Exception(f'pos_return_num should be smaller than length of positive list')
+        try: neg = random.sample(neg_lst, self.neg_return_num)
+        except: raise Exception(f'neg_return_num should be smaller than length of negative list')
+        
         cat, prod = self.classify(self.get_basepath(qry))
         if self.load_images:
             qry_rslt = self.image_lst_im[qry]
