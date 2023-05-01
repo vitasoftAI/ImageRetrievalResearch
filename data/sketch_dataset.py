@@ -243,6 +243,20 @@ Parameters:
         return dic
     
 class SketchyImageDataset(SketchyDataset):
+    
+    
+    """
+    
+    This class gets several parameters and returns a sketchy dataset.
+    
+    Parameters:
+    
+        transform_dic      - transformations to be applied, dict;
+        
+    
+    """
+    
+    
     def __init__(self, transform_dic=None, pos_return_num=1, neg_return_num=1, load_images=False, **kwargs):
         super(SketchyImageDataset, self).__init__(**kwargs)
         self.load_images = load_images
