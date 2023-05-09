@@ -111,7 +111,7 @@ def run(args):
             
             This class gets a model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
             
-            Arguments:
+            Parameters:
             
                 model_name        - name of the model/CNN to run. Used for creating the model (see function below)
                 optimizer_name    - name of the optimizer to use. Currently supported: Adam, SGD
@@ -181,7 +181,7 @@ def run(args):
             
             This function gets batch and batch index and conducts one step of training process.
             
-            Arguments:
+            Parameters:
             
                 batch       - batch of the train dataloader, tensor;
                 batch_idx   - index of the batch in the train dataloader, int.
@@ -259,7 +259,7 @@ def run(args):
             
             This function gets batch and batch index and conducts one step of validation process.
             
-            Arguments:
+            Parameters:
             
                 batch           - batch of the train dataloader, tensor;
                 batch_idx       - index of the batch in the train dataloader, int.
@@ -346,7 +346,7 @@ def run(args):
         
         This function gets model name and creates a timm model.
         
-        Arguments:
+        Parameters:
         
             model_name  - name of the model in timm library, str;
             conv_input  - option for the the input to pass convolution layer first, bool;
@@ -375,7 +375,7 @@ def run(args):
         
         This function trains the model and returns trained model with its results.
         
-        Arguments:
+        Parameters:
         
             model_name - name of the model in timm library, str;
             save_name  - name for the saved model, str.

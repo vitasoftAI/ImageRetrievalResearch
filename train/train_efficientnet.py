@@ -106,7 +106,7 @@ def run(args):
         This function gets feature map with size (bs, fm_shape, 7, 7)
         applies average pooling and returns feature map with shape (bs, fm_shape).
         
-        Argument:
+        Parameter:
         
             fm - feature map, tensor.
         
@@ -137,7 +137,7 @@ def run(args):
             
             This class gets model name, optimizer name and hparams and returns trained model (pytorch lightning) with results (dict).
             
-            Arguments:
+            Parameters:
             
                 model_name          - model name in the timm library, str;
                 optimizer_name      - optimizer name in the torch library, str;
@@ -205,7 +205,7 @@ def run(args):
             
             This function gets batch and batch index and conducts one step of training process.
             
-            Arguments:
+            Parameters:
             
                 batch       - batch of the train dataloader, tensor;
                 batch_idx   - index of the batch in the train dataloader, int.
@@ -304,7 +304,7 @@ def run(args):
             
             This function gets batch and batch index and conducts one step of validation process.
             
-            Arguments:
+            Parameters:
             
                 batch           - batch of the train dataloader, tensor;
                 batch_idx       - index of the batch in the train dataloader, int.
@@ -419,7 +419,7 @@ def run(args):
         
         This function gets model name and creates a timm model.
         
-        Arguments:
+        Parameters:
         
             model_name  - name of the model in timm library, str;
             conv_input  - option for the the input to pass convolution layer first, bool;
@@ -447,7 +447,7 @@ def run(args):
         
         This function trains the model and returns trained model with its results.
         
-        Arguments:
+        Parameters:
         
             model_name - name of the model in timm library, str;
             save_name  - name for the saved model, str.
@@ -532,9 +532,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Triplet Loss PyTorch Lightning Arguments')
     
     # Add Arguments to the Parser
-    parser.add_argument('-ed', '--expdir', default=None, help='Experiment directory')
-    parser.add_argument("-sp", "--save_path", type=str, default='saved_models', help="Path to save trained models")
-    parser.add_argument("-bs", "--batch_size", type=int, default=64, help="Batch size")
+    parser.add_argument('-ed', '--expdir', default = None, help = 'Experiment directory')
+    parser.add_argument("-sp", "--save_path", type = str, default = 'saved_models', help = "Path to save trained models")
+    parser.add_argument("-bs", "--batch_size", type=int, default = 64, help="Batch size")
     parser.add_argument("-d", "--device", type=str, default='cuda:1', help="GPU device number")
     parser.add_argument("-ip", "--ims_path", type=str, default='/home/ubuntu/workspace/dataset/sketchy_database_256', help="Path to the images")
     parser.add_argument("-mn", "--model_name", type=str, default='efficientnet_b3a', help="Model name (from timm library (ex. darknet53, ig_resnext101_32x32d))")
@@ -550,4 +550,4 @@ if __name__ == "__main__":
     args = parser.parse_args() 
     
     # Run the script
-    run(args) 
+    run(args)
