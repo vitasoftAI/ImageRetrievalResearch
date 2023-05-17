@@ -43,6 +43,8 @@ class ContrastiveLoss(Module):
         
                 fm1    - feature map#1, tensor;
                 fm2    - feature map#2, tensor;
+                label  - label for the loss, float;
+                mean.  - whether or not to compute mean value of the loss values, bool.
         
         """
         
