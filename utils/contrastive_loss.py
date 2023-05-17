@@ -11,6 +11,14 @@ class ContrastiveLoss(Module):
 
     This class gets a pair of feature maps as (qry_fm, pos_fm) or (qry_fm, neg_fm) and a corresponding target integer value (1 for positive and 0 for negative pairs)
     
+    Parameter:
+    
+        margin.   - margin for the loss, float.
+        
+    Output:
+    
+        losses    - loss value, float.
+    
     Example: 
     
     loss_fn = ContrastiveLoss(0.5)
