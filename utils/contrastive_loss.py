@@ -41,14 +41,21 @@ class ContrastiveLoss(Module):
         
         Parameters:
         
-                fm1    - feature map#1, tensor;
-                fm2    - feature map#2, tensor;
-                label  - label for the loss, float;
-                mean.  - whether or not to compute mean value of the loss values, bool.
+                fm1       - feature map#1, tensor;
+                fm2       - feature map#2, tensor;
+                label     - label for the loss, float;
+                mean.     - whether or not to compute mean value of the loss values, bool.
+                
+        Output:
+    
+                losses    - loss value, float.
         
         """
         
+        # Compute distance between feature maps
         dis = (fm2 - fm1).pow(2).sum(1)  
+        
+        # Compute the loss values
         losses = 0.5 * (label * dis + (1 + -1 * label) * F.relu(self.margin - (dis + self.eps).sqrt()).pow(2))
         
         return losses.mean() if mean else losses.sum()
