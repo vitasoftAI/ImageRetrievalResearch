@@ -1,3 +1,4 @@
+# Import libraries
 import torch
 from torch.nn import Module
 import torch.nn.functional as F
@@ -6,9 +7,9 @@ class ContrastiveLoss(Module):
 
     """
 
-    Contrastive Loss PyTorch Implementation
+    Contrastive Loss PyTorch Implementation:
 
-    Gets a pair of feature maps as (qry_fm, pos_fm) or (qry_fm, neg_fm) and a corresponding target integer value (1 for positive and 0 for negative pairs)
+    This class gets a pair of feature maps as (qry_fm, pos_fm) or (qry_fm, neg_fm) and a corresponding target integer value (1 for positive and 0 for negative pairs)
     
     Example: 
     
