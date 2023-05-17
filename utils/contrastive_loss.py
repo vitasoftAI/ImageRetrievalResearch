@@ -31,10 +31,9 @@ class ContrastiveLoss(Module):
     def __init__(self, margin):
         super(ContrastiveLoss, self).__init__()
         
-        self.margin = margin
-        self.eps = 1e-9
+        self.margin, self.eps = margin, 1e-9
 
-    def forward(self, fm1, fm2, label, mean=True):
+    def forward(self, fm1, fm2, label, mean = True):
         
         dis = (fm2 - fm1).pow(2).sum(1)  
         losses = 0.5 * (label * dis + (1 + -1 * label) * F.relu(self.margin - (dis + self.eps).sqrt()).pow(2))
