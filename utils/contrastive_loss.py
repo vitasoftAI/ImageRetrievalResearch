@@ -35,6 +35,17 @@ class ContrastiveLoss(Module):
 
     def forward(self, fm1, fm2, label, mean = True):
         
+        """
+        
+        This function gets several parameters and implements feedforward of the ContrastiveLoss.
+        
+        Parameters:
+        
+                fm1    - feature map#1, tensor;
+                fm2    - feature map#2, tensor;
+        
+        """
+        
         dis = (fm2 - fm1).pow(2).sum(1)  
         losses = 0.5 * (label * dis + (1 + -1 * label) * F.relu(self.margin - (dis + self.eps).sqrt()).pow(2))
         
